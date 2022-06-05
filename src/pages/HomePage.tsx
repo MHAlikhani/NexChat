@@ -1,8 +1,10 @@
 import { Box, Typography, Button, Container, Paper } from '@mui/material';
 import { Chat as ChatIcon } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
-// باید به صورت default export باشد
 export default function HomePage() {
+  const navigate = useNavigate();
+
   return (
     <Box
       sx={{
@@ -21,7 +23,6 @@ export default function HomePage() {
             padding: 5,
             textAlign: 'center',
             borderRadius: 4,
-            backdropFilter: 'blur(10px)',
             backgroundColor: 'rgba(255, 255, 255, 0.95)',
           }}
         >
@@ -43,7 +44,6 @@ export default function HomePage() {
             <Button
               variant="contained"
               size="large"
-              color="primary"
               sx={{
                 px: 4,
                 py: 1.5,
@@ -51,7 +51,7 @@ export default function HomePage() {
                 borderRadius: 3,
                 textTransform: 'none',
               }}
-              onClick={() => alert('به زودی: ورود با Google')}
+              onClick={() => navigate('/login')}
             >
               شروع کنید
             </Button>
