@@ -20,10 +20,11 @@ import {
   limit,
   onSnapshot,
   serverTimestamp,
-  Timestamp,
-  type Unsubscribe,
   arrayUnion,
   arrayRemove,
+  increment,
+  type Unsubscribe,
+  type DocumentSnapshot,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Room, CreateRoomInput, UpdateRoomInput, LastMessage } from '../types';
@@ -72,8 +73,6 @@ export const roomsService = {
       };
 
       const docRef = await addDoc(roomsRef, roomData);
-
-      // Fetch the created document to get server-generated fields
       const createdDoc = await getDoc(docRef);
 
       if (!createdDoc.exists()) {
@@ -108,7 +107,7 @@ export const roomsService = {
       }
 
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(mapFirestoreDocToRoom);
+      return snapshot.docs.map((docSnap) => mapFirestoreDocToRoom(docSnap));
     } catch (error) {
       throw normalizeRoomError(error);
     }
@@ -183,14 +182,16 @@ export const roomsService = {
   },
 
   /**
-   * Join a room
+   * Join a room (Optimized)
+   *
+   * از increment استفاده می‌کنیم تا نیاز به fetch کردن اتاق نباشد
    */
   join: async (roomId: string, userId: string): Promise<void> => {
     try {
       const roomRef = doc(db, ROOMS_COLLECTION, roomId);
       await updateDoc(roomRef, {
         members: arrayUnion(userId),
-        memberCount: (await this.getById(roomId))!.memberCount + 1,
+        memberCount: increment(1),
         lastActivityAt: serverTimestamp(),
       });
     } catch (error) {
@@ -199,14 +200,16 @@ export const roomsService = {
   },
 
   /**
-   * Leave a room
+   * Leave a room (Optimized)
+   *
+   * از increment(-1) استفاده می‌کنیم تا نیاز به fetch کردن اتاق نباشد
    */
   leave: async (roomId: string, userId: string): Promise<void> => {
     try {
       const roomRef = doc(db, ROOMS_COLLECTION, roomId);
       await updateDoc(roomRef, {
         members: arrayRemove(userId),
-        memberCount: (await this.getById(roomId))!.memberCount - 1,
+        memberCount: increment(-1),
         lastActivityAt: serverTimestamp(),
       });
     } catch (error) {
@@ -232,45 +235,42 @@ export const roomsService = {
     }
   },
 
-/**
- * Subscribe to real-time room updates
- */
-subscribeToAll: (
-  callback: (rooms: Room[]) => void,
-  options?: {
-    userId?: string;
-    limit?: number;
-  }
-): Unsubscribe => {
-  const roomsRef = collection(db, ROOMS_COLLECTION);
-
-  // Query با فیلتر members (سازگار با Security Rules)
-  let q = query(roomsRef, where('isActive', '==', true));
-
-  // فیلتر members در server-side (مهم برای Security Rules)
-  if (options?.userId) {
-    q = query(q, where('members', 'array-contains', options.userId));
-  }
-
-  // مرتب‌سازی
-  q = query(q, orderBy('lastActivityAt', 'desc'));
-
-  if (options?.limit) {
-    q = query(q, limit(options.limit));
-  }
-
-  return onSnapshot(
-    q,
-    (snapshot) => {
-      const rooms = snapshot.docs.map(mapFirestoreDocToRoom);
-      callback(rooms);
-    },
-    (error) => {
-      console.error('Error in rooms subscription:', error);
-      callback([]);
+  /**
+   * Subscribe to real-time room updates (Observer Pattern)
+   */
+  subscribeToAll: (
+    callback: (rooms: Room[]) => void,
+    options?: {
+      userId?: string;
+      limit?: number;
     }
-  );
-},
+  ): Unsubscribe => {
+    const roomsRef = collection(db, ROOMS_COLLECTION);
+    let q = query(roomsRef, where('isActive', '==', true));
+
+    // فیلتر members در server-side (مهم برای Security Rules)
+    if (options?.userId) {
+      q = query(q, where('members', 'array-contains', options.userId));
+    }
+
+    q = query(q, orderBy('lastActivityAt', 'desc'));
+
+    if (options?.limit) {
+      q = query(q, limit(options.limit));
+    }
+
+    return onSnapshot(
+      q,
+      (snapshot) => {
+        const rooms = snapshot.docs.map((docSnap) => mapFirestoreDocToRoom(docSnap));
+        callback(rooms);
+      },
+      (error) => {
+        console.error('Error in rooms subscription:', error);
+        callback([]);
+      }
+    );
+  },
 
   /**
    * Subscribe to a single room
@@ -281,33 +281,42 @@ subscribeToAll: (
   ): Unsubscribe => {
     const roomRef = doc(db, ROOMS_COLLECTION, roomId);
 
-    return onSnapshot(roomRef, (snapshot) => {
-      if (!snapshot.exists()) {
+    return onSnapshot(
+      roomRef,
+      (snapshot) => {
+        if (!snapshot.exists()) {
+          callback(null);
+          return;
+        }
+        callback(mapFirestoreDocToRoom(snapshot));
+      },
+      (error) => {
+        console.error('Error in room subscription:', error);
         callback(null);
-        return;
       }
-      callback(mapFirestoreDocToRoom(snapshot));
-    });
+    );
   },
 
   /**
    * Search rooms
+   *
+   * توجه: Firestore از full-text search پشتیبانی نمی‌کند.
+   * این یک پیاده‌سازی ساده client-side است.
+   * برای production، از Algolia یا Typesense استفاده کنید.
    */
-  search: async (queryText: string, limit = 20): Promise<Room[]> => {
+  search: async (queryText: string, searchLimit = 20): Promise<Room[]> => {
     try {
-      // Note: Firestore doesn't support full-text search
-      // This is a simple client-side filter after fetching
-      const allRooms = await this.getAll({ limit: 100 });
+      const allRooms = await roomsService.getAll({ limit: 100 });
 
       const normalizedQuery = queryText.toLowerCase().trim();
 
       return allRooms
-        .filter((room) => {
+        .filter((room: Room) => {
           const nameMatch = room.name.toLowerCase().includes(normalizedQuery);
           const descMatch = room.description?.toLowerCase().includes(normalizedQuery);
           return nameMatch || descMatch;
         })
-        .slice(0, limit);
+        .slice(0, searchLimit);
     } catch (error) {
       throw normalizeRoomError(error);
     }
@@ -315,7 +324,7 @@ subscribeToAll: (
 };
 
 /**
- * Helper: Normalize Firestore errors to domain RoomError
+ * Helper: Normalize Firestore errors to domain Error
  */
 function normalizeRoomError(error: unknown): Error {
   if (error && typeof error === 'object' && 'code' in error) {
