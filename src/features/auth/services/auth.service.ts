@@ -1,9 +1,6 @@
 /**
  * Authentication Service (Repository Pattern)
  *
- * این لایه، جزئیات Firebase Auth را از لایه Business Logic پنهان می‌کند.
- * اگر روزی خواستیم از Auth0 یا Supabase استفاده کنیم، فقط این فایل تغییر می‌کند.
- *
  * @module features/auth/services/auth
  */
 
@@ -12,7 +9,6 @@ import {
   signOut as firebaseSignOut,
   GoogleAuthProvider,
   onAuthStateChanged,
-  type User as FirebaseUser,
   type Unsubscribe,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -21,7 +17,7 @@ import { profileService } from './profile.service';
 import { mapFirebaseUserToDomain } from '../utils/mappers';
 
 /**
- * Error Messages - User-Friendly Messages
+ * Error Messages
  */
 const ERROR_MESSAGES: Record<string, string> = {
   'auth/popup-closed-by-user': 'پنجره ورود توسط شما بسته شد',
@@ -35,6 +31,8 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 /**
  * Provider Instances
+ *
+ * فقط Google فعال است. اگر خواستید GitHub یا Email اضافه کنید، اینجا تعریف کنید.
  */
 const providers = {
   google: new GoogleAuthProvider(),
@@ -47,29 +45,25 @@ export const authService = {
   /**
    * Sign in with specified provider
    *
-   * @param provider - احراز هویت با کدام ارائه‌دهنده
-   * @returns Promise containing the authenticated user
-   * @throws {AuthError} If authentication fails
+   * @param provider - روش احراز هویت (فقط 'google' در حال حاضر)
    */
   signIn: async (provider: AuthProvider = 'google'): Promise<User> => {
     try {
-      const selectedProvider = providers[provider];
-
-      if (!selectedProvider) {
-        throw new Error(`Provider ${provider} is not supported`);
+      // بررسی اینکه provider پشتیبانی می‌شود
+      if (!(provider in providers)) {
+        throw new Error(`روش ورود "${provider}" پشتیبانی نمی‌شود`);
       }
 
-      // Step 1: Authenticate with Firebase
+      const selectedProvider =
+        providers[provider as keyof typeof providers];
+
       const result = await signInWithPopup(auth, selectedProvider);
 
       if (!result.user) {
         throw new Error('Authentication succeeded but no user returned');
       }
 
-      // Step 2: Map Firebase user to domain model
       const user = mapFirebaseUserToDomain(result.user);
-
-      // Step 3: Create or update profile in Firestore
       await profileService.upsertProfile(user);
 
       return user;
@@ -91,16 +85,9 @@ export const authService = {
 
   /**
    * Subscribe to authentication state changes
-   *
-   * این متد یک unsubscribe function برمی‌گرداند که باید در cleanup فراخوانی شود.
-   *
-   * @param callback - تابعی که با تغییر وضعیت فراخوانی می‌شود
-   * @returns Unsubscribe function
    */
-  onAuthChange: (
-    callback: (user: User | null) => void
-  ): Unsubscribe => {
-    return onAuthStateChanged(auth, async (firebaseUser) => {
+  onAuthChange: (callback: (user: User | null) => void): Unsubscribe => {
+    return onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         const user = mapFirebaseUserToDomain(firebaseUser);
         callback(user);
@@ -120,7 +107,7 @@ export const authService = {
 };
 
 /**
- * Helper: Normalize Firebase errors to domain AuthError
+ * Helper: Normalize Firebase errors
  */
 function normalizeAuthError(error: unknown): AuthError {
   if (error && typeof error === 'object' && 'code' in error) {

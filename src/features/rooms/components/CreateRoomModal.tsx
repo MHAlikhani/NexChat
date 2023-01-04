@@ -27,7 +27,6 @@ import {
 import { Close as CloseIcon } from '@mui/icons-material';
 import { useCreateRoom } from '../hooks/useCreateRoom';
 import { createRoomSchema, type CreateRoomFormData } from '../utils/validators';
-import type { RoomType } from '../types';
 
 export const CreateRoomModal: React.FC = () => {
   const { isModalOpen, closeModal, createRoom, isCreating } = useCreateRoom();

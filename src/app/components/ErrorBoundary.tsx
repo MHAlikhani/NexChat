@@ -1,11 +1,9 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Alert from '@mui/material/Alert';
+import { Component, ErrorInfo, ReactNode } from 'react';
+import { Box, Typography, Button } from '@mui/material';
 
 interface Props {
   children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface State {
@@ -13,11 +11,7 @@ interface State {
   error: Error | null;
 }
 
-/**
- * Error Boundary برای گرفتن خطاهای غیرمنتظره در سطح کامپوننت
- * و جلوگیری از کرش کامل اپلیکیشن
- */
-export default class ErrorBoundary extends Component<Props, State> {
+export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,
     error: null,
@@ -28,60 +22,48 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
-    // TODO: Send error to monitoring service (e.g., Sentry)
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
-
-  private handleReset = () => {
-    this.setState({ hasError: false, error: null });
-    window.location.href = '/';
-  };
 
   public render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
       return (
         <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          minHeight="100vh"
-          p={3}
-          bgcolor="background.default"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100vh',
+            p: 3,
+            gap: 2,
+          }}
         >
-          <Alert severity="error" sx={{ mb: 2, maxWidth: 500 }}>
-            <Typography variant="h6" gutterBottom>
-              خطای غیرمنتظره
-            </Typography>
-            <Typography variant="body2">
-              متأسفانه مشکلی در بارگذاری برنامه پیش آمده است. لطفاً صفحه را رفرش کنید.
-            </Typography>
-          </Alert>
-          
-          {process.env.NODE_ENV === 'development' && this.state.error && (
-            <Box
-              component="pre"
-              sx={{
-                bgcolor: 'grey.900',
-                color: 'grey.100',
-                p: 2,
-                borderRadius: 1,
-                overflow: 'auto',
-                maxWidth: '80vw',
-                fontSize: '0.875rem',
-              }}
+          <Typography variant="h4" color="error" gutterBottom>
+            خطایی رخ داد
+          </Typography>
+          <Typography variant="body1" color="text.secondary" align="center">
+            متأسفانه مشکلی در بارگذاری صفحه پیش آمده است.
+          </Typography>
+          {this.state.error && (
+            <Typography
+              variant="body2"
+              color="error"
+              sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}
             >
-              {this.state.error.toString()}
-            </Box>
+              {this.state.error.message}
+            </Typography>
           )}
-          
           <Button
             variant="contained"
-            color="primary"
-            onClick={this.handleReset}
-            sx={{ mt: 3 }}
+            onClick={() => window.location.reload()}
+            sx={{ mt: 2 }}
           >
-            بازگشت به صفحه اصلی
+            بارگذاری مجدد صفحه
           </Button>
         </Box>
       );

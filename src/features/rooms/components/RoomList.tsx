@@ -1,7 +1,12 @@
 /**
  * RoomList Component
  *
- * نمایش لیست اتاق‌ها با جستجو و فیلتر
+ * نمایش لیست اتاق‌ها با:
+ * - جستجوی real-time با debounce
+ * - نمایش وضعیت loading، error و empty
+ * - دکمه ایجاد اتاق جدید
+ * - Deduplication نهایی در UI
+ * - بهینه‌سازی performance با useMemo
  *
  * @module features/rooms/components/RoomList
  */
@@ -18,33 +23,61 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
-import { Add as AddIcon, Refresh as RefreshIcon } from '@mui/icons-material';
+import {
+  Add as AddIcon,
+  Refresh as RefreshIcon,
+  Chat as ChatIcon,
+} from '@mui/icons-material';
 import { useRooms } from '../hooks/useRooms';
 import { useCreateRoom } from '../hooks/useCreateRoom';
 import { RoomItem } from './RoomItem';
 import { SearchBar } from './SearchBar';
 import { useRoomsStore } from '../stores/roomsStore';
+import type { Room } from '../types';
 
 export const RoomList: React.FC = () => {
-  const { rooms, isLoading, error, searchQuery, setSearchQuery, refresh } = useRooms();
+  const { rooms, isLoading, error, searchQuery, setSearchQuery, refresh } =
+    useRooms();
   const { openModal } = useCreateRoom();
-  const setActiveRoom = useRoomsStore((state) => state.setActiveRoom);
   const activeRoomId = useRoomsStore((state) => state.activeRoomId);
+  const setActiveRoom = useRoomsStore((state) => state.setActiveRoom);
 
   /**
-   * Memoize filtered rooms to prevent unnecessary re-renders
+   * Deduplication نهایی در UI
+   *
+   * این لایه سوم دفاعی است تا حتی اگر store داده تکراری برگرداند،
+   * در UI مشکلی ایجاد نشود.
    */
-  const filteredRooms = useMemo(() => rooms, [rooms]);
+  const uniqueRooms = useMemo<Room[]>(() => {
+    const map = new Map<string, Room>();
+
+    rooms.forEach((room) => {
+      if (!map.has(room.id)) {
+        map.set(room.id, room);
+      }
+    });
+
+    return Array.from(map.values());
+  }, [rooms]);
 
   /**
-   * Loading Skeleton
+   * Loading Skeleton (فقط در بارگذاری اولیه)
    */
-  if (isLoading) {
+  if (isLoading && rooms.length === 0) {
     return (
       <Box sx={{ p: 2 }}>
-        <Skeleton variant="rectangular" height={40} sx={{ mb: 2, borderRadius: 1 }} />
+        <Skeleton
+          variant="rectangular"
+          height={40}
+          sx={{ mb: 2, borderRadius: 1 }}
+        />
         {[1, 2, 3, 4, 5].map((i) => (
-          <Skeleton key={i} variant="rectangular" height={60} sx={{ mb: 1, borderRadius: 1 }} />
+          <Skeleton
+            key={i}
+            variant="rectangular"
+            height={60}
+            sx={{ mb: 1, borderRadius: 1 }}
+          />
         ))}
       </Box>
     );
@@ -62,9 +95,11 @@ export const RoomList: React.FC = () => {
         <Typography variant="body2" color="text.secondary" paragraph>
           {error.message}
         </Typography>
-        <IconButton onClick={refresh} color="primary">
-          <RefreshIcon />
-        </IconButton>
+        <Tooltip title="تلاش مجدد">
+          <IconButton onClick={refresh} color="primary" size="large">
+            <RefreshIcon />
+          </IconButton>
+        </Tooltip>
       </Box>
     );
   }
@@ -79,7 +114,9 @@ export const RoomList: React.FC = () => {
         bgcolor: '#f0f2f5',
       }}
     >
-      {/* Header */}
+      {/* ============================================
+          Header
+          ============================================ */}
       <Box
         sx={{
           p: 2,
@@ -88,18 +125,41 @@ export const RoomList: React.FC = () => {
           bgcolor: 'background.paper',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-          <Typography variant="h6" fontWeight="bold">
-            اتاق‌ها
-          </Typography>
-          <Box>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            mb: 2,
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <ChatIcon color="primary" />
+            <Typography variant="h6" fontWeight="bold">
+              اتاق‌ها
+            </Typography>
+            {uniqueRooms.length > 0 && (
+              <Typography variant="caption" color="text.secondary">
+                ({uniqueRooms.length})
+              </Typography>
+            )}
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
             <Tooltip title="ایجاد اتاق جدید">
               <IconButton onClick={openModal} color="primary">
                 <AddIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title="بروزرسانی">
-              <IconButton onClick={refresh}>
+              <IconButton
+                onClick={refresh}
+                disabled={isLoading}
+                sx={{
+                  opacity: isLoading ? 0.5 : 1,
+                  transition: 'opacity 0.2s ease',
+                }}
+              >
                 <RefreshIcon />
               </IconButton>
             </Tooltip>
@@ -109,37 +169,74 @@ export const RoomList: React.FC = () => {
         <SearchBar value={searchQuery} onChange={setSearchQuery} />
       </Box>
 
-      {/* Room List */}
+      {/* ============================================
+          Room List
+          ============================================ */}
       <Box sx={{ flex: 1, overflow: 'auto' }}>
-        {filteredRooms.length === 0 ? (
-          <Box sx={{ p: 3, textAlign: 'center' }}>
-            <Typography color="text.secondary">
-              {searchQuery ? 'اتاقی یافت نشد' : 'هنوز اتاقی ایجاد نشده'}
-            </Typography>
-            {!searchQuery && (
-              <Typography
-                variant="body2"
-                color="primary"
-                sx={{ cursor: 'pointer', mt: 1 }}
-                onClick={openModal}
-              >
-                اولین اتاق را ایجاد کنید
-              </Typography>
+        {uniqueRooms.length === 0 ? (
+          <Box sx={{ p: 3, textAlign: 'center', mt: 4 }}>
+            {searchQuery ? (
+              <>
+                <Typography color="text.secondary" gutterBottom>
+                  اتاقی با عنوان "{searchQuery}" یافت نشد
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="primary"
+                  sx={{ cursor: 'pointer', mt: 1 }}
+                  onClick={() => setSearchQuery('')}
+                >
+                  پاک کردن جستجو
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography variant="h6" color="text.secondary" gutterBottom>
+                  هنوز اتاقی ایجاد نشده
+                </Typography>
+                <Typography variant="body2" color="text.secondary" paragraph>
+                  اولین اتاق چت خود را ایجاد کنید
+                </Typography>
+                <Tooltip title="ایجاد اتاق جدید">
+                  <IconButton
+                    onClick={openModal}
+                    color="primary"
+                    size="large"
+                    sx={{
+                      mt: 2,
+                      bgcolor: 'primary.main',
+                      color: 'white',
+                      width: 64,
+                      height: 64,
+                      '&:hover': {
+                        bgcolor: 'primary.dark',
+                      },
+                    }}
+                  >
+                    <AddIcon sx={{ fontSize: 32 }} />
+                  </IconButton>
+                </Tooltip>
+              </>
             )}
           </Box>
         ) : (
           <List disablePadding>
-            {filteredRooms.map((room) => (
+            {uniqueRooms.map((room) => (
               <ListItem key={room.id} disablePadding>
                 <ListItemButton
                   selected={activeRoomId === room.id}
                   onClick={() => setActiveRoom(room.id)}
                   sx={{
                     '&.Mui-selected': {
-                      bgcolor: 'primary.light',
+                      bgcolor: 'rgba(37, 211, 102, 0.08)',
+                      borderRight: '3px solid',
+                      borderColor: 'primary.main',
                       '&:hover': {
-                        bgcolor: 'primary.light',
+                        bgcolor: 'rgba(37, 211, 102, 0.12)',
                       },
+                    },
+                    '&:hover': {
+                      bgcolor: 'rgba(0, 0, 0, 0.04)',
                     },
                   }}
                 >

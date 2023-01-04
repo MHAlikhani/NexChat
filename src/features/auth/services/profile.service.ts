@@ -12,7 +12,6 @@ import {
   getDoc,
   updateDoc,
   serverTimestamp,
-  Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { User, UserProfile } from '../types';
@@ -73,7 +72,7 @@ export const profileService = {
   /**
    * Get user profile
    */
-  getProfile: async (uid: string): Promise<UserProfile | null> => {
+ getProfile: async (uid: string): Promise<UserProfile | null> => {
     try {
       const userRef = doc(db, USERS_COLLECTION, uid);
       const userSnap = await getDoc(userRef);
@@ -83,13 +82,20 @@ export const profileService = {
       }
 
       const data = userSnap.data();
+
+      // تبدیل Timestamp به ISO string
+      const lastSeenAtDate =
+        data.lastSeenAt &&
+        typeof data.lastSeenAt === 'object' &&
+        'toDate' in data.lastSeenAt
+          ? data.lastSeenAt.toDate()
+          : new Date();
+
       return {
         bio: data.bio,
         status: data.status || 'offline',
         settings: data.settings,
-        lastSeenAt: data.lastSeenAt instanceof Timestamp
-          ? data.lastSeenAt.toISOString()
-          : new Date().toISOString(),
+        lastSeenAt: lastSeenAtDate.toISOString(),
       };
     } catch (error) {
       console.error('Failed to get profile:', error);

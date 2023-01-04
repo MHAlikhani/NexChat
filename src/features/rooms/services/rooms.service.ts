@@ -24,7 +24,6 @@ import {
   arrayRemove,
   increment,
   type Unsubscribe,
-  type DocumentSnapshot,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Room, CreateRoomInput, UpdateRoomInput, LastMessage } from '../types';

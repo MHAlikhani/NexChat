@@ -1,22 +1,18 @@
 /**
  * Firebase Configuration & Initialization
  *
- * این فایل به عنوان یک Singleton عمل می‌کند و تمام سرویس‌های Firebase
- * را در یک نقطه مرکزی پیکربندی می‌کند تا از تکرار initialization جلوگیری شود.
- *
  * @module lib/firebase
  */
 
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
-import { getStorage, type FirebaseStorage } from 'firebase/storage';
 
 /**
- * Firebase Configuration Object
+ * Firebase Configuration
  *
- * مقادیر از Environment Variables خوانده می‌شوند.
- * این مقادیر را از Firebase Console → Project Settings → General دریافت کنید.
+ * ⚠️ توجه: Firebase Storage استفاده نمی‌شود (نیاز به پلن پولی دارد)
+ * رسانه‌ها به صورت Base64 مستقیم در Firestore ذخیره می‌شوند
  */
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -28,12 +24,11 @@ const firebaseConfig = {
 };
 
 /**
- * Validation در زمان Build
- * اگر هر یک از متغیرهای محیطی تنظیم نشده باشند، خطا می‌دهد
+ * Validation در زمان توسعه
  */
 const validateConfig = () => {
   const missingKeys = Object.entries(firebaseConfig)
-    .filter(([_, value]) => !value)
+    .filter(([, value]) => !value)
     .map(([key]) => key);
 
   if (missingKeys.length > 0 && import.meta.env.DEV) {
@@ -52,11 +47,11 @@ validateConfig();
 const app: FirebaseApp = initializeApp(firebaseConfig);
 
 /**
- * Firebase Services - Lazy Initialization
- * فقط در زمان نیاز ایجاد می‌شوند
+ * Firebase Services
+ *
+ * ❌ Storage حذف شد - رسانه‌ها به صورت Base64 در Firestore ذخیره می‌شوند
  */
 export const auth: Auth = getAuth(app);
 export const db: Firestore = getFirestore(app);
-export const storage: FirebaseStorage = getStorage(app);
 
 export default app;
