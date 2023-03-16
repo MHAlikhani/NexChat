@@ -136,7 +136,7 @@ function haveRoomsChanged(oldRooms: Room[], newRooms: Room[]): boolean {
  */
 export const useRoomsStore = create<RoomsStore>()(
   devtools(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
 
       /**

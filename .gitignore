@@ -34,3 +34,7 @@ pnpm-debug.log*
 
 # Misc
 *.local
+*.bak
+
+# Legacy cleanup folder
+_legacy_cleanup/
