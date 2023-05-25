@@ -7,9 +7,9 @@ import { UI } from '../constants';
 export const messageSchema = z.object({
   content: z
     .string()
+    .trim()
     .min(1, 'پیام نمی‌تواند خالی باشد')
-    .max(UI.MAX_MESSAGE_LENGTH, `حداکثر طول پیام ${UI.MAX_MESSAGE_LENGTH} کاراکتر است`)
-    .trim(),
+    .max(UI.MAX_MESSAGE_LENGTH, `حداکثر طول پیام ${UI.MAX_MESSAGE_LENGTH} کاراکتر است`),
 });
 
 /**
@@ -18,10 +18,10 @@ export const messageSchema = z.object({
 export const roomSchema = z.object({
   name: z
     .string()
+    .trim()
     .min(3, 'نام اتاق باید حداقل ۳ کاراکتر باشد')
-    .max(50, 'نام اتاق نمی‌تواند بیشتر از ۵۰ کاراکتر باشد')
-    .trim(),
-  description: z.string().max(200, 'توضیحات نمی‌تواند بیشتر از ۲۰۰ کاراکتر باشد').optional(),
+    .max(50, 'نام اتاق نمی‌تواند بیشتر از ۵۰ کاراکتر باشد'),
+  description: z.string().trim().max(200, 'توضیحات نمی‌تواند بیشتر از ۲۰۰ کاراکتر باشد').optional(),
 });
 
 /**
