@@ -25,6 +25,7 @@
     "@mui/icons-material": "^5.15.10",
     "@mui/material": "^5.15.10",
     "@tanstack/react-query": "^5.24.1",
+    "@tanstack/react-virtual": "^3.14.10",
     "clsx": "^2.1.0",
     "compressorjs": "^1.2.1",
     "date-fns": "^3.3.1",

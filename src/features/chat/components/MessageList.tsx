@@ -1,13 +1,14 @@
 /**
  * MessageList Component
  *
- * لیست پیام‌ها با auto-scroll و بارگذاری پیام‌های قدیمی
+ * لیست پیام‌ها با Virtualization برای پرفورمنس بالا و auto-scroll
  *
  * @module features/chat/components/MessageList
  */
 
 import { useEffect, useRef, useMemo } from 'react';
 import { Box, CircularProgress, Typography, Button } from '@mui/material';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { useMessages } from '../hooks/useMessages';
 import { MessageBubble } from './MessageBubble';
 import { DateSeparator } from './DateSeparator';
@@ -60,32 +61,45 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
     loadOlderMessages,
   } = useMessages(roomId);
 
-  const bottomRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
   const isFirstLoadRef = useRef(true);
+
+  const groupedItems = useMemo(() => groupMessagesByDate(messages), [messages]);
 
   /**
    * Filter out typing users who are not the current user
    */
   const activeTypingUsers = useMemo(() => {
     if (!user) return {};
-
     return Object.fromEntries(
       Object.entries(typingUsers).filter(([uid]) => uid !== user.uid)
     );
   }, [typingUsers, user]);
 
   /**
+   * Virtualizer setup for high-performance rendering
+   */
+  const virtualizer = useVirtualizer({
+    count: groupedItems.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 80, // Estimated height of a message bubble
+    overscan: 5, // Render 5 extra items above and below the viewport
+    paddingStart: 16,
+    paddingEnd: 16,
+  });
+
+  /**
    * Auto-scroll to bottom when new messages arrive
    */
   useEffect(() => {
-    if (messages.length > 0) {
-      bottomRef.current?.scrollIntoView({
+    if (messages.length > 0 && !isLoadingMore) {
+      virtualizer.scrollToIndex(groupedItems.length - 1, {
+        align: 'end',
         behavior: isFirstLoadRef.current ? 'auto' : 'smooth',
       });
       isFirstLoadRef.current = false;
     }
-  }, [messages.length]);
+  }, [messages.length, isLoadingMore, groupedItems.length, virtualizer]);
 
   /**
    * Reset first load flag when room changes
@@ -93,6 +107,19 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
   useEffect(() => {
     isFirstLoadRef.current = true;
   }, [roomId]);
+
+  /**
+   * Handle scroll to load older messages
+   */
+  const handleScroll = () => {
+    const scrollElement = parentRef.current;
+    if (!scrollElement) return;
+
+    const isNearTop = scrollElement.scrollTop < 150;
+    if (isNearTop && hasMoreMessages && !isLoadingMore) {
+      loadOlderMessages();
+    }
+  };
 
   // Loading state
   if (isLoading) {
@@ -134,23 +161,21 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
     );
   }
 
-  const groupedItems = groupMessagesByDate(messages);
-
   return (
     <Box
-      ref={containerRef}
+      ref={parentRef}
       className="chat-background"
+      onScroll={handleScroll}
       sx={{
         flex: 1,
         overflowY: 'auto',
-        p: 2,
         display: 'flex',
         flexDirection: 'column',
       }}
     >
       {/* Load older messages button */}
       {hasMoreMessages && messages.length > 0 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, pt: 1 }}>
           <Button
             size="small"
             variant="outlined"
@@ -179,26 +204,49 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
         </Box>
       )}
 
-      {/* Messages with date separators */}
-      {groupedItems.map((item) =>
-        item.type === 'separator' ? (
-          <DateSeparator key={item.key} date={item.date!} />
-        ) : (
-          <MessageBubble
-            key={item.key}
-            message={item.message!}
-            isOwn={item.message!.senderId === user?.uid}
-          />
-        )
-      )}
+      {/* Virtualized Messages List */}
+      <Box
+        sx={{
+          height: `${virtualizer.getTotalSize()}px`,
+          width: '100%',
+          position: 'relative',
+        }}
+      >
+        {virtualizer.getVirtualItems().map((virtualItem) => {
+          const item = groupedItems[virtualItem.index];
+          
+          return (
+            <Box
+              key={item.key}
+              ref={virtualizer.measureElement}
+              data-index={virtualItem.index}
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                transform: `translateY(${virtualItem.start}px)`,
+              }}
+            >
+              {item.type === 'separator' ? (
+                <DateSeparator date={item.date!} />
+              ) : (
+                <MessageBubble
+                  message={item.message!}
+                  isOwn={item.message!.senderId === user?.uid}
+                />
+              )}
+            </Box>
+          );
+        })}
+      </Box>
 
       {/* Typing indicator */}
       {Object.keys(activeTypingUsers).length > 0 && (
-        <TypingIndicator users={activeTypingUsers} />
+        <Box sx={{ p: 1, bgcolor: 'transparent' }}>
+          <TypingIndicator users={activeTypingUsers} />
+        </Box>
       )}
-
-      {/* Scroll anchor */}
-      <div ref={bottomRef} />
     </Box>
   );
 };
