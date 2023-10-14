@@ -6,9 +6,15 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import { Toaster } from 'react-hot-toast';
 import { BrowserRouter } from 'react-router-dom';
 
+// Initialize i18n and Sentry before rendering
+import './lib/i18n';
+import { SentryInit } from './lib/sentry';
+
 import { App } from './App';
 import { theme } from './styles/theme';
 import './styles/global.css';
+
+SentryInit();
 
 const queryClient = new QueryClient({
   defaultOptions: {
