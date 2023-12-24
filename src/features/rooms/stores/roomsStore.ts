@@ -167,8 +167,7 @@ export const useRoomsStore = create<RoomsStore>()(
       /**
        * تنظیم خطا
        */
-      setError: (error) => set({ error }),
-
+      setError: (error) => set({ error, isLoading: false }),
       /**
        * باز/بسته کردن مودال ایجاد
        */

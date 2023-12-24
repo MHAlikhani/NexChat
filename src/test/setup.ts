@@ -7,6 +7,36 @@ afterEach(() => {
   cleanup();
 });
 
+// Mock HTMLMediaElement methods (not implemented in jsdom)
+// This prevents "Not implemented: HTMLMediaElement.prototype.pause" warnings
+Object.defineProperty(window.HTMLMediaElement.prototype, 'pause', {
+  writable: true,
+  value: vi.fn(),
+});
+
+Object.defineProperty(window.HTMLMediaElement.prototype, 'play', {
+  writable: true,
+  value: vi.fn().mockResolvedValue(undefined),
+});
+
+Object.defineProperty(window.HTMLMediaElement.prototype, 'load', {
+  writable: true,
+  value: vi.fn(),
+});
+
+// Mock Audio constructor
+Object.defineProperty(window, 'Audio', {
+  writable: true,
+  value: vi.fn().mockImplementation(() => ({
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    pause: vi.fn(),
+    play: vi.fn().mockResolvedValue(undefined),
+    duration: 0,
+    currentTime: 0,
+  })),
+});
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

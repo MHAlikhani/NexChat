@@ -47,6 +47,12 @@ export interface Message {
 
   /** آیا ارسال با خطا مواجه شد؟ */
   isFailed?: boolean;
+
+  /** مدت زمان صدا به ثانیه (برای پیام‌های صوتی) */
+  duration?: number;
+
+  /** تاریخ ارسال (timestamp object - deprecated، از createdAt استفاده کنید) */
+  timestamp?: Date;
 }
 
 /**

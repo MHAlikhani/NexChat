@@ -61,6 +61,7 @@ export const MessageBubble = memo<MessageBubbleProps>(({ message, isOwn }) => {
       {!isOwn && (
         <Avatar
           src={message.senderPhoto || undefined}
+          alt={message.senderName}
           sx={{ width: 32, height: 32, ml: 1, alignSelf: 'flex-end' }}
         >
           {message.senderName.charAt(0)}
@@ -128,7 +129,7 @@ export const MessageBubble = memo<MessageBubbleProps>(({ message, isOwn }) => {
         )}
 
         {message.type === 'audio' && (
-          <AudioPlayer src={message.content} duration={0} />
+          <AudioPlayer src={message.content} duration={message.duration || 0} />
         )}
 
         {/* Time and status */}

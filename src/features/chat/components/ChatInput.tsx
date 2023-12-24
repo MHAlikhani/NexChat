@@ -238,6 +238,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
           {/* لغو ضبط */}
           <Tooltip title="لغو ضبط">
             <IconButton
+              aria-label="لغو ضبط"
               color="error"
               onClick={cancelRecording}
               disabled={isSending}
@@ -289,6 +290,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
           {/* ارسال پیام صوتی */}
           <Tooltip title="ارسال پیام صوتی">
             <IconButton
+              aria-label="ارسال پیام صوتی"
               color="primary"
               onClick={() => void handleStopRecording()}
               disabled={isSending}
@@ -380,6 +382,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
         {/* دکمه انتخاب تصویر */}
         <Tooltip title="ارسال تصویر">
           <IconButton
+            aria-label="ارسال تصویر"
             onClick={() => fileInputRef.current?.click()}
             disabled={isSending}
           >
@@ -410,6 +413,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
         {text.trim() ? (
           <Tooltip title="ارسال پیام">
             <IconButton
+              aria-label="ارسال پیام"
               color="primary"
               onClick={() => void handleSendText()}
               disabled={isSending}
@@ -427,6 +431,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
           >
             <span>
               <IconButton
+                aria-label={isSupported ? 'ضبط پیام صوتی' : 'مرورگر شما از ضبط صدا پشتیبانی نمی‌کند'}
                 color="primary"
                 onClick={() => void startRecording()}
                 disabled={isSending || !isSupported}
