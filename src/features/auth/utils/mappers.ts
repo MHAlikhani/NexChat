@@ -1,8 +1,7 @@
 /**
  * User Mappers (Adapter Pattern)
  *
- * این فایل مسئول تبدیل بین Firebase User و Domain User است.
- * اگر ساختار Firebase User تغییر کند، فقط این فایل نیاز به تغییر دارد.
+ * تبدیل بین Firebase User و Domain User.
  *
  * @module features/auth/utils/mappers
  */
@@ -10,12 +9,6 @@
 import type { User as FirebaseUser } from 'firebase/auth';
 import type { User } from '../types';
 
-/**
- * Map Firebase User to Domain User
- *
- * @param firebaseUser - Firebase User object
- * @returns Domain User object
- */
 export const mapFirebaseUserToDomain = (firebaseUser: FirebaseUser): User => {
   return {
     uid: firebaseUser.uid,

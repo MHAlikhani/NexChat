@@ -1,8 +1,6 @@
 /**
  * Auth Provider
  *
- * در ریشه اپلیکیشن قرار می‌گیرد و auth listener را فعال می‌کند.
- *
  * @module app/providers/AuthProvider
  */
 

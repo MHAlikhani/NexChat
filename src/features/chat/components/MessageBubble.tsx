@@ -1,11 +1,3 @@
-/**
- * MessageBubble Component
- *
- * حباب پیام با پشتیبانی از متن، تصویر و صدا
- *
- * @module features/chat/components/MessageBubble
- */
-
 import { memo } from 'react';
 import { Box, Typography, Avatar } from '@mui/material';
 import { Done as DoneIcon, DoneAll as DoneAllIcon, Error as ErrorIcon } from '@mui/icons-material';
@@ -19,9 +11,6 @@ interface MessageBubbleProps {
   isOwn: boolean;
 }
 
-/**
- * Message Status Icon
- */
 const MessageStatus: React.FC<{ message: Message }> = ({ message }) => {
   if (message.isPending) {
     return <DoneIcon sx={{ fontSize: 14, color: 'text.secondary' }} />;
@@ -38,9 +27,6 @@ const MessageStatus: React.FC<{ message: Message }> = ({ message }) => {
   return <DoneAllIcon sx={{ fontSize: 14, color: 'text.secondary' }} />;
 };
 
-/**
- * Message Bubble Component (memoized for performance)
- */
 export const MessageBubble = memo<MessageBubbleProps>(({ message, isOwn }) => {
   const time = format(new Date(message.createdAt), 'HH:mm', {
     locale: faIR,
@@ -57,7 +43,6 @@ export const MessageBubble = memo<MessageBubbleProps>(({ message, isOwn }) => {
         px: 1,
       }}
     >
-      {/* Sender avatar for others */}
       {!isOwn && (
         <Avatar
           src={message.senderPhoto || undefined}
@@ -68,7 +53,6 @@ export const MessageBubble = memo<MessageBubbleProps>(({ message, isOwn }) => {
         </Avatar>
       )}
 
-      {/* Bubble */}
       <Box
         sx={{
           maxWidth: { xs: '85%', sm: '65%', md: '45%' },
@@ -82,7 +66,6 @@ export const MessageBubble = memo<MessageBubbleProps>(({ message, isOwn }) => {
           position: 'relative',
         }}
       >
-        {/* Sender name (only for others) */}
         {!isOwn && (
           <Typography
             variant="caption"
@@ -97,7 +80,6 @@ export const MessageBubble = memo<MessageBubbleProps>(({ message, isOwn }) => {
           </Typography>
         )}
 
-        {/* Content based on type */}
         {message.type === 'text' && (
           <Typography
             variant="body2"
@@ -132,7 +114,6 @@ export const MessageBubble = memo<MessageBubbleProps>(({ message, isOwn }) => {
           <AudioPlayer src={message.content} duration={message.duration || 0} />
         )}
 
-        {/* Time and status */}
         <Box
           sx={{
             display: 'flex',

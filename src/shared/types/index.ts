@@ -1,11 +1,9 @@
 /**
  * Shared Type Definitions for NexChat
- * این فایل شامل تمام تایپ‌های مشترک بین فیچرهای مختلف است.
+ *
+ * @module shared/types
  */
 
-// ==========================================
-// User Types
-// ==========================================
 export interface User {
   uid: string;
   name: string;
@@ -16,44 +14,35 @@ export interface User {
   status: 'online' | 'offline' | 'away';
 }
 
-// ==========================================
-// Room Types
-// ==========================================
 export interface Room {
   id: string;
   name: string;
   description?: string;
   creatorUid: string;
-  participants: string[]; // Array of user UIDs
+  participants: string[];
   createdAt: string;
   updatedAt: string;
   lastMessage?: Message;
   unreadCount: number;
 }
 
-// ==========================================
-// Message Types
-// ==========================================
 export type MessageType = 'text' | 'image' | 'audio';
 
 export interface Message {
   id: string;
   roomId: string;
   senderUid: string;
-  content: string; // Text content or URL for media
+  content: string;
   type: MessageType;
   timestamp: string;
   isRead: boolean;
   metadata?: {
-    duration?: number; // For audio messages (in seconds)
-    width?: number;    // For image messages
-    height?: number;   // For image messages
+    duration?: number;
+    width?: number;
+    height?: number;
   };
 }
 
-// ==========================================
-// Error Types
-// ==========================================
 export class AppError extends Error {
   constructor(
     message: string,
@@ -66,10 +55,7 @@ export class AppError extends Error {
   }
 }
 
-// ==========================================
-// Utility Types
-// ==========================================
 export type Nullable<T> = T | null;
 export type Optional<T> = T | undefined;
-export type AsyncReturnType<T extends (...args: any[]) => Promise<any>> = 
-  T extends (...args: any[]) => Promise<infer R> ? R : any;
+export type AsyncReturnType<T extends (...args: unknown[]) => Promise<unknown>> =
+  T extends (...args: unknown[]) => Promise<infer R> ? R : never;

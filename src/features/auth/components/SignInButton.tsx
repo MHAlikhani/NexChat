@@ -1,9 +1,6 @@
 /**
  * Sign In Button Component
  *
- * کامپوننت دکمه ورود با Google
- * یک کامپوننت Presentational خالص است.
- *
  * @module features/auth/components/SignInButton
  */
 
@@ -14,17 +11,11 @@ import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
 
 interface SignInButtonProps {
-  /** اندازه دکمه */
   size?: 'small' | 'medium' | 'large';
-  /** عرض کامل؟ */
   fullWidth?: boolean;
-  /** کلاس اضافی */
   className?: string;
 }
 
-/**
- * Sign In Button
- */
 export const SignInButton: React.FC<SignInButtonProps> = ({
   size = 'large',
   fullWidth = false,

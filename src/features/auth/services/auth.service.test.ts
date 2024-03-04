@@ -1,18 +1,8 @@
-/**
- * Auth Service Tests
- *
- * تست‌های جامع برای AuthService
- * بررسی signIn، signOut، onAuthChange و مدیریت خطاها
- *
- * @module features/auth/services/auth.service.test
- */
-
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { authService } from './auth.service';
-import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { profileService } from './profile.service';
 
-// Mock کردن Firebase Auth
 vi.mock('firebase/auth', () => ({
   signInWithPopup: vi.fn(),
   signOut: vi.fn(),
@@ -63,7 +53,7 @@ describe('Auth Service', () => {
 
   describe('signIn', () => {
     it('should sign in successfully with Google provider', async () => {
-      (signInWithPopup as any).mockResolvedValue({
+      (signInWithPopup as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
         user: mockFirebaseUser,
       });
 
@@ -75,7 +65,7 @@ describe('Auth Service', () => {
     });
 
     it('should default to google provider if none specified', async () => {
-      (signInWithPopup as any).mockResolvedValue({
+      (signInWithPopup as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
         user: mockFirebaseUser,
       });
 
@@ -85,14 +75,14 @@ describe('Auth Service', () => {
     });
 
     it('should throw error for unsupported provider', async () => {
-      await expect(authService.signIn('github' as any)).rejects.toThrow(
+      await expect(authService.signIn('github' as unknown as string)).rejects.toThrow(
         'روش ورود "github" پشتیبانی نمی‌شود'
       );
       expect(signInWithPopup).not.toHaveBeenCalled();
     });
 
     it('should throw error if no user returned from popup', async () => {
-      (signInWithPopup as any).mockResolvedValue({
+      (signInWithPopup as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
         user: null,
       });
 
@@ -106,7 +96,7 @@ describe('Auth Service', () => {
         code: 'auth/popup-closed-by-user',
         message: 'The popup has been closed by the user',
       };
-      (signInWithPopup as any).mockRejectedValue(firebaseError);
+      (signInWithPopup as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(firebaseError);
 
       await expect(authService.signIn('google')).rejects.toEqual({
         code: 'auth/popup-closed-by-user',
@@ -116,7 +106,7 @@ describe('Auth Service', () => {
     });
 
     it('should handle unknown error types', async () => {
-      (signInWithPopup as any).mockRejectedValue('string error');
+      (signInWithPopup as unknown as ReturnType<typeof vi.fn>).mockRejectedValue('string error');
 
       await expect(authService.signIn('google')).rejects.toEqual({
         code: 'unknown-error',
@@ -128,7 +118,7 @@ describe('Auth Service', () => {
 
   describe('signOut', () => {
     it('should sign out successfully', async () => {
-      (signOut as any).mockResolvedValue(undefined);
+      (signOut as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
 
       await authService.signOut();
 
@@ -140,7 +130,7 @@ describe('Auth Service', () => {
         code: 'auth/network-request-failed',
         message: 'Network error',
       };
-      (signOut as any).mockRejectedValue(firebaseError);
+      (signOut as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(firebaseError);
 
       await expect(authService.signOut()).rejects.toEqual({
         code: 'auth/network-request-failed',
@@ -154,12 +144,13 @@ describe('Auth Service', () => {
     it('should subscribe to auth state changes and map user', () => {
       const mockCallback = vi.fn();
       const mockUnsubscribe = vi.fn();
-      
-      (onAuthStateChanged as any).mockImplementation((auth, callback) => {
-        // شبیه‌سازی فراخوانی callback با کاربر
-        callback(mockFirebaseUser);
-        return mockUnsubscribe;
-      });
+
+      (onAuthStateChanged as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+        (_auth: unknown, callback: (user: unknown) => void) => {
+          callback(mockFirebaseUser);
+          return mockUnsubscribe;
+        }
+      );
 
       const unsubscribe = authService.onAuthChange(mockCallback);
 
@@ -169,11 +160,13 @@ describe('Auth Service', () => {
 
     it('should call callback with null when user signs out', () => {
       const mockCallback = vi.fn();
-      
-      (onAuthStateChanged as any).mockImplementation((auth, callback) => {
-        callback(null);
-        return vi.fn();
-      });
+
+      (onAuthStateChanged as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+        (_auth: unknown, callback: (user: unknown) => void) => {
+          callback(null);
+          return vi.fn();
+        }
+      );
 
       authService.onAuthChange(mockCallback);
 
@@ -183,7 +176,6 @@ describe('Auth Service', () => {
 
   describe('getCurrentUser', () => {
     it('should return null when no current user', () => {
-      // در محیط تست، auth.currentUser تعریف نشده است
       const result = authService.getCurrentUser();
       expect(result).toBeNull();
     });

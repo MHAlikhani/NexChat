@@ -1,9 +1,6 @@
 /**
  * Chat Store Tests
  *
- * تست‌های جامع برای Zustand Chat Store
- * بررسی مدیریت پیام‌ها، وضعیت تایپ کردن و بهینه‌سازی‌ها
- *
  * @module features/chat/stores/chatStore.test
  */
 
@@ -15,19 +12,23 @@ describe('Chat Store', () => {
   const mockMessages: Message[] = [
     {
       id: 'msg-1',
+      roomId: 'room-1',
       content: 'Hello!',
       senderId: 'user-1',
       senderName: 'Alice',
-      timestamp: new Date('2024-01-01T10:00:00Z'),
+      senderPhoto: null,
+      createdAt: new Date('2024-01-01T10:00:00Z').toISOString(),
       type: 'text',
       seenBy: ['user-1'],
     },
     {
       id: 'msg-2',
+      roomId: 'room-1',
       content: 'Hi there!',
       senderId: 'user-2',
       senderName: 'Bob',
-      timestamp: new Date('2024-01-01T10:01:00Z'),
+      senderPhoto: null,
+      createdAt: new Date('2024-01-01T10:01:00Z').toISOString(),
       type: 'text',
       seenBy: ['user-2'],
     },
@@ -62,19 +63,21 @@ describe('Chat Store', () => {
 
     it('should add a new message to the end', () => {
       useChatStore.getState().setMessages([mockMessages[0]]);
-      
+
       const newMessage: Message = {
         id: 'msg-3',
+        roomId: 'room-1',
         content: 'New message',
         senderId: 'user-1',
         senderName: 'Alice',
-        timestamp: new Date('2024-01-01T10:02:00Z'),
+        senderPhoto: null,
+        createdAt: new Date('2024-01-01T10:02:00Z').toISOString(),
         type: 'text',
         seenBy: [],
       };
-      
+
       useChatStore.getState().addMessage(newMessage);
-      
+
       const state = useChatStore.getState();
       expect(state.messages).toHaveLength(2);
       expect(state.messages[1]).toEqual(newMessage);
@@ -82,16 +85,15 @@ describe('Chat Store', () => {
 
     it('should prevent duplicate messages (optimistic update handling)', () => {
       useChatStore.getState().setMessages([mockMessages[0]]);
-      
-      // تلاش برای اضافه کردن پیام با همان ID اما با محتوای به‌روز شده (مثلاً پس از تأیید سرور)
+
       const updatedMessage: Message = {
         ...mockMessages[0],
         content: 'Hello! (Updated)',
         seenBy: ['user-1', 'user-2'],
       };
-      
+
       useChatStore.getState().addMessage(updatedMessage);
-      
+
       const state = useChatStore.getState();
       expect(state.messages).toHaveLength(1);
       expect(state.messages[0].content).toBe('Hello! (Updated)');
@@ -100,35 +102,33 @@ describe('Chat Store', () => {
 
     it('should prepend older messages for pagination', () => {
       useChatStore.getState().setMessages([mockMessages[1]]);
-      
+
       const olderMessages: Message[] = [mockMessages[0]];
       useChatStore.getState().prependMessages(olderMessages);
-      
+
       const state = useChatStore.getState();
       expect(state.messages).toHaveLength(2);
-      expect(state.messages[0].id).toBe('msg-1'); // قدیمی‌تر اول باشد
+      expect(state.messages[0].id).toBe('msg-1');
       expect(state.messages[1].id).toBe('msg-2');
     });
 
     it('should update an existing message', () => {
       useChatStore.getState().setMessages(mockMessages);
-      
+
       useChatStore.getState().updateMessage('msg-1', {
         content: 'Edited message',
-        isEdited: true,
       });
-      
+
       const state = useChatStore.getState();
       expect(state.messages[0].content).toBe('Edited message');
-      expect((state.messages[0] as any).isEdited).toBe(true);
-      expect(state.messages[1].content).toBe('Hi there!'); // بدون تغییر
+      expect(state.messages[1].content).toBe('Hi there!');
     });
 
     it('should remove a message', () => {
       useChatStore.getState().setMessages(mockMessages);
-      
+
       useChatStore.getState().removeMessage('msg-1');
-      
+
       const state = useChatStore.getState();
       expect(state.messages).toHaveLength(1);
       expect(state.messages[0].id).toBe('msg-2');
@@ -137,9 +137,9 @@ describe('Chat Store', () => {
     it('should clear all messages and reset hasMoreMessages', () => {
       useChatStore.getState().setMessages(mockMessages);
       useChatStore.getState().setHasMoreMessages(false);
-      
+
       useChatStore.getState().clearMessages();
-      
+
       const state = useChatStore.getState();
       expect(state.messages).toEqual([]);
       expect(state.hasMoreMessages).toBe(true);
@@ -150,20 +150,20 @@ describe('Chat Store', () => {
     it('should manage loading states independently', () => {
       useChatStore.getState().setLoading(true);
       expect(useChatStore.getState().isLoading).toBe(true);
-      
+
       useChatStore.getState().setLoadingMore(true);
       expect(useChatStore.getState().isLoadingMore).toBe(true);
-      
+
       useChatStore.getState().setLoading(false);
       expect(useChatStore.getState().isLoading).toBe(false);
-      expect(useChatStore.getState().isLoadingMore).toBe(true); // باید بدون تغییر بماند
+      expect(useChatStore.getState().isLoadingMore).toBe(true);
     });
 
     it('should set and clear errors', () => {
       const mockError = new Error('Network error');
       useChatStore.getState().setError(mockError);
       expect(useChatStore.getState().error).toBe(mockError);
-      
+
       useChatStore.getState().setError(null);
       expect(useChatStore.getState().error).toBeNull();
     });
@@ -184,9 +184,9 @@ describe('Chat Store', () => {
     it('should remove a typing user when displayName is null', () => {
       useChatStore.getState().setTypingUser('user-2', 'Bob');
       useChatStore.getState().setTypingUser('user-3', 'Alice');
-      
+
       useChatStore.getState().setTypingUser('user-2', null);
-      
+
       expect(useChatStore.getState().typingUsers).toEqual({ 'user-3': 'Alice' });
     });
   });
@@ -196,35 +196,41 @@ describe('Chat Store', () => {
       const messagesWithSeen: Message[] = [
         {
           id: 'msg-1',
+          roomId: 'room-1',
           content: 'Hello',
           senderId: 'user-2',
           senderName: 'Bob',
-          timestamp: new Date(),
+          senderPhoto: null,
+          createdAt: new Date().toISOString(),
           type: 'text',
-          seenBy: [], // دیده نشده
+          seenBy: [],
         },
         {
           id: 'msg-2',
+          roomId: 'room-1',
           content: 'Hi',
-          senderId: 'user-1', // پیام خود کاربر
+          senderId: 'user-1',
           senderName: 'Alice',
-          timestamp: new Date(),
+          senderPhoto: null,
+          createdAt: new Date().toISOString(),
           type: 'text',
           seenBy: ['user-1'],
         },
         {
           id: 'msg-3',
+          roomId: 'room-1',
           content: 'How are you?',
           senderId: 'user-2',
           senderName: 'Bob',
-          timestamp: new Date(),
+          senderPhoto: null,
+          createdAt: new Date().toISOString(),
           type: 'text',
-          seenBy: ['user-1'], // دیده شده
+          seenBy: ['user-1'],
         },
       ];
-      
+
       useChatStore.getState().setMessages(messagesWithSeen);
-      
+
       const unseen = chatSelectors.selectUnseenMessageIds(useChatStore.getState())('user-1');
       expect(unseen).toEqual(['msg-1']);
     });

@@ -1,8 +1,6 @@
 /**
  * Rooms Service (Repository Pattern)
  *
- * این لایه، جزئیات Firestore را از Business Logic پنهان می‌کند.
- *
  * @module features/rooms/services/rooms
  */
 
@@ -29,14 +27,8 @@ import { db } from '@/lib/firebase';
 import type { Room, CreateRoomInput, UpdateRoomInput, LastMessage } from '../types';
 import { mapFirestoreDocToRoom } from '../utils/mappers';
 
-/**
- * Collection Names
- */
 const ROOMS_COLLECTION = 'rooms';
 
-/**
- * Error Messages
- */
 const ERROR_MESSAGES: Record<string, string> = {
   'permission-denied': 'شما مجوز انجام این عملیات را ندارید',
   'not-found': 'اتاق مورد نظر یافت نشد',
@@ -44,13 +36,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   'invalid-argument': 'اطلاعات وارد شده نامعتبر است',
 };
 
-/**
- * Rooms Service API
- */
 export const roomsService = {
-  /**
-   * Create a new room
-   */
   create: async (
     input: CreateRoomInput,
     creatorId: string
@@ -84,9 +70,6 @@ export const roomsService = {
     }
   },
 
-  /**
-   * Get all rooms (with optional filters)
-   */
   getAll: async (options?: {
     type?: Room['type'];
     limit?: number;
@@ -112,9 +95,6 @@ export const roomsService = {
     }
   },
 
-  /**
-   * Get a single room by ID
-   */
   getById: async (roomId: string): Promise<Room | null> => {
     try {
       const roomRef = doc(db, ROOMS_COLLECTION, roomId);
@@ -130,9 +110,6 @@ export const roomsService = {
     }
   },
 
-  /**
-   * Update room details
-   */
   update: async (roomId: string, input: UpdateRoomInput): Promise<void> => {
     try {
       const roomRef = doc(db, ROOMS_COLLECTION, roomId);
@@ -153,9 +130,6 @@ export const roomsService = {
     }
   },
 
-  /**
-   * Delete a room (soft delete)
-   */
   delete: async (roomId: string): Promise<void> => {
     try {
       const roomRef = doc(db, ROOMS_COLLECTION, roomId);
@@ -168,9 +142,6 @@ export const roomsService = {
     }
   },
 
-  /**
-   * Permanently delete a room
-   */
   deletePermanently: async (roomId: string): Promise<void> => {
     try {
       const roomRef = doc(db, ROOMS_COLLECTION, roomId);
@@ -180,11 +151,6 @@ export const roomsService = {
     }
   },
 
-  /**
-   * Join a room (Optimized)
-   *
-   * از increment استفاده می‌کنیم تا نیاز به fetch کردن اتاق نباشد
-   */
   join: async (roomId: string, userId: string): Promise<void> => {
     try {
       const roomRef = doc(db, ROOMS_COLLECTION, roomId);
@@ -198,11 +164,6 @@ export const roomsService = {
     }
   },
 
-  /**
-   * Leave a room (Optimized)
-   *
-   * از increment(-1) استفاده می‌کنیم تا نیاز به fetch کردن اتاق نباشد
-   */
   leave: async (roomId: string, userId: string): Promise<void> => {
     try {
       const roomRef = doc(db, ROOMS_COLLECTION, roomId);
@@ -216,9 +177,6 @@ export const roomsService = {
     }
   },
 
-  /**
-   * Update last message (called when a new message is sent)
-   */
   updateLastMessage: async (
     roomId: string,
     message: LastMessage
@@ -234,9 +192,6 @@ export const roomsService = {
     }
   },
 
-  /**
-   * Subscribe to real-time room updates (Observer Pattern)
-   */
   subscribeToAll: (
     callback: (rooms: Room[]) => void,
     options?: {
@@ -247,7 +202,6 @@ export const roomsService = {
     const roomsRef = collection(db, ROOMS_COLLECTION);
     let q = query(roomsRef, where('isActive', '==', true));
 
-    // فیلتر members در server-side (مهم برای Security Rules)
     if (options?.userId) {
       q = query(q, where('members', 'array-contains', options.userId));
     }
@@ -271,9 +225,6 @@ export const roomsService = {
     );
   },
 
-  /**
-   * Subscribe to a single room
-   */
   subscribeToOne: (
     roomId: string,
     callback: (room: Room | null) => void
@@ -296,13 +247,6 @@ export const roomsService = {
     );
   },
 
-  /**
-   * Search rooms
-   *
-   * توجه: Firestore از full-text search پشتیبانی نمی‌کند.
-   * این یک پیاده‌سازی ساده client-side است.
-   * برای production، از Algolia یا Typesense استفاده کنید.
-   */
   search: async (queryText: string, searchLimit = 20): Promise<Room[]> => {
     try {
       const allRooms = await roomsService.getAll({ limit: 100 });
@@ -322,9 +266,6 @@ export const roomsService = {
   },
 };
 
-/**
- * Helper: Normalize Firestore errors to domain Error
- */
 function normalizeRoomError(error: unknown): Error {
   if (error && typeof error === 'object' && 'code' in error) {
     const firestoreError = error as { code: string; message: string };

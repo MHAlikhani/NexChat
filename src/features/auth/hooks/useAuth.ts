@@ -1,9 +1,6 @@
 /**
  * useAuth Hook (Facade Pattern)
  *
- * یک رابط ساده برای مدیریت احراز هویت ارائه می‌دهد.
- * کامپوننت‌ها نیازی به دانستن جزئیات service و store ندارند.
- *
  * @module features/auth/hooks/useAuth
  */
 
@@ -12,9 +9,6 @@ import { useAuthStore, authSelectors } from '../stores/authStore';
 import { authService } from '../services/auth.service';
 import type { AuthProvider, AuthError } from '../types';
 
-/**
- * useAuth Return Type
- */
 export interface UseAuthReturn {
   user: ReturnType<typeof authSelectors.selectUser>;
   isLoading: boolean;
@@ -25,14 +19,6 @@ export interface UseAuthReturn {
   clearError: () => void;
 }
 
-/**
- * Authentication Hook
- *
- * @example
- * ```tsx
- * const { user, signIn, signOut, isAuthenticated } = useAuth();
- * ```
- */
 export const useAuth = (): UseAuthReturn => {
   const user = useAuthStore(authSelectors.selectUser);
   const isLoading = useAuthStore(authSelectors.selectIsLoading);
@@ -41,9 +27,6 @@ export const useAuth = (): UseAuthReturn => {
 
   const { setUser, setLoading, setError } = useAuthStore();
 
-  /**
-   * Sign in with specified provider
-   */
   const signIn = useCallback(
     async (provider: AuthProvider = 'google'): Promise<void> => {
       try {
@@ -59,9 +42,6 @@ export const useAuth = (): UseAuthReturn => {
     [setLoading, setError, setUser]
   );
 
-  /**
-   * Sign out current user
-   */
   const signOut = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
@@ -73,9 +53,6 @@ export const useAuth = (): UseAuthReturn => {
     }
   }, [setLoading, setError, setUser]);
 
-  /**
-   * Clear current error
-   */
   const clearError = useCallback(() => {
     setError(null);
   }, [setError]);

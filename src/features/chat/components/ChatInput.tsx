@@ -1,15 +1,5 @@
-/**
- * ChatInput Component
- *
- * ورودی چت با پشتیبانی از:
- * - ارسال پیام متنی (با پشتیبانی از Enter و Shift+Enter)
- * - ارسال تصویر با پیش‌نمایش
- * - ضبط و ارسال پیام صوتی (با توقف خودکار در ۶۰ ثانیه)
- *
- * @module features/chat/components/ChatInput
- */
-
 import { useState, useRef, useCallback, useEffect } from 'react';
+
 import {
   Box,
   TextField,
@@ -34,33 +24,19 @@ import {
 import { formatDuration } from '../utils/format';
 
 interface ChatInputProps {
-  /** شناسه اتاق فعال */
   roomId: string;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
-  // ============================================
-  // Local State
-  // ============================================
   const [text, setText] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
 
-  // ============================================
-  // Refs
-  // ============================================
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  /**
-   * جلوگیری از ارسال همزمان/دوبل پیام صوتی
-   * (مثلاً وقتی کلیک کاربر و توقف خودکار همزمان رخ می‌دهند)
-   */
   const isProcessingAudioRef = useRef(false);
 
-  // ============================================
-  // Hooks
-  // ============================================
   const { sendTextMessage, sendImageMessage, sendAudioMessage } =
     useSendMessage();
 
@@ -73,18 +49,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
     cancelRecording,
   } = useAudioRecorder();
 
-  // ============================================
-  // Handlers: Text Message
-  // ============================================
-
-  /**
-   * ارسال پیام متنی
-   */
   const handleSendText = useCallback(async (): Promise<void> => {
     const trimmedText = text.trim();
     if (!trimmedText || isSending) return;
 
-    // پاک کردن ورودی قبل از ارسال (برای تجربه کاربری سریع‌تر)
     setText('');
 
     try {
@@ -95,11 +63,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
     }
   }, [text, roomId, sendTextMessage, isSending]);
 
-  /**
-   * مدیریت کلیدها:
-   * - Enter: ارسال پیام
-   * - Shift+Enter: خط جدید
-   */
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>): void => {
       if (event.key === 'Enter' && !event.shiftKey) {
@@ -110,13 +73,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
     [handleSendText]
   );
 
-  // ============================================
-  // Handlers: Image Message
-  // ============================================
-
-  /**
-   * انتخاب تصویر از گالری
-   */
   const handleImageSelect = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>): void => {
       const file = event.target.files?.[0];
@@ -134,9 +90,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
     []
   );
 
-  /**
-   * ارسال تصویر انتخاب شده
-   */
   const handleSendImage = useCallback(async (): Promise<void> => {
     if (!selectedImage || isSending) return;
 
@@ -146,7 +99,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
       setIsSending(true);
       await sendImageMessage(roomId, file);
     } finally {
-      // پاکسازی حالت
       if (imagePreview) {
         URL.revokeObjectURL(imagePreview);
       }
@@ -160,9 +112,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
     }
   }, [selectedImage, imagePreview, roomId, sendImageMessage, isSending]);
 
-  /**
-   * لغو انتخاب تصویر
-   */
   const handleCancelImage = useCallback((): void => {
     if (imagePreview) {
       URL.revokeObjectURL(imagePreview);
@@ -175,16 +124,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
     }
   }, [imagePreview]);
 
-  // ============================================
-  // Handlers: Audio Message
-  // ============================================
-
-  /**
-   * توقف ضبط و ارسال پیام صوتی
-   *
-   * از isProcessingAudioRef برای جلوگیری از ارسال دوبل استفاده می‌شود
-   * (مثلاً وقتی توقف خودکار و کلیک کاربر همزمان رخ می‌دهند).
-   */
   const handleStopRecording = useCallback(async (): Promise<void> => {
     if (isProcessingAudioRef.current) return;
     isProcessingAudioRef.current = true;
@@ -208,18 +147,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
     }
   }, [stopRecording, sendAudioMessage, roomId]);
 
-  /**
-   * توقف و ارسال خودکار وقتی ضبط به سقف ۶۰ ثانیه می‌رسد
-   */
   useEffect(() => {
     if (isRecording && duration >= MAX_RECORD_DURATION) {
       void handleStopRecording();
     }
   }, [isRecording, duration, handleStopRecording]);
 
-  // ============================================
-  // Cleanup: آزادسازی پیش‌نمایش تصویر هنگام حذف
-  // ============================================
   useEffect(() => {
     return () => {
       if (imagePreview) {
@@ -228,14 +161,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
     };
   }, [imagePreview]);
 
-  // ============================================
-  // Render: Recording Mode
-  // ============================================
   if (isRecording) {
     return (
       <Paper elevation={2} sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {/* لغو ضبط */}
           <Tooltip title="لغو ضبط">
             <IconButton
               aria-label="لغو ضبط"
@@ -247,7 +176,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
             </IconButton>
           </Tooltip>
 
-          {/* نشانگر ضبط */}
           <Box
             sx={{
               flex: 1,
@@ -275,7 +203,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
               در حال ضبط... {formatDuration(duration)}
             </Typography>
 
-            {/* هشدار نزدیک شدن به سقف */}
             {duration >= MAX_RECORD_DURATION - 10 && (
               <Typography
                 variant="caption"
@@ -287,7 +214,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
             )}
           </Box>
 
-          {/* ارسال پیام صوتی */}
           <Tooltip title="ارسال پیام صوتی">
             <IconButton
               aria-label="ارسال پیام صوتی"
@@ -303,12 +229,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
     );
   }
 
-  // ============================================
-  // Render: Normal Mode
-  // ============================================
   return (
     <Paper elevation={2} sx={{ p: 1.5 }}>
-      {/* پیش‌نمایش تصویر انتخاب شده */}
       {imagePreview && (
         <Box sx={{ mb: 1.5, display: 'inline-block' }}>
           <Box sx={{ position: 'relative' }}>
@@ -324,7 +246,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
               }}
             />
 
-            {/* دکمه حذف روی تصویر */}
             <IconButton
               size="small"
               onClick={handleCancelImage}
@@ -343,7 +264,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
             </IconButton>
           </Box>
 
-          {/* دکمه‌های ارسال/لغو تصویر */}
           <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
             <Tooltip title="ارسال تصویر">
               <IconButton
@@ -368,9 +288,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
         </Box>
       )}
 
-      {/* ردیف ورودی اصلی */}
       <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1 }}>
-        {/* ورودی فایل مخفی */}
         <input
           ref={fileInputRef}
           type="file"
@@ -379,7 +297,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
           onChange={handleImageSelect}
         />
 
-        {/* دکمه انتخاب تصویر */}
         <Tooltip title="ارسال تصویر">
           <IconButton
             aria-label="ارسال تصویر"
@@ -390,7 +307,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
           </IconButton>
         </Tooltip>
 
-        {/* ورودی متن */}
         <TextField
           fullWidth
           multiline
@@ -409,7 +325,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ roomId }) => {
           }}
         />
 
-        {/* دکمه ارسال یا میکروفن */}
         {text.trim() ? (
           <Tooltip title="ارسال پیام">
             <IconButton

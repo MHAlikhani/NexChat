@@ -31,7 +31,7 @@ export const SentryRoutes = () => {
   return useRoutes([]); // Placeholder, actual routes should be wrapped or handled by Sentry.reactRouterV6BrowserTracingIntegration
 };
 
-export const captureError = (error: unknown, context?: Record<string, any>) => {
+export const captureError = (error: unknown, context?: Record<string, unknown>) => {
   Sentry.captureException(error, { extra: context });
 };
 

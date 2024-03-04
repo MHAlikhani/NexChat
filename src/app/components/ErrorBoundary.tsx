@@ -1,3 +1,9 @@
+/**
+ * ErrorBoundary Component
+ *
+ * @module app/components/ErrorBoundary
+ */
+
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 

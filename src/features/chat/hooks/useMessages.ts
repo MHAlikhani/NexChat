@@ -1,8 +1,6 @@
 /**
  * useMessages Hook
  *
- * مدیریت پیام‌های یک اتاق با Real-time sync
- *
  * @module features/chat/hooks/useMessages
  */
 
@@ -13,9 +11,6 @@ import { messagesService } from '../services/messages.service';
 import { useAuth } from '@/features/auth';
 import type { Message } from '../types';
 
-/**
- * useMessages Return Type
- */
 export interface UseMessagesReturn {
   messages: Message[];
   isLoading: boolean;
@@ -26,9 +21,6 @@ export interface UseMessagesReturn {
   loadOlderMessages: () => Promise<void>;
 }
 
-/**
- * useMessages Hook
- */
 export const useMessages = (roomId: string | null): UseMessagesReturn => {
   const { user } = useAuth();
 
@@ -50,9 +42,6 @@ export const useMessages = (roomId: string | null): UseMessagesReturn => {
     }))
   );
 
-  /**
-   * Subscribe to real-time messages
-   */
   useEffect(() => {
     if (!roomId) {
       return;
@@ -78,9 +67,6 @@ export const useMessages = (roomId: string | null): UseMessagesReturn => {
     };
   }, [roomId]);
 
-  /**
-   * Mark messages as seen when user views them
-   */
   useEffect(() => {
     if (!roomId || !user || messages.length === 0) {
       return;
@@ -97,9 +83,6 @@ export const useMessages = (roomId: string | null): UseMessagesReturn => {
     }
   }, [roomId, user, messages]);
 
-  /**
-   * Load older messages
-   */
   const loadOlderMessages = useCallback(async () => {
     if (!roomId) return;
 

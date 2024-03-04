@@ -1,8 +1,6 @@
 /**
  * ChatWindow Component
  *
- * پنجره اصلی چت شامل لیست پیام‌ها و ورودی
- *
  * @module features/chat/components/ChatWindow
  */
 
@@ -45,7 +43,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Header */}
       <AppBar position="static" color="default" elevation={1}>
         <Toolbar sx={{ gap: 1 }}>
           <IconButton
@@ -87,10 +84,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
         </Toolbar>
       </AppBar>
 
-      {/* Messages */}
       <MessageList roomId={roomId} />
 
-      {/* Input */}
       <ChatInput roomId={roomId} />
     </Box>
   );

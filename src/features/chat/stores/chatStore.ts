@@ -1,8 +1,6 @@
 /**
  * Chat Store (Zustand)
  *
- * مدیریت state چت
- *
  * @module features/chat/stores/chatStore
  */
 
@@ -10,9 +8,6 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { Message } from '../types';
 
-/**
- * Chat Store State
- */
 interface ChatState {
   messages: Message[];
   isLoading: boolean;
@@ -22,9 +17,6 @@ interface ChatState {
   typingUsers: Record<string, string>;
 }
 
-/**
- * Chat Store Actions
- */
 interface ChatActions {
   setMessages: (messages: Message[]) => void;
   addMessage: (message: Message) => void;
@@ -41,9 +33,6 @@ interface ChatActions {
 
 type ChatStore = ChatState & ChatActions;
 
-/**
- * Initial State
- */
 const initialState: ChatState = {
   messages: [],
   isLoading: false,
@@ -53,9 +42,6 @@ const initialState: ChatState = {
   typingUsers: {},
 };
 
-/**
- * Chat Store Hook
- */
 export const useChatStore = create<ChatStore>()(
   devtools(
     (set) => ({
@@ -65,7 +51,6 @@ export const useChatStore = create<ChatStore>()(
 
       addMessage: (message) =>
         set((state) => {
-          // Prevent duplicates (e.g., optimistic + server confirmation)
           const exists = state.messages.some((m) => m.id === message.id);
           if (exists) {
             return {
@@ -104,7 +89,8 @@ export const useChatStore = create<ChatStore>()(
 
       setTypingUser: (userId, displayName) =>
         set((state) => {
-          const { [userId]: _, ...rest } = state.typingUsers;
+          const rest = { ...state.typingUsers };
+          delete rest[userId];
 
           if (displayName) {
             return { typingUsers: { ...rest, [userId]: displayName } };
@@ -119,9 +105,6 @@ export const useChatStore = create<ChatStore>()(
   )
 );
 
-/**
- * Selectors
- */
 export const chatSelectors = {
   selectMessages: (state: ChatStore) => state.messages,
   selectIsLoading: (state: ChatStore) => state.isLoading,

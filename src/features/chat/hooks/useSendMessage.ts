@@ -1,9 +1,6 @@
 /**
  * useSendMessage Hook
  *
- * ارسال پیام با Optimistic Updates
- * نسخه جدید: رسانه‌ها به صورت Base64 در Firestore ذخیره می‌شوند
- *
  * @module features/chat/hooks/useSendMessage
  */
 
@@ -16,9 +13,6 @@ import { mediaService } from '../services/media.service';
 import { useAuth } from '@/features/auth';
 import type { Message, MessageType } from '../types';
 
-/**
- * useSendMessage Return Type
- */
 export interface UseSendMessageReturn {
   sendTextMessage: (roomId: string, text: string) => Promise<void>;
   sendImageMessage: (roomId: string, file: File) => Promise<void>;
@@ -29,15 +23,9 @@ export interface UseSendMessageReturn {
   ) => Promise<void>;
 }
 
-/**
- * useSendMessage Hook
- */
 export const useSendMessage = (): UseSendMessageReturn => {
   const { user } = useAuth();
 
-  /**
-   * Create an optimistic message
-   */
   const createOptimisticMessage = useCallback(
     (
       roomId: string,
@@ -63,9 +51,6 @@ export const useSendMessage = (): UseSendMessageReturn => {
     [user]
   );
 
-  /**
-   * Send text message with optimistic update
-   */
   const sendTextMessage = useCallback(
     async (roomId: string, text: string): Promise<void> => {
       if (!user) {
@@ -76,7 +61,6 @@ export const useSendMessage = (): UseSendMessageReturn => {
       const trimmedText = text.trim();
       if (!trimmedText) return;
 
-      // Step 1: Add optimistic message
       const optimisticMessage = createOptimisticMessage(
         roomId,
         trimmedText,
@@ -86,7 +70,6 @@ export const useSendMessage = (): UseSendMessageReturn => {
       useChatStore.getState().addMessage(optimisticMessage);
 
       try {
-        // Step 2: Send to server
         const realMessageId = await messagesService.send(
           { roomId, content: trimmedText, type: 'text' },
           {
@@ -96,13 +79,11 @@ export const useSendMessage = (): UseSendMessageReturn => {
           }
         );
 
-        // Step 3: Replace optimistic message with real one
         useChatStore.getState().updateMessage(optimisticMessage.id, {
           id: realMessageId,
           isPending: false,
         });
       } catch (error) {
-        // Step 4: Mark as failed on error
         useChatStore.getState().updateMessage(optimisticMessage.id, {
           isPending: false,
           isFailed: true,
@@ -116,9 +97,6 @@ export const useSendMessage = (): UseSendMessageReturn => {
     [user, createOptimisticMessage]
   );
 
-  /**
-   * Send image message (Base64 storage)
-   */
   const sendImageMessage = useCallback(
     async (roomId: string, file: File): Promise<void> => {
       if (!user) {
@@ -128,7 +106,6 @@ export const useSendMessage = (): UseSendMessageReturn => {
 
       const toastId = toast.loading('در حال فشرده‌سازی و ارسال تصویر...');
 
-      // نمایش فوری پیش‌نمایش محلی (Optimistic)
       const localUrl = URL.createObjectURL(file);
       const optimisticMessage = createOptimisticMessage(
         roomId,
@@ -140,10 +117,8 @@ export const useSendMessage = (): UseSendMessageReturn => {
       useChatStore.getState().addMessage(optimisticMessage);
 
       try {
-        // فشرده‌سازی و تبدیل به Data URL (بدون نیاز به Storage)
         const { url, size } = await mediaService.uploadImage(file);
 
-        // ارسال پیام با Data URL در فیلد content
         const realMessageId = await messagesService.send(
           {
             roomId,
@@ -159,10 +134,8 @@ export const useSendMessage = (): UseSendMessageReturn => {
           }
         );
 
-        // آزادسازی حافظه پیش‌نمایش محلی
         URL.revokeObjectURL(localUrl);
 
-        // جایگزینی پیام خوش‌بینانه با پیام واقعی
         useChatStore.getState().updateMessage(optimisticMessage.id, {
           id: realMessageId,
           content: url,
@@ -186,9 +159,6 @@ export const useSendMessage = (): UseSendMessageReturn => {
     [user, createOptimisticMessage]
   );
 
-  /**
-   * Send audio message (Base64 storage)
-   */
   const sendAudioMessage = useCallback(
     async (
       roomId: string,
@@ -213,7 +183,6 @@ export const useSendMessage = (): UseSendMessageReturn => {
       useChatStore.getState().addMessage(optimisticMessage);
 
       try {
-        // تبدیل به Data URL (بدون نیاز به Storage)
         const { url, size } = await mediaService.uploadAudio(audioBlob);
 
         const realMessageId = await messagesService.send(

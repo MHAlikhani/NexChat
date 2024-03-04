@@ -1,8 +1,6 @@
 /**
  * MessageList Component
  *
- * لیست پیام‌ها با Virtualization برای پرفورمنس بالا و auto-scroll
- *
  * @module features/chat/components/MessageList
  */
 
@@ -20,9 +18,6 @@ interface MessageListProps {
   roomId: string;
 }
 
-/**
- * Group messages by date for separators
- */
 function groupMessagesByDate(messages: Message[]): Array<{ type: 'separator' | 'message'; key: string; message?: Message; date?: string }> {
   const items: Array<{ type: 'separator' | 'message'; key: string; message?: Message; date?: string }> = [];
   let lastDate: string | null = null;
@@ -66,9 +61,6 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
 
   const groupedItems = useMemo(() => groupMessagesByDate(messages), [messages]);
 
-  /**
-   * Filter out typing users who are not the current user
-   */
   const activeTypingUsers = useMemo(() => {
     if (!user) return {};
     return Object.fromEntries(
@@ -76,21 +68,15 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
     );
   }, [typingUsers, user]);
 
-  /**
-   * Virtualizer setup for high-performance rendering
-   */
   const virtualizer = useVirtualizer({
     count: groupedItems.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 80, // Estimated height of a message bubble
-    overscan: 5, // Render 5 extra items above and below the viewport
+    estimateSize: () => 80,
+    overscan: 5,
     paddingStart: 16,
     paddingEnd: 16,
   });
 
-  /**
-   * Auto-scroll to bottom when new messages arrive
-   */
   useEffect(() => {
     if (messages.length > 0 && !isLoadingMore) {
       virtualizer.scrollToIndex(groupedItems.length - 1, {
@@ -101,16 +87,10 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
     }
   }, [messages.length, isLoadingMore, groupedItems.length, virtualizer]);
 
-  /**
-   * Reset first load flag when room changes
-   */
   useEffect(() => {
     isFirstLoadRef.current = true;
   }, [roomId]);
 
-  /**
-   * Handle scroll to load older messages
-   */
   const handleScroll = () => {
     const scrollElement = parentRef.current;
     if (!scrollElement) return;
@@ -121,7 +101,6 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
     }
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <Box
@@ -138,7 +117,6 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <Box
@@ -173,7 +151,6 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
         flexDirection: 'column',
       }}
     >
-      {/* Load older messages button */}
       {hasMoreMessages && messages.length > 0 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, pt: 1 }}>
           <Button
@@ -188,7 +165,6 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
         </Box>
       )}
 
-      {/* Empty state */}
       {messages.length === 0 && (
         <Box
           sx={{
@@ -204,7 +180,6 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
         </Box>
       )}
 
-      {/* Virtualized Messages List */}
       <Box
         sx={{
           height: `${virtualizer.getTotalSize()}px`,
@@ -214,7 +189,7 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
       >
         {virtualizer.getVirtualItems().map((virtualItem) => {
           const item = groupedItems[virtualItem.index];
-          
+
           return (
             <Box
               key={item.key}
@@ -241,7 +216,6 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
         })}
       </Box>
 
-      {/* Typing indicator */}
       {Object.keys(activeTypingUsers).length > 0 && (
         <Box sx={{ p: 1, bgcolor: 'transparent' }}>
           <TypingIndicator users={activeTypingUsers} />

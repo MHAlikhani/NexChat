@@ -1,8 +1,6 @@
 /**
  * RoomItem Component
  *
- * آیتم تکی اتاق در لیست
- *
  * @module features/rooms/components/RoomItem
  */
 
@@ -29,7 +27,6 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', gap: 2 }}>
-      {/* Avatar */}
       <Badge
         overlap="circular"
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -51,7 +48,6 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
         </Avatar>
       </Badge>
 
-      {/* Content */}
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <Typography
@@ -67,7 +63,6 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
           </Typography>
         </Box>
 
-        {/* Last Message or Description */}
         <Typography
           variant="body2"
           color="text.secondary"
@@ -84,7 +79,6 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
           )}
         </Typography>
 
-        {/* Member Count */}
         <Typography variant="caption" color="text.secondary">
           {room.memberCount} عضو
         </Typography>

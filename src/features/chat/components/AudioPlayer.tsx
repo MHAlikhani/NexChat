@@ -1,8 +1,6 @@
 /**
  * AudioPlayer Component
  *
- * پخش‌کننده پیام صوتی
- *
  * @module features/chat/components/AudioPlayer
  */
 

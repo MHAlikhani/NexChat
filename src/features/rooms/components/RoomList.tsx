@@ -1,13 +1,6 @@
 /**
  * RoomList Component
  *
- * نمایش لیست اتاق‌ها با:
- * - جستجوی real-time با debounce
- * - نمایش وضعیت loading، error و empty
- * - دکمه ایجاد اتاق جدید
- * - Deduplication نهایی در UI
- * - بهینه‌سازی performance با useMemo
- *
  * @module features/rooms/components/RoomList
  */
 
@@ -42,12 +35,6 @@ export const RoomList: React.FC = () => {
   const activeRoomId = useRoomsStore((state) => state.activeRoomId);
   const setActiveRoom = useRoomsStore((state) => state.setActiveRoom);
 
-  /**
-   * Deduplication نهایی در UI
-   *
-   * این لایه سوم دفاعی است تا حتی اگر store داده تکراری برگرداند،
-   * در UI مشکلی ایجاد نشود.
-   */
   const uniqueRooms = useMemo<Room[]>(() => {
     const map = new Map<string, Room>();
 
@@ -60,9 +47,6 @@ export const RoomList: React.FC = () => {
     return Array.from(map.values());
   }, [rooms]);
 
-  /**
-   * Loading Skeleton (فقط در بارگذاری اولیه)
-   */
   if (isLoading && rooms.length === 0) {
     return (
       <Box sx={{ p: 2 }}>
@@ -83,9 +67,6 @@ export const RoomList: React.FC = () => {
     );
   }
 
-  /**
-   * Error State
-   */
   if (error) {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
@@ -114,9 +95,6 @@ export const RoomList: React.FC = () => {
         bgcolor: '#f0f2f5',
       }}
     >
-      {/* ============================================
-          Header
-          ============================================ */}
       <Box
         sx={{
           p: 2,
@@ -169,9 +147,6 @@ export const RoomList: React.FC = () => {
         <SearchBar value={searchQuery} onChange={setSearchQuery} />
       </Box>
 
-      {/* ============================================
-          Room List
-          ============================================ */}
       <Box sx={{ flex: 1, overflow: 'auto' }}>
         {uniqueRooms.length === 0 ? (
           <Box sx={{ p: 3, textAlign: 'center', mt: 4 }}>

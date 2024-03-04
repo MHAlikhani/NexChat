@@ -1,8 +1,6 @@
 /**
  * Profile Service
  *
- * مدیریت پروفایل کاربران در Firestore
- *
  * @module features/auth/services/profile
  */
 
@@ -16,28 +14,15 @@ import {
 import { db } from '@/lib/firebase';
 import type { User, UserProfile } from '../types';
 
-/**
- * Firestore Collection Name
- */
 const USERS_COLLECTION = 'users';
 
-/**
- * Profile Service API
- */
 export const profileService = {
-  /**
-   * Create or update user profile
-   *
-   * اگر کاربر از قبل وجود داشته باشد، فقط lastLoginAt به‌روز می‌شود.
-   * در غیر این صورت، پروفایل جدید ایجاد می‌شود.
-   */
   upsertProfile: async (user: User): Promise<void> => {
     try {
       const userRef = doc(db, USERS_COLLECTION, user.uid);
       const userSnap = await getDoc(userRef);
 
       if (userSnap.exists()) {
-        // User exists - just update last login
         await updateDoc(userRef, {
           lastLoginAt: serverTimestamp(),
           displayName: user.displayName,
@@ -45,7 +30,6 @@ export const profileService = {
           email: user.email,
         });
       } else {
-        // New user - create full profile
         await setDoc(userRef, {
           uid: user.uid,
           displayName: user.displayName,
@@ -69,10 +53,7 @@ export const profileService = {
     }
   },
 
-  /**
-   * Get user profile
-   */
- getProfile: async (uid: string): Promise<UserProfile | null> => {
+  getProfile: async (uid: string): Promise<UserProfile | null> => {
     try {
       const userRef = doc(db, USERS_COLLECTION, uid);
       const userSnap = await getDoc(userRef);
@@ -83,7 +64,6 @@ export const profileService = {
 
       const data = userSnap.data();
 
-      // تبدیل Timestamp به ISO string
       const lastSeenAtDate =
         data.lastSeenAt &&
         typeof data.lastSeenAt === 'object' &&
@@ -103,9 +83,6 @@ export const profileService = {
     }
   },
 
-  /**
-   * Update user status
-   */
   updateStatus: async (
     uid: string,
     status: UserProfile['status']

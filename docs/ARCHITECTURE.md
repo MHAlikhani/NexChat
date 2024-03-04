@@ -1,14 +1,14 @@
-# 🏗️ سند معماری سیستم (System Architecture Document)
+# سند معماری سیستم (System Architecture Document)
 
-## ۱. معرفی
+## معرفی
 
-این سند معماری فنی پروژه **NexChat** را توصیف می‌کند. هدف این سند ارائه یک دیدگاه جامع از ساختار، تصمیمات فنی، و الگوهای طراحی استفاده شده در پروژه است تا تیم توسعه بتواند با درک کامل از سیستم، به توسعه و نگهداری آن بپردازد.
+این سند معماری فنی پروژه **NexChat** را توصیف می‌کند. هدف این سند ارائه یک دیدگاه جامع از ساختار، تصمیمات فنی، و الگوهای طراحی استفاده شده در پروژه است.
 
-## ۲. نمای کلی معماری
+## نمای کلی معماری
 
-NexChat از معماری **Feature-Sliced Design (FSD)** الهام گرفته است که بر جداسازی دغدغه‌ها (Separation of Concerns) و ماژولار بودن تأکید دارد. این معماری به سه لایه اصلی تقسیم می‌شود:
+NexChat از معماری **Feature-Sliced Design (FSD)** الهام گرفته است که بر جداسازی دغدغه‌ها و ماژولار بودن تأکید دارد.
 
-### ۲.۱ لایه‌های معماری
+### لایه‌های معماری
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -23,116 +23,116 @@ NexChat از معماری **Feature-Sliced Design (FSD)** الهام گرفته 
 └─────────────────────────────────────────────────────────┘
 ```
 
-### ۲.۲ قوانین وابستگی (Dependency Rules)
+### قوانین وابستگی (Dependency Rules)
 
 1. **لایه App** می‌تواند به **Features** و **Shared** وابسته باشد.
 2. **لایه Features** می‌تواند فقط به **Shared** وابسته باشد (نه به سایر Features).
 3. **لایه Shared** نباید به هیچ لایه دیگری وابسته باشد (Independent).
 
-## ۳. پشته فناوری (Tech Stack)
+## پشته فناوری (Tech Stack)
 
-### ۳.۱ فرانت‌اند
+### فرانت‌اند
+
 | کامپوننت | تکنولوژی | دلیل انتخاب |
 |----------|----------|-------------|
-| **Build Tool** | Vite 5.x | سرعت توسعه بالا، HMR سریع، پشتیبانی عالی از TypeScript |
-| **Framework** | React 18.x | Concurrent Features، Suspense، و اکوسیستم گسترده |
-| **Language** | TypeScript 5.x | Type Safety، Refactoring امن، و مستندسازی خودکار |
-| **State (Client)** | Zustand | سبک، بدون Boilerplate، و پشتیبانی از DevTools |
-| **State (Server)** | TanStack Query | Caching، Deduplication، Optimistic Updates |
-| **UI Library** | MUI v6 | دسترسی‌پذیری بالا، کامپوننت‌های آماده، تم‌پذیری |
-| **Forms** | React Hook Form + Zod | پرفورمنس بالا (Uncontrolled)، Validation قوی |
+| **Build Tool** | Vite 5.x | سرعت توسعه بالا، HMR سریع |
+| **Framework** | React 18.x | Concurrent Features، Suspense |
+| **Language** | TypeScript 5.x | Type Safety، Refactoring امن |
+| **State (Client)** | Zustand | سبک، بدون Boilerplate |
+| **State (Server)** | TanStack Query | Caching، Optimistic Updates |
+| **UI Library** | MUI v6 | دسترسی‌پذیری بالا، تم‌پذیری |
+| **Forms** | React Hook Form + Zod | پرفورمنس بالا، Validation قوی |
 
-### ۳.۲ بک‌اند و زیرساخت
+### بک‌اند و زیرساخت
+
 | کامپوننت | تکنولوژی | دلیل انتخاب |
 |----------|----------|-------------|
-| **Backend** | Firebase v9+ (Modular) | Real-time، Authentication، Storage، Tree-shaking |
-| **Hosting** | Firebase Hosting | CDN جهانی، HTTPS خودکار، Deploy سریع |
-| **CI/CD** | GitHub Actions | یکپارچگی با GitHub، اتوماسیون تست و deploy |
+| **Backend** | Firebase v9+ (Modular) | Real-time، Tree-shaking |
+| **Hosting** | Firebase Hosting | CDN جهانی، Deploy سریع |
+| **CI/CD** | GitHub Actions | یکپارچگی با GitHub |
 
-## ۴. الگوهای طراحی (Design Patterns)
+## الگوهای طراحی (Design Patterns)
 
-### ۴.۱ Container/Presentational Pattern
-- **Presentational Components**: فقط مسئول رندر UI هستند. هیچ منطق business یا fetch داده‌ای ندارند.
-- **Container Components/Hooks**: مسئول fetch داده، مدیریت state، و پاس دادن props به کامپوننت‌های Presentational.
+### Container/Presentational Pattern
 
-### ۴.۲ Compound Components
-برای کامپوننت‌های پیچیده مانند `Modal` یا `Select` از الگوی Compound Components استفاده می‌شود تا انعطاف‌پذیری بیشتری در API ارائه دهد.
+- **Presentational Components**: فقط مسئول رندر UI هستند.
+- **Container Components/Hooks**: مسئول fetch داده و مدیریت state.
 
-### ۴.۳ Optimistic Updates
-برای بهبود UX، تغییرات state بلافاصله در UI اعمال می‌شوند و در پس‌زمینه با سرور همگام‌سازی می‌شوند. در صورت خطا، state به حالت قبلی بازگردانده می‌شود (Rollback).
+### Compound Components
 
-## ۵. مدیریت State
+برای کامپوننت‌های پیچیده مانند `Modal` یا `Select` از الگوی Compound Components استفاده می‌شود.
 
-### ۵.۱ Server State (TanStack Query)
+### Optimistic Updates
+
+برای بهبود UX، تغییرات state بلافاصله در UI اعمال می‌شوند و در پس‌زمینه با سرور همگام‌سازی می‌شوند.
+
+## مدیریت State
+
+### Server State (TanStack Query)
+
 - داده‌هایی که از Firebase دریافت می‌شوند.
 - مدیریت Caching، Stale Time، و Retries.
-- مثال: لیست اتاق‌ها، پیام‌های یک اتاق، پروفایل کاربر.
 
-### ۵.۲ Client State (Zustand)
+### Client State (Zustand)
+
 - داده‌های محلی که نیازی به persist در سرور ندارند.
-- مثال: وضعیت باز/بسته بودن Sidebar، ID اتاق فعال، تنظیمات تم.
+- مثال: وضعیت باز/بسته بودن Sidebar، ID اتاق فعال.
 
-## ۶. مدیریت خطا (Error Handling)
+## مدیریت خطا (Error Handling)
 
-### ۶.۱ Error Boundary
-یک `ErrorBoundary` در سطح روت اپلیکیشن قرار دارد تا از کرش کامل برنامه جلوگیری کند و یک UI جایگزین (Fallback) نمایش دهد.
+### Error Boundary
 
-### ۶.۲ Custom Error Classes
-خطاهای سفارشی مانند `AppError` برای یکپارچه‌سازی مدیریت خطا در سراسر برنامه:
+یک `ErrorBoundary` در سطح روت اپلیکیشن قرار دارد تا از کرش کامل برنامه جلوگیری کند.
 
-```typescript
-class AppError extends Error {
-  constructor(
-    public message: string,
-    public code: string,
-    public statusCode: number = 500
-  ) {
-    super(message);
-  }
-}
-```
+### Custom Error Classes
 
-## ۷. امنیت (Security)
+خطاهای سفارشی مانند `AppError` برای یکپارچه‌سازی مدیریت خطا در سراسر برنامه.
 
-### ۷.۱ Firebase Security Rules
+## امنیت (Security)
+
+### Firebase Security Rules
+
 - فقط کاربران احراز هویت شده می‌توانند به داده‌ها دسترسی داشته باشند.
 - کاربران فقط می‌توانند پیام‌های خود را حذف یا ویرایش کنند.
-- Validation در سطح Rules برای جلوگیری از injection.
 
-### ۷.۲ Environment Variables
-- تمام API Keyها و Secrets در `.env.local` ذخیره می‌شوند و هرگز در مخزن commit نمی‌شوند.
-- استفاده از `VITE_` prefix برای متغیرهایی که در کلاینت نیاز هستند.
+### Environment Variables
 
-## ۸. پرفورمنس (Performance)
+- تمام API Keyها و Secrets در `.env.local` ذخیره می‌شوند.
+- استفاده از `VITE_` prefix برای متغیرهای کلاینت.
 
-### ۸.۱ Code Splitting
+## پرفورمنس (Performance)
+
+### Code Splitting
+
 - Route-based splitting با `React.lazy` و `Suspense`.
-- Component-based splitting برای کامپوننت‌های سنگین (مانند Image Viewer یا Audio Recorder).
+- Component-based splitting برای کامپوننت‌های سنگین.
 
-### ۸.۲ Memoization
+### Memoization
+
 - استفاده از `React.memo` برای کامپوننت‌هایی که props آن‌ها به ندرت تغییر می‌کند.
 - استفاده از `useMemo` و `useCallback` برای جلوگیری از re-renderهای غیرضروری.
 
-### ۸.۳ Virtualization
-- استفاده از `@tanstack/react-virtual` برای رندر لیست‌های بزرگ پیام‌ها (فقط آیتم‌های قابل مشاهده در viewport رندر می‌شوند).
+### Virtualization
 
-## ۹. تست (Testing Strategy)
+- استفاده از `@tanstack/react-virtual` برای رندر لیست‌های بزرگ پیام‌ها.
+
+## تست (Testing Strategy)
 
 | نوع تست | ابزار | پوشش هدف |
 |---------|-------|----------|
 | **Unit** | Vitest + RTL | ۸۰٪+ برای Hooks و Utils |
 | **Integration** | Vitest + RTL | ۶۰٪+ برای کامپوننت‌های کلیدی |
-| **E2E** | Playwright | Critical Paths (Login, Send Message) |
+| **E2E** | Playwright | Critical Paths |
 
-## ۱۰. استانداردهای کدنویسی
+## استانداردهای کدنویسی
 
-- **ESLint**: با پیکربندی سخت‌گیرانه (`no-console`, `no-unused-vars`, `react-hooks/exhaustive-deps`).
+- **ESLint**: با پیکربندی سخت‌گیرانه.
 - **Prettier**: برای فرمت‌دهی خودکار کد.
 - **Husky + lint-staged**: اجرای خودکار Lint و Format قبل از هر commit.
-- **Conventional Commits**: برای تاریخچه commit خوانا و تولید خودکار Changelog.
+- **Conventional Commits**: برای تاریخچه commit خوانا.
 
 ---
 
-**تاریخ بازنگری**: ۲۰۲۶-۰۹-۰۴  
-**نویسنده**: محمدحسین علیخانی  
+**تاریخ بازنگری**: ۲۰۲۶-۰۹-۰۵
+**نویسنده**: محمدحسین علیخانی
 **وضعیت**: Approved

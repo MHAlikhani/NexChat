@@ -1,8 +1,6 @@
 /**
  * useCreateRoom Hook
  *
- * Hook برای ایجاد اتاق جدید با Optimistic Updates
- *
  * @module features/rooms/hooks/useCreateRoom
  */
 
@@ -14,9 +12,6 @@ import { createRoomSchema, type CreateRoomFormData } from '../utils/validators';
 import { useAuth } from '@/features/auth';
 import type { Room } from '../types';
 
-/**
- * useCreateRoom Return Type
- */
 export interface UseCreateRoomReturn {
   isCreating: boolean;
   createRoom: (data: CreateRoomFormData) => Promise<Room | null>;
@@ -25,18 +20,12 @@ export interface UseCreateRoomReturn {
   isModalOpen: boolean;
 }
 
-/**
- * useCreateRoom Hook
- */
 export const useCreateRoom = (): UseCreateRoomReturn => {
   const { user } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
 
   const { addRoom, setCreateModalOpen, isCreateModalOpen } = useRoomsStore();
 
-  /**
-   * Create a new room
-   */
   const createRoom = useCallback(
     async (data: CreateRoomFormData): Promise<Room | null> => {
       if (!user) {
@@ -44,7 +33,6 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
         return null;
       }
 
-      // Validate input
       const validationResult = createRoomSchema.safeParse(data);
 
       if (!validationResult.success) {
@@ -62,7 +50,6 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
           user.uid
         );
 
-        // Optimistic update: Add room to store immediately
         addRoom(newRoom);
 
         toast.success(`اتاق "${newRoom.name}" با موفقیت ایجاد شد`, {
@@ -87,16 +74,10 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
     [user, addRoom, setCreateModalOpen]
   );
 
-  /**
-   * Open create modal
-   */
   const openModal = useCallback(() => {
     setCreateModalOpen(true);
   }, [setCreateModalOpen]);
 
-  /**
-   * Close create modal
-   */
   const closeModal = useCallback(() => {
     setCreateModalOpen(false);
   }, [setCreateModalOpen]);

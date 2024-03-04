@@ -1,9 +1,3 @@
-/**
- * Authentication Service (Repository Pattern)
- *
- * @module features/auth/services/auth
- */
-
 import {
   signInWithPopup,
   signOut as firebaseSignOut,
@@ -16,9 +10,6 @@ import type { User, AuthError, AuthProvider } from '../types';
 import { profileService } from './profile.service';
 import { mapFirebaseUserToDomain } from '../utils/mappers';
 
-/**
- * Error Messages
- */
 const ERROR_MESSAGES: Record<string, string> = {
   'auth/popup-closed-by-user': 'پنجره ورود توسط شما بسته شد',
   'auth/cancelled-popup-request': 'درخواست ورود لغو شد',
@@ -29,27 +20,13 @@ const ERROR_MESSAGES: Record<string, string> = {
   'auth/unauthorized-domain': 'دامنه مجاز نیست',
 };
 
-/**
- * Provider Instances
- *
- * فقط Google فعال است. اگر خواستید GitHub یا Email اضافه کنید، اینجا تعریف کنید.
- */
 const providers = {
   google: new GoogleAuthProvider(),
 } as const;
 
-/**
- * Authentication Service API
- */
 export const authService = {
-  /**
-   * Sign in with specified provider
-   *
-   * @param provider - روش احراز هویت (فقط 'google' در حال حاضر)
-   */
   signIn: async (provider: AuthProvider = 'google'): Promise<User> => {
     try {
-      // بررسی اینکه provider پشتیبانی می‌شود
       if (!(provider in providers)) {
         throw new Error(`روش ورود "${provider}" پشتیبانی نمی‌شود`);
       }
@@ -72,9 +49,6 @@ export const authService = {
     }
   },
 
-  /**
-   * Sign out current user
-   */
   signOut: async (): Promise<void> => {
     try {
       await firebaseSignOut(auth);
@@ -83,9 +57,6 @@ export const authService = {
     }
   },
 
-  /**
-   * Subscribe to authentication state changes
-   */
   onAuthChange: (callback: (user: User | null) => void): Unsubscribe => {
     return onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
@@ -97,18 +68,12 @@ export const authService = {
     });
   },
 
-  /**
-   * Get currently authenticated user (synchronous)
-   */
   getCurrentUser: (): User | null => {
     const firebaseUser = auth.currentUser;
     return firebaseUser ? mapFirebaseUserToDomain(firebaseUser) : null;
   },
 };
 
-/**
- * Helper: Normalize Firebase errors
- */
 function normalizeAuthError(error: unknown): AuthError {
   if (error && typeof error === 'object' && 'code' in error) {
     const firebaseError = error as { code: string; message: string };

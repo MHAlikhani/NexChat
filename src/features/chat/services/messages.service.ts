@@ -1,12 +1,6 @@
 /**
  * Messages Service (Repository Pattern)
  *
- * مدیریت پیام‌ها در Firestore با پشتیبانی از:
- * - ارسال پیام (متن، تصویر، صوت)
- * - همگام‌سازی لحظه‌ای (Real-time) با onSnapshot
- * - صفحه‌بندی برای پیام‌های قدیمی
- * - علامت‌گذاری پیام‌ها به عنوان دیده‌شده (با writeBatch)
- *
  * @module features/chat/services/messages
  */
 
@@ -33,16 +27,10 @@ import { db } from '@/lib/firebase';
 import type { Message, SendMessageInput } from '../types';
 import { mapFirestoreDocToMessage } from '../utils/mappers';
 
-/**
- * Constants
- */
 const ROOMS_COLLECTION = 'rooms';
 const MESSAGES_SUBCOLLECTION = 'messages';
 const MESSAGES_PER_PAGE = 50;
 
-/**
- * ساختار آخرین پیام اتاق (برای پیش‌نمایش در لیست اتاق‌ها)
- */
 export interface LastMessagePayload {
   id: string;
   content: string;
@@ -52,24 +40,13 @@ export interface LastMessagePayload {
   timestamp: string;
 }
 
-/**
- * اطلاعات فرستنده برای ارسال پیام
- */
 export interface MessageSender {
   uid: string;
   displayName: string;
   photoURL: string | null;
 }
 
-/**
- * Messages Service API
- */
 export const messagesService = {
-  /**
-   * ارسال پیام جدید
-   *
-   * @returns شناسه پیام ایجاد شده
-   */
   send: async (
     input: SendMessageInput,
     sender: MessageSender
@@ -93,14 +70,12 @@ export const messagesService = {
         createdAt: serverTimestamp(),
       };
 
-      // فیلدهای مخصوص رسانه
       if (input.fileName) messageData.fileName = input.fileName;
       if (input.fileSize) messageData.fileSize = input.fileSize;
       if (input.duration) messageData.duration = input.duration;
 
       const docRef = await addDoc(messagesRef, messageData);
 
-      // به‌روزرسانی پیش‌نمایش اتاق (بدون توقف در صورت خطا)
       const lastMessage: LastMessagePayload = {
         id: docRef.id,
         content:
@@ -119,12 +94,6 @@ export const messagesService = {
     }
   },
 
-  /**
-   * گوش دادن لحظه‌ای به آخرین پیام‌های یک اتاق
-   *
-   * پیام‌ها به ترتیب نزولی از سرور گرفته شده و سپس معکوس می‌شوند
-   * تا قدیمی‌ترین پیام در بالای لیست قرار بگیرد.
-   */
   subscribeToLatest: (
     roomId: string,
     callback: (messages: Message[]) => void,
@@ -148,7 +117,7 @@ export const messagesService = {
       (snapshot) => {
         const messages = snapshot.docs
           .map((docSnap) => mapFirestoreDocToMessage(docSnap, roomId))
-          .reverse(); // قدیمی‌ترین در بالا
+          .reverse();
 
         callback(messages);
       },
@@ -159,9 +128,6 @@ export const messagesService = {
     );
   },
 
-  /**
-   * بارگذاری پیام‌های قدیمی‌تر (صفحه‌بندی با کرسر)
-   */
   loadOlderMessages: async (
     roomId: string,
     lastMessageId: string
@@ -202,9 +168,6 @@ export const messagesService = {
     }
   },
 
-  /**
-   * حذف یک پیام
-   */
   delete: async (roomId: string, messageId: string): Promise<void> => {
     try {
       const messageRef = doc(
@@ -220,12 +183,6 @@ export const messagesService = {
     }
   },
 
-  /**
-   * علامت‌گذاری چند پیام به عنوان دیده‌شده (در یک عملیات اتمی)
-   *
-   * از writeBatch استفاده می‌شود تا همه به‌روزرسانی‌ها در یک درخواست انجام شوند.
-   * در صورت خطا، فقط هشدار داده می‌شود (وضعیت دیده‌شدن حیاتی نیست).
-   */
   markAsSeen: async (
     roomId: string,
     messageIds: string[],
@@ -251,17 +208,11 @@ export const messagesService = {
 
       await batch.commit();
     } catch (error) {
-      // شکست در این عملیات نباید تجربه کاربری را خراب کند
       console.warn('Failed to mark messages as seen:', error);
     }
   },
 };
 
-/**
- * Helper: دریافت سند پیام بر اساس شناسه
- *
- * برای استفاده از کرسر در صفحه‌بندی نیاز است خود سند را داشته باشیم.
- */
 async function getMessageDocById(
   roomId: string,
   messageId: string
@@ -283,9 +234,6 @@ async function getMessageDocById(
   return snapshot as QueryDocumentSnapshot;
 }
 
-/**
- * Helper: به‌روزرسانی آخرین پیام اتاق
- */
 async function updateRoomLastMessage(
   roomId: string,
   lastMessage: LastMessagePayload
@@ -297,14 +245,10 @@ async function updateRoomLastMessage(
       lastActivityAt: serverTimestamp(),
     });
   } catch (error) {
-    // به‌روزرسانی پیش‌نمایش نباید ارسال پیام را شکست دهد
     console.warn('Failed to update last message:', error);
   }
 }
 
-/**
- * Helper: متن پیش‌نمایش برای پیام‌های رسانه‌ای
- */
 function getMediaPreviewText(type: string): string {
   switch (type) {
     case 'image':
@@ -320,9 +264,6 @@ function getMediaPreviewText(type: string): string {
   }
 }
 
-/**
- * Helper: تبدیل خطاهای Firestore به خطای استاندارد با پیام کاربرپسند
- */
 function normalizeMessageError(error: unknown): Error {
   if (error && typeof error === 'object' && 'code' in error) {
     const firestoreError = error as { code: string; message: string };
