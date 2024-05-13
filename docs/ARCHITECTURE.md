@@ -1,19 +1,16 @@
-# سند معماری سیستم (System Architecture Document)
+# System Architecture Document
 
-## معرفی
+## Introduction
+This document outlines the technical architecture of the **NexChat** project. Its purpose is to provide a comprehensive, high-level view of the system's structure, technical decisions, and design patterns, serving as a single source of truth for current and future development.
 
-این سند معماری فنی پروژه **NexChat** را توصیف می‌کند. هدف این سند ارائه یک دیدگاه جامع از ساختار، تصمیمات فنی، و الگوهای طراحی استفاده شده در پروژه است.
+## Architectural Overview
+NexChat is built upon the principles of **Feature-Sliced Design (FSD)**, emphasizing strict separation of concerns, high cohesion, and modularity.
 
-## نمای کلی معماری
-
-NexChat از معماری **Feature-Sliced Design (FSD)** الهام گرفته است که بر جداسازی دغدغه‌ها و ماژولار بودن تأکید دارد.
-
-### لایه‌های معماری
-
-```
+### Architectural Layers
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                     App Layer (app/)                    │
-│  (Routing, Global Providers, Error Boundaries)          │
+│  (Routing, Global Providers, Error Boundaries, Layout)  │
 ├─────────────────────────────────────────────────────────┤
 │                   Features Layer (features/)            │
 │  (Business Logic, Domain Models, Feature-specific UI)   │
@@ -23,116 +20,66 @@ NexChat از معماری **Feature-Sliced Design (FSD)** الهام گرفته 
 └─────────────────────────────────────────────────────────┘
 ```
 
-### قوانین وابستگی (Dependency Rules)
+### Dependency Rules
+1. **App Layer** can depend on **Features** and **Shared**.
+2. **Features Layer** can *only* depend on **Shared** (cross-feature dependencies are strictly prohibited).
+3. **Shared Layer** must remain completely independent and cannot depend on App or Features.
 
-1. **لایه App** می‌تواند به **Features** و **Shared** وابسته باشد.
-2. **لایه Features** می‌تواند فقط به **Shared** وابسته باشد (نه به سایر Features).
-3. **لایه Shared** نباید به هیچ لایه دیگری وابسته باشد (Independent).
+## Technology Stack
 
-## پشته فناوری (Tech Stack)
+### Frontend
+| Component | Technology | Rationale |
+|-----------|------------|-----------|
+| **Build Tool** | Vite 5.x | Blazing fast HMR and optimized production builds. |
+| **Framework** | React 18.x | Leverages Concurrent Features and Suspense for smooth UX. |
+| **Language** | TypeScript 5.x | Ensures type safety and enables confident, large-scale refactoring. |
+| **Client State** | Zustand | Minimal boilerplate, highly performant selector-based updates. |
+| **Server State** | TanStack Query | Robust caching, background syncing, and optimistic updates. |
+| **UI Library** | MUI v6 | Excellent accessibility, comprehensive theming, and production-ready components. |
+| **Forms & Validation** | React Hook Form + Zod | High-performance form handling with strict, schema-based validation. |
 
-### فرانت‌اند
+### Backend & Infrastructure
+| Component | Technology | Rationale |
+|-----------|------------|-----------|
+| **Backend / DB** | Firebase v9+ (Modular) | Native real-time capabilities and excellent tree-shaking support. |
+| **Hosting** | Firebase Hosting | Global CDN, seamless CI/CD integration, and instant deployments. |
+| **CI/CD** | GitHub Actions | Native GitHub integration for automated testing and deployment. |
 
-| کامپوننت | تکنولوژی | دلیل انتخاب |
-|----------|----------|-------------|
-| **Build Tool** | Vite 5.x | سرعت توسعه بالا، HMR سریع |
-| **Framework** | React 18.x | Concurrent Features، Suspense |
-| **Language** | TypeScript 5.x | Type Safety، Refactoring امن |
-| **State (Client)** | Zustand | سبک، بدون Boilerplate |
-| **State (Server)** | TanStack Query | Caching، Optimistic Updates |
-| **UI Library** | MUI v6 | دسترسی‌پذیری بالا، تم‌پذیری |
-| **Forms** | React Hook Form + Zod | پرفورمنس بالا، Validation قوی |
+## Design Patterns
+- **Container/Presentational Pattern**: Presentational components handle pure UI rendering, while custom hooks/containers manage data fetching and state logic.
+- **Compound Components**: Utilized for complex, flexible UI elements (e.g., Modals, custom Selects) to provide a clean and expressive API.
+- **Optimistic Updates**: State is updated immediately on the client to ensure a snappy UX, with background synchronization and rollback mechanisms for failed server requests.
 
-### بک‌اند و زیرساخت
+## State Management Strategy
+- **Server State (TanStack Query)**: Manages data fetched from external sources (e.g., user profiles, room metadata), handling caching, stale times, and retries automatically.
+- **Client State (Zustand)**: Reserved for ephemeral, local UI state (e.g., sidebar toggle, active room ID) and real-time data streams that don't fit the traditional request/response cycle.
 
-| کامپوننت | تکنولوژی | دلیل انتخاب |
-|----------|----------|-------------|
-| **Backend** | Firebase v9+ (Modular) | Real-time، Tree-shaking |
-| **Hosting** | Firebase Hosting | CDN جهانی، Deploy سریع |
-| **CI/CD** | GitHub Actions | یکپارچگی با GitHub |
+## Error Handling
+- **Error Boundaries**: Implemented at the application root and feature levels to gracefully catch rendering errors and prevent full app crashes.
+- **Custom Error Classes**: Standardized error handling using custom classes (e.g., `AppError`) to ensure consistent error propagation and logging across the codebase.
 
-## الگوهای طراحی (Design Patterns)
+## Security
+- **Firebase Security Rules**: Strict rules enforce that only authenticated users can access data, and users can only modify or delete their own messages.
+- **Environment Variables**: All sensitive keys and secrets are strictly managed via `.env` files, utilizing the `VITE_` prefix for client-side exposure.
 
-### Container/Presentational Pattern
+## Performance Optimization
+- **Code Splitting**: Route-based and component-based lazy loading using `React.lazy` and `Suspense` to minimize initial bundle size.
+- **Memoization**: Strategic use of `React.memo`, `useMemo`, and `useCallback` to prevent unnecessary re-renders in heavily interactive components.
+- **Virtualization**: Implementation of `@tanstack/react-virtual` for efficiently rendering large lists of chat messages without DOM bloat.
 
-- **Presentational Components**: فقط مسئول رندر UI هستند.
-- **Container Components/Hooks**: مسئول fetch داده و مدیریت state.
+## Testing Strategy
+| Test Type | Tools | Target Coverage |
+|-----------|-------|-----------------|
+| **Unit** | Vitest + React Testing Library | 80%+ for hooks, utilities, and pure functions. |
+| **Integration** | Vitest + React Testing Library | 60%+ for critical feature components and user flows. |
+| **E2E** | Playwright | Core critical paths (e.g., authentication, sending messages). |
 
-### Compound Components
-
-برای کامپوننت‌های پیچیده مانند `Modal` یا `Select` از الگوی Compound Components استفاده می‌شود.
-
-### Optimistic Updates
-
-برای بهبود UX، تغییرات state بلافاصله در UI اعمال می‌شوند و در پس‌زمینه با سرور همگام‌سازی می‌شوند.
-
-## مدیریت State
-
-### Server State (TanStack Query)
-
-- داده‌هایی که از Firebase دریافت می‌شوند.
-- مدیریت Caching، Stale Time، و Retries.
-
-### Client State (Zustand)
-
-- داده‌های محلی که نیازی به persist در سرور ندارند.
-- مثال: وضعیت باز/بسته بودن Sidebar، ID اتاق فعال.
-
-## مدیریت خطا (Error Handling)
-
-### Error Boundary
-
-یک `ErrorBoundary` در سطح روت اپلیکیشن قرار دارد تا از کرش کامل برنامه جلوگیری کند.
-
-### Custom Error Classes
-
-خطاهای سفارشی مانند `AppError` برای یکپارچه‌سازی مدیریت خطا در سراسر برنامه.
-
-## امنیت (Security)
-
-### Firebase Security Rules
-
-- فقط کاربران احراز هویت شده می‌توانند به داده‌ها دسترسی داشته باشند.
-- کاربران فقط می‌توانند پیام‌های خود را حذف یا ویرایش کنند.
-
-### Environment Variables
-
-- تمام API Keyها و Secrets در `.env.local` ذخیره می‌شوند.
-- استفاده از `VITE_` prefix برای متغیرهای کلاینت.
-
-## پرفورمنس (Performance)
-
-### Code Splitting
-
-- Route-based splitting با `React.lazy` و `Suspense`.
-- Component-based splitting برای کامپوننت‌های سنگین.
-
-### Memoization
-
-- استفاده از `React.memo` برای کامپوننت‌هایی که props آن‌ها به ندرت تغییر می‌کند.
-- استفاده از `useMemo` و `useCallback` برای جلوگیری از re-renderهای غیرضروری.
-
-### Virtualization
-
-- استفاده از `@tanstack/react-virtual` برای رندر لیست‌های بزرگ پیام‌ها.
-
-## تست (Testing Strategy)
-
-| نوع تست | ابزار | پوشش هدف |
-|---------|-------|----------|
-| **Unit** | Vitest + RTL | ۸۰٪+ برای Hooks و Utils |
-| **Integration** | Vitest + RTL | ۶۰٪+ برای کامپوننت‌های کلیدی |
-| **E2E** | Playwright | Critical Paths |
-
-## استانداردهای کدنویسی
-
-- **ESLint**: با پیکربندی سخت‌گیرانه.
-- **Prettier**: برای فرمت‌دهی خودکار کد.
-- **Husky + lint-staged**: اجرای خودکار Lint و Format قبل از هر commit.
-- **Conventional Commits**: برای تاریخچه commit خوانا.
+## Coding Standards
+- **Linting & Formatting**: Strict ESLint configuration paired with Prettier for consistent code style.
+- **Pre-commit Hooks**: Husky and `lint-staged` enforce linting and formatting automatically before every commit.
+- **Commit Convention**: Adherence to Conventional Commits for a clean, automated, and readable Git history.
 
 ---
-
-**تاریخ بازنگری**: ۲۰۲۶-۰۹-۰۵
-**نویسنده**: محمدحسین علیخانی
-**وضعیت**: Approved
+**Last Updated**: September 5, 2026  
+**Author**: Mohammad Hossein Alikhani  
+**Status**: Approved  

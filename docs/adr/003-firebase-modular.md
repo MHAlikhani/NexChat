@@ -1,20 +1,20 @@
-# ADR 003: مهاجرت به Firebase Modular SDK (v9+)
+# ADR 003: Migrating to Firebase Modular SDK (v9+)
 
-**تاریخ**: ۲۰۲۶-۰۹-۰۴  
-**وضعیت**: Accepted  
-**نویسنده**: محمدحسین علیخانی
+**Date**: September 4, 2026  
+**Status**: Accepted  
+**Author**: Mohammad Hossein Alikhani
 
-## زمینه (Context)
-پروژه قبلی از Firebase v8 (Namespaced API) استفاده می‌کرد. این نسخه قدیمی است، حجم bundle بالایی دارد، و با Tree-shaking مدرن سازگار نیست.
+## Context
+The legacy codebase utilized the Firebase v8 (Namespaced) SDK. This older version is no longer the recommended approach, as it bundles large amounts of unused code and is incompatible with modern tree-shaking algorithms, leading to bloated production builds.
 
-## تصمیم (Decision)
-ما به **Firebase v9+ Modular SDK** مهاجرت می‌کنیم.
+## Decision
+We will fully migrate to the **Firebase v9+ Modular SDK**.
 
-## دلایل (Rationale)
-1. **Tree-shaking**: فقط کدهایی که واقعاً استفاده می‌شوند در bundle نهایی قرار می‌گیرند. این می‌تواند حجم Firebase را تا ۸۰٪ کاهش دهد.
-2. **TypeScript Support**: Modular SDK تایپ‌های بهتری دارد و با TypeScript یکپارچه‌تر است.
-3. **Future-proof**: این نسخه، نسخه استاندارد و پشتیبانی‌شده توسط Google است.
+## Rationale
+1. **Tree-Shaking**: The modular architecture allows bundlers to include only the exact functions and services that are imported, potentially reducing the Firebase bundle size by up to 80%.
+2. **Enhanced TypeScript Support**: The modular SDK was built with TypeScript in mind, offering superior type inference and a more robust developer experience.
+3. **Future-Proofing**: This is the current, actively maintained standard endorsed by Google, ensuring long-term support and access to new features.
 
-## پیامدها (Consequences)
-- **مثبت**: کاهش چشمگیر حجم bundle، کد ماژولارتر و قابل تست‌تر.
-- **منفی**: نیاز به بازنویسی تمام فراخوانی‌های Firebase (که در فاز Migration انجام می‌شود).
+## Consequences
+- **Positive**: Significantly reduced application bundle size, improved load times, and a more modular, testable codebase.
+- **Negative**: Requires a one-time, comprehensive refactoring of all existing Firebase service calls, which is accounted for in the migration phase.

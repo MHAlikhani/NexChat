@@ -1,21 +1,21 @@
-# ADR 004: استفاده از Feature-Sliced Design (FSD)
+# ADR 004: Adopting Feature-Sliced Design (FSD) Architecture
 
-**تاریخ**: ۲۰۲۶-۰۹-۰۴  
-**وضعیت**: Accepted  
-**نویسنده**: محمدحسین علیخانی
+**Date**: September 4, 2026  
+**Status**: Accepted  
+**Author**: Mohammad Hossein Alikhani
 
-## زمینه (Context)
-ساختار قبلی پروژه بر اساس نوع فایل (Group-by-Type) بود (مثلاً پوشه `components`، `hooks`، `services` در روت). این ساختار در پروژه‌های بزرگ منجر به "Spaghetti Code" می‌شود، زیرا فایل‌های مرتبط با یک ویژگی در پوشه‌های مختلف پراکنده می‌شوند.
+## Context
+The previous project structure was organized by file type (e.g., global `components/`, `hooks/`, `services/` directories). In growing applications, this "Group-by-Type" approach inevitably leads to tangled dependencies and "spaghetti code," as files related to a single feature are scattered across multiple unrelated directories.
 
-## تصمیم (Decision)
-ما از الگوی **Feature-Based** (الهام گرفته از Feature-Sliced Design) استفاده می‌کنیم.
+## Decision
+We will restructure the codebase using a **Feature-Based** architecture, heavily inspired by the principles of Feature-Sliced Design (FSD).
 
-## دلایل (Rationale)
-1. **Cohesion بالا**: تمام کدهای مرتبط با یک ویژگی (مثلاً `chat`) در یک پوشه قرار دارند.
-2. **Coupling پایین**: ویژگی‌ها مستقل هستند و نمی‌توانند مستقیماً به یکدیگر وابسته شوند (باید از `shared` استفاده کنند).
-3. **مقیاس‌پذیری**: اضافه کردن ویژگی جدید یا حذف یک ویژگی قدیمی بسیار ساده است.
-4. **تست‌پذیری**: هر ویژگی را می‌توان به صورت ایزوله تست کرد.
+## Rationale
+1. **High Cohesion**: All code related to a specific domain (e.g., `chat`, `auth`) is colocated within a single feature directory, making it easy to understand and modify.
+2. **Low Coupling**: Features are strictly isolated. They cannot directly depend on each other; any shared logic must be explicitly elevated to the `shared` layer.
+3. **Scalability**: Adding new features or removing deprecated ones becomes a matter of adding or deleting a single directory, without ripple effects across the codebase.
+4. **Testability**: Features are self-contained, making it straightforward to write isolated unit and integration tests.
 
-## پیامدها (Consequences)
-- **مثبت**: نگهداری کد بسیار ساده‌تر می‌شود. Onboarding توسعه‌دهندگان جدید سریع‌تر است.
-- **منفی**: نیاز به تغییر ذهنیت از Group-by-Type به Feature-Based. ممکن است در ابتدا کمی تکرار کد در `shared` احساس شود، اما این بهای ماژولار بودن است.
+## Consequences
+- **Positive**: Drastically simplified codebase maintenance, faster onboarding for new developers, and a more predictable project structure.
+- **Negative**: Requires a mental shift for developers accustomed to Group-by-Type. There may be a slight, intentional duplication of utilities in the `shared` layer, which is an acceptable trade-off for strict modularity.

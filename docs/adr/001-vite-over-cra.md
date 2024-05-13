@@ -1,21 +1,21 @@
-# ADR 001: استفاده از Vite به جای Create React App
+# ADR 001: Adopting Vite over Create React App
 
-**تاریخ**: ۲۰۲۶-۰۹-۰۴  
-**وضعیت**: Accepted  
-**نویسنده**: محمدحسین علیخانی
+**Date**: September 4, 2026  
+**Status**: Accepted  
+**Author**: Mohammad Hossein Alikhani
 
-## زمینه (Context)
-پروژه قبلی از `create-react-app` (CRA) استفاده می‌کرد که با `react-scripts` کار می‌کند. CRA سال‌هاست که به‌روزرسانی نشده، کند است، و انعطاف‌پذیری کمی در پیکربندی Webpack دارد.
+## Context
+The previous iteration of the project relied on `create-react-app` (CRA) and `react-scripts`. CRA has effectively been abandoned by the community, suffers from slow development server startup times, and offers very limited flexibility for customizing the underlying Webpack configuration.
 
-## تصمیم (Decision)
-ما از **Vite** به عنوان Build Tool اصلی استفاده خواهیم کرد.
+## Decision
+We will use **Vite** as the primary build tool and development server for the project.
 
-## دلایل (Rationale)
-1. **سرعت توسعه**: Vite از ES Modules بومی مرورگر استفاده می‌کند که باعث می‌شود HMR (Hot Module Replacement) در حد میلی‌ثانیه باشد، حتی در پروژه‌های بزرگ.
-2. **پشتیبانی عالی از TypeScript**: Vite به صورت native از TypeScript پشتیبانی می‌کند و نیازی به transpile کردن توسط Babel نیست.
-3. **Build Production بهینه**: Vite از Rollup برای build نهایی استفاده می‌کند که Tree-shaking بسیار بهتری نسبت به Webpack دارد.
-4. **پیکربندی ساده**: فایل `vite.config.ts` خوانا و قابل گسترش است.
+## Rationale
+1. **Development Speed**: Vite leverages native ES Modules in the browser, delivering near-instantaneous Hot Module Replacement (HMR), regardless of project size.
+2. **First-Class TypeScript Support**: Vite handles TypeScript natively without requiring Babel transpilation, streamlining the development workflow.
+3. **Optimized Production Builds**: Vite uses Rollup under the hood for production builds, providing superior tree-shaking and smaller bundle sizes compared to traditional Webpack setups.
+4. **Simplicity**: The `vite.config.ts` file is highly readable, intuitive, and easily extensible via a rich plugin ecosystem.
 
-## پیامدها (Consequences)
-- **مثبت**: سرعت توسعه به شدت افزایش می‌یابد. حجم bundle نهایی کاهش می‌یابد.
-- **منفی**: نیاز به یادگیری پیکربندی Vite (که بسیار ساده است). برخی پلاگین‌های قدیمی CRA ممکن است نیاز به جایگزینی داشته باشند.
+## Consequences
+- **Positive**: Dramatically improved developer experience (DX), faster CI/CD pipelines, and reduced production bundle sizes.
+- **Negative**: Minor initial learning curve for Vite-specific configurations, and the need to replace a few legacy CRA-specific plugins with their Vite equivalents.

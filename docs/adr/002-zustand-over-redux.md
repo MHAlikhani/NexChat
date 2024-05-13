@@ -1,21 +1,21 @@
-# ADR 002: استفاده از Zustand به جای Redux
+# ADR 002: Choosing Zustand over Redux for Client State
 
-**تاریخ**: ۲۰۲۶-۰۹-۰۴  
-**وضعیت**: Accepted  
-**نویسنده**: محمدحسین علیخانی
+**Date**: September 4, 2026  
+**Status**: Accepted  
+**Author**: Mohammad Hossein Alikhani
 
-## زمینه (Context)
-در پروژه‌های React، مدیریت state پیچیده می‌تواند چالش‌برانگیز باشد. Redux استاندارد صنعتی است، اما Boilerplate زیادی دارد و برای stateهای ساده overkill است.
+## Context
+Managing complex state in React applications can quickly become cumbersome. While Redux has long been the industry standard, it introduces significant boilerplate (actions, reducers, providers) that is often overkill for modern, moderately complex applications.
 
-## تصمیم (Decision)
-ما از **Zustand** برای مدیریت Client State استفاده خواهیم کرد و **TanStack Query** را برای Server State به کار می‌بریم.
+## Decision
+We will use **Zustand** for managing client-side state, paired with **TanStack Query** for server-state management.
 
-## دلایل (Rationale)
-1. **کمترین Boilerplate**: Zustand نیاز به Provider در روت اپلیکیشن، Actions، یا Reducers پیچیده ندارد.
-2. **Performance**: Zustand از selector-based updates استفاده می‌کند که فقط کامپوننت‌هایی که به یک بخش خاص از state وابسته‌اند re-render می‌شوند.
-3. **DevTools**: پشتیبانی بومی از Redux DevTools.
-4. **تفکیک State**: با استفاده از TanStack Query برای داده‌های سرور، Zustand فقط برای stateهای محلی (مانند UI state) استفاده می‌شود که حجم آن را بسیار کم نگه می‌دارد.
+## Rationale
+1. **Minimal Boilerplate**: Zustand eliminates the need for wrapping the app in a Provider, writing action creators, or defining complex reducers. It is straightforward and hook-based.
+2. **Performance**: It utilizes a selector-based subscription model, ensuring that only components explicitly subscribed to a specific slice of state will re-render.
+3. **Developer Experience**: It offers seamless, native integration with Redux DevTools for debugging without the Redux overhead.
+4. **Clear Separation of Concerns**: By delegating server-state caching to TanStack Query, Zustand is reserved strictly for ephemeral UI state (e.g., modal visibility, active chat room), keeping the global store incredibly lean.
 
-## پیامدها (Consequences)
-- **مثبت**: کد تمیزتر، توسعه سریع‌تر، و پرفورمنس بهتر.
-- **منفی**: تیم باید با الگوی Hook-based Zustand آشنا شود (که منحنی یادگیری کوتاهی دارد).
+## Consequences
+- **Positive**: Cleaner codebase, faster feature development, and improved runtime performance due to reduced re-renders.
+- **Negative**: The development team must adapt to the hook-based paradigm of Zustand, though its learning curve is notoriously shallow.
