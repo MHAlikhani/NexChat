@@ -25,15 +25,15 @@ describe('useAudioRecorder', () => {
     } as unknown as MediaStream;
 
     const recorderInstance = {
-      state: 'inactive' as const,
+      state: 'inactive' as 'inactive' | 'recording' | 'paused',
       mimeType: 'audio/webm',
-      start: vi.fn().mockImplementation(() => {
-        recorderInstance.state = 'recording';
+      start: vi.fn().mockImplementation(function(this: any) {
+        this.state = 'recording';
       }),
-      stop: vi.fn().mockImplementation(() => {
-        recorderInstance.state = 'inactive';
-        if (recorderInstance.onstop) {
-          (recorderInstance.onstop as (this: MediaRecorder, ev: Event) => void)(new Event('stop'));
+      stop: vi.fn().mockImplementation(function(this: any) {
+        this.state = 'inactive';
+        if (this.onstop) {
+          this.onstop.call(this, new Event('stop'));
         }
       }),
       ondataavailable: null as ((this: MediaRecorder, ev: BlobEvent) => void) | null,

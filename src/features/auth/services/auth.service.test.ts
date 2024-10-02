@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { authService } from './auth.service';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { profileService } from './profile.service';
+import type { AuthProvider } from '../types';
 
 vi.mock('firebase/auth', () => ({
   signInWithPopup: vi.fn(),
@@ -75,7 +76,7 @@ describe('Auth Service', () => {
     });
 
     it('should throw error for unsupported provider', async () => {
-      await expect(authService.signIn('github' as unknown as string)).rejects.toThrow(
+      await expect(authService.signIn('github' as AuthProvider)).rejects.toThrow(
         'روش ورود "github" پشتیبانی نمی‌شود'
       );
       expect(signInWithPopup).not.toHaveBeenCalled();
