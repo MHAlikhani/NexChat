@@ -27,13 +27,13 @@ describe('useAudioRecorder', () => {
     const recorderInstance = {
       state: 'inactive' as 'inactive' | 'recording' | 'paused',
       mimeType: 'audio/webm',
-      start: vi.fn().mockImplementation(function(this: any) {
-        this.state = 'recording';
+      start: vi.fn().mockImplementation(() => {
+        recorderInstance.state = 'recording';
       }),
-      stop: vi.fn().mockImplementation(function(this: any) {
-        this.state = 'inactive';
-        if (this.onstop) {
-          this.onstop.call(this, new Event('stop'));
+      stop: vi.fn().mockImplementation(() => {
+        recorderInstance.state = 'inactive';
+        if (recorderInstance.onstop) {
+          recorderInstance.onstop.call(recorderInstance as unknown as MediaRecorder, new Event('stop'));
         }
       }),
       ondataavailable: null as ((this: MediaRecorder, ev: BlobEvent) => void) | null,
