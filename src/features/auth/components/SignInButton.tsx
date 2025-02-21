@@ -52,28 +52,36 @@ export const SignInButton: React.FC<SignInButtonProps> = ({
       className={className}
       startIcon={
         isSigningIn ? (
-          <CircularProgress size={20} color="inherit" />
+          <CircularProgress size={20} sx={{ color: '#0B0F19' }} />
         ) : (
-          <GoogleIcon />
+          <GoogleIcon sx={{ color: '#EA4335' }} />
         )
       }
       sx={{
         textTransform: 'none',
-        fontWeight: 600,
-        fontSize: size === 'large' ? '1rem' : '0.875rem',
+        fontWeight: 700,
+        fontSize: size === 'large' ? '1.05rem' : '0.9rem',
         paddingX: 3,
-        paddingY: size === 'large' ? 1.5 : 1,
-        background: '#ffffff',
-        color: '#757575',
-        border: '1px solid #dadce0',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+        paddingY: size === 'large' ? 1.75 : 1.25,
+        borderRadius: 3,
+        background: 'linear-gradient(135deg, #00F0FF 0%, #7000FF 100%)',
+        color: '#0B0F19',
+        border: '1px solid rgba(0, 240, 255, 0.3)',
+        boxShadow: '0 4px 15px rgba(0, 240, 255, 0.25)',
+        transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
         '&:hover': {
-          background: '#f8f9fa',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+          background: 'linear-gradient(135deg, #66F9FF 0%, #9D4DFF 100%)',
+          boxShadow: '0 8px 25px rgba(0, 240, 255, 0.4)',
+          transform: 'translateY(-2px)',
+        },
+        '&:active': {
+          transform: 'translateY(0)',
         },
         '&:disabled': {
-          background: '#f5f5f5',
-          color: '#9e9e9e',
+          background: 'rgba(255,255,255,0.1)',
+          color: '#64748B',
+          border: '1px solid rgba(255,255,255,0.05)',
+          boxShadow: 'none',
         },
       }}
     >

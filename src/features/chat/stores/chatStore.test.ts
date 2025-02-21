@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useChatStore, chatSelectors } from './chatStore';
+import { useChatStore, chatSelectors, getUnseenMessageIds } from './chatStore';
 import type { Message } from '../types';
 
 describe('Chat Store', () => {
@@ -192,7 +192,19 @@ describe('Chat Store', () => {
   });
 
   describe('Selectors', () => {
-    it('selectUnseenMessageIds should return correct unseen messages', () => {
+    it('chatSelectors should expose correct state slices', () => {
+      useChatStore.getState().setMessages(mockMessages);
+      const state = useChatStore.getState();
+
+      expect(chatSelectors.selectMessages(state)).toEqual(mockMessages);
+      expect(chatSelectors.selectIsLoading(state)).toBe(false);
+      expect(chatSelectors.selectIsLoadingMore(state)).toBe(false);
+      expect(chatSelectors.selectHasMoreMessages(state)).toBe(true);
+      expect(chatSelectors.selectError(state)).toBeNull();
+      expect(chatSelectors.selectTypingUsers(state)).toEqual({});
+    });
+
+    it('getUnseenMessageIds should return correct unseen messages', () => {
       const messagesWithSeen: Message[] = [
         {
           id: 'msg-1',
@@ -229,9 +241,7 @@ describe('Chat Store', () => {
         },
       ];
 
-      useChatStore.getState().setMessages(messagesWithSeen);
-
-      const unseen = chatSelectors.selectUnseenMessageIds(useChatStore.getState())('user-1');
+      const unseen = getUnseenMessageIds(messagesWithSeen, 'user-1');
       expect(unseen).toEqual(['msg-1']);
     });
   });

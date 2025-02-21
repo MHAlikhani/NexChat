@@ -1,10 +1,23 @@
+/**
+ * Sentry Configuration
+ *
+ * @module lib/sentry
+ */
+
 import * as Sentry from "@sentry/react";
-import { useEffect } from "react";
-import { useLocation, useRoutes } from "react-router-dom";
 
 export const SentryInit = () => {
+  const dsn = import.meta.env.VITE_SENTRY_DSN;
+
+  if (!dsn) {
+    if (import.meta.env.DEV) {
+      console.warn('[Sentry] DSN not configured. Sentry will not be initialized.');
+    }
+    return;
+  }
+
   Sentry.init({
-    dsn: import.meta.env.VITE_SENTRY_DSN,
+    dsn,
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration({
@@ -18,23 +31,21 @@ export const SentryInit = () => {
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
     environment: import.meta.env.MODE,
+    // Don't send PII by default
+    sendDefaultPii: false,
   });
 };
 
-export const SentryRoutes = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    Sentry.setTag("page", location.pathname);
-  }, [location]);
-
-  return useRoutes([]); // Placeholder, actual routes should be wrapped or handled by Sentry.reactRouterV6BrowserTracingIntegration
-};
-
 export const captureError = (error: unknown, context?: Record<string, unknown>) => {
-  Sentry.captureException(error, { extra: context });
+  if (import.meta.env.VITE_SENTRY_DSN) {
+    Sentry.captureException(error, { extra: context });
+  } else {
+    console.error('[Sentry fallback]', error, context);
+  }
 };
 
 export const captureMessage = (message: string, level: Sentry.SeverityLevel = 'info') => {
-  Sentry.captureMessage(message, level);
+  if (import.meta.env.VITE_SENTRY_DSN) {
+    Sentry.captureMessage(message, level);
+  }
 };

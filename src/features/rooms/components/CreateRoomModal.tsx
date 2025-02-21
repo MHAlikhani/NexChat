@@ -62,16 +62,34 @@ export const CreateRoomModal: React.FC = () => {
       maxWidth="sm"
       fullWidth
       dir="rtl"
+      PaperProps={{
+        sx: {
+          borderRadius: 4,
+          bgcolor: 'rgba(15, 23, 42, 0.95)',
+          backdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+        }
+      }}
     >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        ایجاد اتاق جدید
-        <IconButton onClick={handleClose} size="small">
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
+        <Typography variant="h6" fontWeight="700" sx={{ color: '#F8FAFC', letterSpacing: '-0.01em' }}>
+          ایجاد اتاق جدید
+        </Typography>
+        <IconButton 
+          onClick={handleClose} 
+          size="small"
+          sx={{
+            color: '#94A3B8',
+            '&:hover': { bgcolor: 'rgba(255, 107, 107, 0.1)', color: '#FF6B6B' }
+          }}
+        >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogContent>
+        <DialogContent sx={{ pt: 2 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             {/* Room Name */}
             <Controller
@@ -86,6 +104,10 @@ export const CreateRoomModal: React.FC = () => {
                   helperText={errors.name?.message}
                   fullWidth
                   required
+                  sx={{
+                    '& .MuiFormLabel-root': { color: '#94A3B8' },
+                    '& .MuiFormHelperText-root': { color: '#FF6B6B' },
+                  }}
                 />
               )}
             />
@@ -104,41 +126,87 @@ export const CreateRoomModal: React.FC = () => {
                   multiline
                   rows={3}
                   fullWidth
+                  sx={{
+                    '& .MuiFormLabel-root': { color: '#94A3B8' },
+                    '& .MuiFormHelperText-root': { color: '#FF6B6B' },
+                  }}
                 />
               )}
             />
 
             {/* Room Type */}
             <FormControl>
-              <FormLabel>نوع اتاق</FormLabel>
+              <FormLabel sx={{ color: '#F8FAFC', fontWeight: 600, mb: 1 }}>نوع اتاق</FormLabel>
               <Controller
                 name="type"
                 control={control}
                 render={({ field }) => (
-                  <RadioGroup {...field} row>
+                  <RadioGroup {...field} row sx={{ gap: 2 }}>
                     <FormControlLabel
                       value="public"
-                      control={<Radio />}
+                      control={
+                        <Radio 
+                          sx={{ 
+                            color: '#94A3B8',
+                            '&.Mui-checked': { color: '#00F0FF' },
+                          }} 
+                        />
+                      }
                       label={
-                        <Box>
-                          <Typography variant="body1">عمومی</Typography>
-                          <Typography variant="caption" color="text.secondary">
+                        <Box sx={{ mr: 1 }}>
+                          <Typography variant="body1" sx={{ color: '#F8FAFC', fontWeight: 600 }}>عمومی</Typography>
+                          <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mt: 0.5 }}>
                             همه می‌توانند ببینند و عضو شوند
                           </Typography>
                         </Box>
                       }
+                      sx={{
+                        flex: 1,
+                        borderRadius: 2,
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        bgcolor: 'rgba(255,255,255,0.03)',
+                        p: 1.5,
+                        m: 0,
+                        transition: 'all 0.2s ease',
+                        '&:hover': { bgcolor: 'rgba(255,255,255,0.06)' },
+                        '&.Mui-checked': {
+                          border: '1px solid rgba(0, 240, 255, 0.3)',
+                          bgcolor: 'rgba(0, 240, 255, 0.05)',
+                        }
+                      }}
                     />
                     <FormControlLabel
                       value="private"
-                      control={<Radio />}
+                      control={
+                        <Radio 
+                          sx={{ 
+                            color: '#94A3B8',
+                            '&.Mui-checked': { color: '#7000FF' },
+                          }} 
+                        />
+                      }
                       label={
-                        <Box>
-                          <Typography variant="body1">خصوصی</Typography>
-                          <Typography variant="caption" color="text.secondary">
+                        <Box sx={{ mr: 1 }}>
+                          <Typography variant="body1" sx={{ color: '#F8FAFC', fontWeight: 600 }}>خصوصی</Typography>
+                          <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mt: 0.5 }}>
                             فقط با دعوت‌نامه
                           </Typography>
                         </Box>
                       }
+                      sx={{
+                        flex: 1,
+                        borderRadius: 2,
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        bgcolor: 'rgba(255,255,255,0.03)',
+                        p: 1.5,
+                        m: 0,
+                        transition: 'all 0.2s ease',
+                        '&:hover': { bgcolor: 'rgba(255,255,255,0.06)' },
+                        '&.Mui-checked': {
+                          border: '1px solid rgba(112, 0, 255, 0.3)',
+                          bgcolor: 'rgba(112, 0, 255, 0.05)',
+                        }
+                      }}
                     />
                   </RadioGroup>
                 )}
@@ -147,15 +215,30 @@ export const CreateRoomModal: React.FC = () => {
           </Box>
         </DialogContent>
 
-        <DialogActions sx={{ p: 3, pt: 1 }}>
-          <Button onClick={handleClose} disabled={isCreating}>
+        <DialogActions sx={{ p: 3, pt: 1, gap: 1.5 }}>
+          <Button 
+            onClick={handleClose} 
+            disabled={isCreating}
+            sx={{
+              color: '#94A3B8',
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+            }}
+          >
             انصراف
           </Button>
           <Button
             type="submit"
             variant="contained"
             disabled={isCreating}
-            sx={{ minWidth: 120 }}
+            sx={{ 
+              minWidth: 140,
+              background: isCreating ? 'rgba(255,255,255,0.1)' : 'linear-gradient(135deg, #00F0FF 0%, #7000FF 100%)',
+              color: isCreating ? '#94A3B8' : '#0B0F19',
+              fontWeight: 700,
+              '&:hover': {
+                background: isCreating ? 'rgba(255,255,255,0.1)' : 'linear-gradient(135deg, #66F9FF 0%, #9D4DFF 100%)',
+              }
+            }}
           >
             {isCreating ? 'در حال ایجاد...' : 'ایجاد اتاق'}
           </Button>

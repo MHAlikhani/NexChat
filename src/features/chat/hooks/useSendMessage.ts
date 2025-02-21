@@ -14,13 +14,14 @@ import { useAuth } from '@/features/auth';
 import type { Message, MessageType } from '../types';
 
 export interface UseSendMessageReturn {
-  sendTextMessage: (roomId: string, text: string) => Promise<void>;
+  sendTextMessage: (roomId: string, text: string, replyTo?: { id: string; content: string; senderName: string }) => Promise<void>;
   sendImageMessage: (roomId: string, file: File) => Promise<void>;
   sendAudioMessage: (
     roomId: string,
     audioBlob: Blob,
     duration: number
   ) => Promise<void>;
+  deleteMessage: (roomId: string, messageId: string) => Promise<void>;
 }
 
 export const useSendMessage = (): UseSendMessageReturn => {
@@ -52,7 +53,7 @@ export const useSendMessage = (): UseSendMessageReturn => {
   );
 
   const sendTextMessage = useCallback(
-    async (roomId: string, text: string): Promise<void> => {
+    async (roomId: string, text: string, replyTo?: { id: string; content: string; senderName: string }): Promise<void> => {
       if (!user) {
         toast.error('لطفاً ابتدا وارد شوید');
         return;
@@ -64,14 +65,26 @@ export const useSendMessage = (): UseSendMessageReturn => {
       const optimisticMessage = createOptimisticMessage(
         roomId,
         trimmedText,
-        'text'
+        'text',
+        replyTo ? {
+          replyTo: replyTo.id,
+          replyToContent: replyTo.content,
+          replyToSenderName: replyTo.senderName,
+        } : undefined
       );
 
       useChatStore.getState().addMessage(optimisticMessage);
 
       try {
         const realMessageId = await messagesService.send(
-          { roomId, content: trimmedText, type: 'text' },
+          {
+            roomId,
+            content: trimmedText,
+            type: 'text',
+            replyTo: replyTo?.id,
+            replyToContent: replyTo?.content,
+            replyToSenderName: replyTo?.senderName,
+          },
           {
             uid: user.uid,
             displayName: user.displayName,
@@ -225,9 +238,29 @@ export const useSendMessage = (): UseSendMessageReturn => {
     [user, createOptimisticMessage]
   );
 
+  const deleteMessage = useCallback(
+    async (roomId: string, messageId: string): Promise<void> => {
+      if (!user) {
+        toast.error('لطفاً ابتدا وارد شوید');
+        return;
+      }
+
+      try {
+        await messagesService.delete(roomId, messageId);
+        useChatStore.getState().removeMessage(messageId);
+        toast.success('پیام حذف شد');
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'حذف ناموفق بود';
+        toast.error(message);
+      }
+    },
+    [user]
+  );
+
   return {
     sendTextMessage,
     sendImageMessage,
     sendAudioMessage,
+    deleteMessage,
   };
 };

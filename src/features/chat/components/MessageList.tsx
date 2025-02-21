@@ -16,6 +16,9 @@ import type { Message } from '../types';
 
 interface MessageListProps {
   roomId: string;
+  searchQuery?: string;
+  onReply?: (message: Message) => void;
+  onDelete?: (messageId: string) => void;
 }
 
 function groupMessagesByDate(messages: Message[]): Array<{ type: 'separator' | 'message'; key: string; message?: Message; date?: string }> {
@@ -44,7 +47,12 @@ function groupMessagesByDate(messages: Message[]): Array<{ type: 'separator' | '
   return items;
 }
 
-export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
+export const MessageList: React.FC<MessageListProps> = ({
+  roomId,
+  searchQuery = '',
+  onReply,
+  onDelete,
+}) => {
   const { user } = useAuth();
   const {
     messages,
@@ -59,7 +67,16 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const isFirstLoadRef = useRef(true);
 
-  const groupedItems = useMemo(() => groupMessagesByDate(messages), [messages]);
+  const filteredMessages = useMemo(() => {
+    if (!searchQuery.trim()) return messages;
+    const query = searchQuery.toLowerCase();
+    return messages.filter(
+      (m) =>
+        m.type === 'text' && m.content.toLowerCase().includes(query)
+    );
+  }, [messages, searchQuery]);
+
+  const groupedItems = useMemo(() => groupMessagesByDate(filteredMessages), [filteredMessages]);
 
   const activeTypingUsers = useMemo(() => {
     if (!user) return {};
@@ -209,6 +226,9 @@ export const MessageList: React.FC<MessageListProps> = ({ roomId }) => {
                 <MessageBubble
                   message={item.message!}
                   isOwn={item.message!.senderId === user?.uid}
+                  searchQuery={searchQuery}
+                  onReply={onReply}
+                  onDelete={onDelete}
                 />
               )}
             </Box>

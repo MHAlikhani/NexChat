@@ -73,6 +73,9 @@ export const messagesService = {
       if (input.fileName) messageData.fileName = input.fileName;
       if (input.fileSize) messageData.fileSize = input.fileSize;
       if (input.duration) messageData.duration = input.duration;
+      if (input.replyTo) messageData.replyTo = input.replyTo;
+      if (input.replyToContent) messageData.replyToContent = input.replyToContent;
+      if (input.replyToSenderName) messageData.replyToSenderName = input.replyToSenderName;
 
       const docRef = await addDoc(messagesRef, messageData);
 
@@ -178,6 +181,31 @@ export const messagesService = {
         messageId
       );
       await deleteDoc(messageRef);
+
+      // Update room's lastMessage after deletion
+      const messagesRef = collection(db, ROOMS_COLLECTION, roomId, MESSAGES_SUBCOLLECTION);
+      const q = query(messagesRef, orderBy('createdAt', 'desc'), limit(1));
+      const snapshot = await getDocs(q);
+
+      const roomRef = doc(db, ROOMS_COLLECTION, roomId);
+      if (snapshot.empty) {
+        await updateDoc(roomRef, {
+          lastMessage: null,
+          lastActivityAt: serverTimestamp(),
+        });
+      } else {
+        const lastMsgDoc = snapshot.docs[0];
+        const lastMsgData = lastMsgDoc.data();
+        const lastMessage: LastMessagePayload = {
+          id: lastMsgDoc.id,
+          content: lastMsgData.type === 'text' ? lastMsgData.content : getMediaPreviewText(lastMsgData.type),
+          senderId: lastMsgData.senderId,
+          senderName: lastMsgData.senderName,
+          type: lastMsgData.type,
+          timestamp: lastMsgData.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+        };
+        await updateRoomLastMessage(roomId, lastMessage);
+      }
     } catch (error) {
       throw normalizeMessageError(error);
     }

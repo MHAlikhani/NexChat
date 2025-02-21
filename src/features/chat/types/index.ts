@@ -20,6 +20,10 @@ export interface Message {
   isFailed?: boolean;
   duration?: number;
   timestamp?: Date;
+  // Reply/Quote fields
+  replyTo?: string | null;
+  replyToContent?: string | null;
+  replyToSenderName?: string | null;
 }
 
 export interface MediaMessage extends Message {
@@ -40,6 +44,9 @@ export interface SendMessageInput {
   fileName?: string;
   fileSize?: number;
   duration?: number;
+  replyTo?: string;
+  replyToContent?: string;
+  replyToSenderName?: string;
 }
 
 export interface ChatState {

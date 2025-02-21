@@ -1,6 +1,6 @@
 {
-  "short_name": "WhatsApp Clone",
-  "name": "WhatsApp Clone",
+  "short_name": "NexChat",
+  "name": "NexChat - Modern Messaging Platform",
   "icons": [
     {
       "src": "logo.png",
@@ -15,6 +15,7 @@
   ],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#ededed",
-  "background_color": "#ffffff"
+  "theme_color": "#0B0F19",
+  "background_color": "#0B0F19",
+  "description": "NexChat - Modern Messaging Platform"
 }

@@ -12,7 +12,6 @@ import {
   Typography,
   Box,
   Skeleton,
-  Paper,
   IconButton,
   Tooltip,
 } from '@mui/material';
@@ -53,14 +52,14 @@ export const RoomList: React.FC = () => {
         <Skeleton
           variant="rectangular"
           height={40}
-          sx={{ mb: 2, borderRadius: 1 }}
+          sx={{ mb: 2, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.05)' }}
         />
         {[1, 2, 3, 4, 5].map((i) => (
           <Skeleton
             key={i}
             variant="rectangular"
-            height={60}
-            sx={{ mb: 1, borderRadius: 1 }}
+            height={72}
+            sx={{ mb: 1, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.03)' }}
           />
         ))}
       </Box>
@@ -70,14 +69,14 @@ export const RoomList: React.FC = () => {
   if (error) {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography color="error" gutterBottom>
+        <Typography color="#FF6B6B" gutterBottom fontWeight="600">
           خطا در بارگذاری اتاق‌ها
         </Typography>
-        <Typography variant="body2" color="text.secondary" paragraph>
+        <Typography variant="body2" color="#94A3B8" paragraph>
           {error.message}
         </Typography>
         <Tooltip title="تلاش مجدد">
-          <IconButton onClick={refresh} color="primary" size="large">
+          <IconButton onClick={refresh} sx={{ color: '#00F0FF' }}>
             <RefreshIcon />
           </IconButton>
         </Tooltip>
@@ -86,21 +85,20 @@ export const RoomList: React.FC = () => {
   }
 
   return (
-    <Paper
-      elevation={0}
+    <Box
+      className="glass-panel"
       sx={{
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        bgcolor: '#f0f2f5',
+        borderRadius: 0,
+        borderRight: '1px solid rgba(255,255,255,0.08)',
       }}
     >
       <Box
         sx={{
-          p: 2,
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
+          p: 2.5,
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
         }}
       >
         <Box
@@ -108,24 +106,50 @@ export const RoomList: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            mb: 2,
+            mb: 2.5,
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <ChatIcon color="primary" />
-            <Typography variant="h6" fontWeight="bold">
-              اتاق‌ها
-            </Typography>
-            {uniqueRooms.length > 0 && (
-              <Typography variant="caption" color="text.secondary">
-                ({uniqueRooms.length})
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Box 
+              sx={{ 
+                p: 1, 
+                borderRadius: 2, 
+                bgcolor: 'rgba(0, 240, 255, 0.1)',
+                color: '#00F0FF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <ChatIcon sx={{ fontSize: 24 }} />
+            </Box>
+            <Box>
+              <Typography variant="h6" fontWeight="800" sx={{ color: '#F8FAFC', letterSpacing: '-0.02em' }}>
+                اتاق‌ها
               </Typography>
-            )}
+              {uniqueRooms.length > 0 && (
+                <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 500 }}>
+                  {uniqueRooms.length} اتاق فعال
+                </Typography>
+              )}
+            </Box>
           </Box>
 
           <Box sx={{ display: 'flex', gap: 0.5 }}>
             <Tooltip title="ایجاد اتاق جدید">
-              <IconButton onClick={openModal} color="primary">
+              <IconButton 
+                onClick={openModal} 
+                sx={{
+                  bgcolor: 'rgba(112, 0, 255, 0.15)',
+                  color: '#9D4DFF',
+                  border: '1px solid rgba(112, 0, 255, 0.2)',
+                  '&:hover': { 
+                    bgcolor: 'rgba(112, 0, 255, 0.25)',
+                    transform: 'translateY(-2px)',
+                  },
+                  transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                }}
+              >
                 <AddIcon />
               </IconButton>
             </Tooltip>
@@ -134,8 +158,10 @@ export const RoomList: React.FC = () => {
                 onClick={refresh}
                 disabled={isLoading}
                 sx={{
+                  color: '#94A3B8',
                   opacity: isLoading ? 0.5 : 1,
-                  transition: 'opacity 0.2s ease',
+                  '&:hover': { color: '#00F0FF', bgcolor: 'rgba(0, 240, 255, 0.1)' },
+                  transition: 'all 0.3s ease',
                 }}
               >
                 <RefreshIcon />
@@ -147,18 +173,17 @@ export const RoomList: React.FC = () => {
         <SearchBar value={searchQuery} onChange={setSearchQuery} />
       </Box>
 
-      <Box sx={{ flex: 1, overflow: 'auto' }}>
+      <Box sx={{ flex: 1, overflow: 'auto', p: 1.5 }}>
         {uniqueRooms.length === 0 ? (
           <Box sx={{ p: 3, textAlign: 'center', mt: 4 }}>
             {searchQuery ? (
               <>
-                <Typography color="text.secondary" gutterBottom>
+                <Typography sx={{ color: '#94A3B8', fontWeight: 500 }} gutterBottom>
                   اتاقی با عنوان "{searchQuery}" یافت نشد
                 </Typography>
                 <Typography
                   variant="body2"
-                  color="primary"
-                  sx={{ cursor: 'pointer', mt: 1 }}
+                  sx={{ color: '#00F0FF', fontWeight: 600, cursor: 'pointer', mt: 1 }}
                   onClick={() => setSearchQuery('')}
                 >
                   پاک کردن جستجو
@@ -166,26 +191,29 @@ export const RoomList: React.FC = () => {
               </>
             ) : (
               <>
-                <Typography variant="h6" color="text.secondary" gutterBottom>
+                <Typography variant="h6" sx={{ color: '#94A3B8', fontWeight: 600 }} gutterBottom>
                   هنوز اتاقی ایجاد نشده
                 </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph>
+                <Typography variant="body2" sx={{ color: '#64748B' }} paragraph>
                   اولین اتاق چت خود را ایجاد کنید
                 </Typography>
                 <Tooltip title="ایجاد اتاق جدید">
                   <IconButton
                     onClick={openModal}
-                    color="primary"
                     size="large"
                     sx={{
                       mt: 2,
-                      bgcolor: 'primary.main',
-                      color: 'white',
+                      background: 'linear-gradient(135deg, #7000FF 0%, #00F0FF 100%)',
+                      color: '#0B0F19',
                       width: 64,
                       height: 64,
+                      boxShadow: '0 8px 24px rgba(112, 0, 255, 0.3)',
                       '&:hover': {
-                        bgcolor: 'primary.dark',
+                        background: 'linear-gradient(135deg, #9D4DFF 0%, #66F9FF 100%)',
+                        transform: 'translateY(-4px) scale(1.05)',
+                        boxShadow: '0 12px 32px rgba(112, 0, 255, 0.4)',
                       },
+                      transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     }}
                   >
                     <AddIcon sx={{ fontSize: 32 }} />
@@ -197,21 +225,24 @@ export const RoomList: React.FC = () => {
         ) : (
           <List disablePadding>
             {uniqueRooms.map((room) => (
-              <ListItem key={room.id} disablePadding>
+              <ListItem key={room.id} disablePadding sx={{ mb: 0.5 }}>
                 <ListItemButton
                   selected={activeRoomId === room.id}
                   onClick={() => setActiveRoom(room.id)}
                   sx={{
+                    borderRadius: 3,
+                    transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     '&.Mui-selected': {
-                      bgcolor: 'rgba(37, 211, 102, 0.08)',
-                      borderRight: '3px solid',
-                      borderColor: 'primary.main',
+                      bgcolor: 'rgba(0, 240, 255, 0.08)',
+                      border: '1px solid rgba(0, 240, 255, 0.2)',
+                      boxShadow: '0 4px 12px rgba(0, 240, 255, 0.1)',
                       '&:hover': {
-                        bgcolor: 'rgba(37, 211, 102, 0.12)',
+                        bgcolor: 'rgba(0, 240, 255, 0.12)',
                       },
                     },
                     '&:hover': {
-                      bgcolor: 'rgba(0, 0, 0, 0.04)',
+                      bgcolor: 'rgba(255, 255, 255, 0.05)',
+                      transform: 'translateX(-4px)',
                     },
                   }}
                 >
@@ -222,6 +253,6 @@ export const RoomList: React.FC = () => {
           </List>
         )}
       </Box>
-    </Paper>
+    </Box>
   );
 };

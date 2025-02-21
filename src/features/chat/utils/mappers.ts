@@ -28,15 +28,19 @@ export const mapFirestoreDocToMessage = (
     seenBy: (data.seenBy as string[]) || [],
     isPending: false,
     isFailed: false,
+    replyTo: (data.replyTo as string) || null,
+    replyToContent: (data.replyToContent as string) || null,
+    replyToSenderName: (data.replyToSenderName as string) || null,
+    editedAt: convertTimestamp(data.editedAt as Timestamp),
   };
 };
 
 /**
- * Convert Firestore Timestamp to ISO string
+ * Convert Firestore Timestamp to ISO string or null
  */
-const convertTimestamp = (timestamp: unknown): string => {
+const convertTimestamp = (timestamp: unknown): string | null => {
   if (!timestamp) {
-    return new Date().toISOString();
+    return null;
   }
 
   if (typeof timestamp === 'string') {
@@ -47,5 +51,5 @@ const convertTimestamp = (timestamp: unknown): string => {
     return (timestamp as Timestamp).toDate().toISOString();
   }
 
-  return new Date().toISOString();
+  return null;
 };

@@ -105,6 +105,10 @@ export const useChatStore = create<ChatStore>()(
   )
 );
 
+/**
+ * Chat selectors - all follow the standard (state) => value pattern
+ * for optimal memoization with zustand.
+ */
 export const chatSelectors = {
   selectMessages: (state: ChatStore) => state.messages,
   selectIsLoading: (state: ChatStore) => state.isLoading,
@@ -112,12 +116,21 @@ export const chatSelectors = {
   selectHasMoreMessages: (state: ChatStore) => state.hasMoreMessages,
   selectError: (state: ChatStore) => state.error,
   selectTypingUsers: (state: ChatStore) => state.typingUsers,
-
-  selectUnseenMessageIds: (state: ChatStore) => (currentUserId: string) =>
-    state.messages
-      .filter(
-        (m) =>
-          m.senderId !== currentUserId && !m.seenBy.includes(currentUserId)
-      )
-      .map((m) => m.id),
+  selectMessageById: (state: ChatStore) => (messageId: string) =>
+    state.messages.find((m) => m.id === messageId),
 };
+
+/**
+ * Utility function to get unseen message IDs for a given user.
+ * Kept outside selectors because it requires a parameter (currentUserId)
+ * and would break selector memoization if curried.
+ */
+export const getUnseenMessageIds = (
+  messages: Message[],
+  currentUserId: string
+): string[] =>
+  messages
+    .filter(
+      (m) => m.senderId !== currentUserId && !m.seenBy.includes(currentUserId)
+    )
+    .map((m) => m.id);
