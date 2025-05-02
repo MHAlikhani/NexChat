@@ -71,12 +71,17 @@ export const roomsService = {
   },
 
   getAll: async (options?: {
+    userId?: string;
     type?: Room['type'];
     limit?: number;
   }): Promise<Room[]> => {
     try {
       const roomsRef = collection(db, ROOMS_COLLECTION);
       let q = query(roomsRef, where('isActive', '==', true));
+
+      if (options?.userId) {
+        q = query(q, where('members', 'array-contains', options.userId));
+      }
 
       if (options?.type) {
         q = query(q, where('type', '==', options.type));

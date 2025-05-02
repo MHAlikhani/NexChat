@@ -88,9 +88,12 @@ export const useRooms = (): UseRoomsReturn => {
 
     try {
       state.setLoading(true);
-      const fetchedRooms = await roomsService.getAll();
-      state.setRooms(fetchedRooms);
       state.setError(null);
+      const fetchedRooms = await roomsService.getAll({
+        userId: user.uid,
+        limit: 100,
+      });
+      state.setRooms(fetchedRooms);
     } catch (error) {
       state.setError(error as Error);
     } finally {
