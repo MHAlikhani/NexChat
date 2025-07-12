@@ -4,34 +4,40 @@
  * @module features/rooms/components/RoomItem
  */
 
-import {
-  Avatar,
-  Box,
-  Typography,
-  Badge,
-} from '@mui/material';
+import { Avatar, Box, Typography, Badge } from '@mui/material';
 import { Group as GroupIcon } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import type { Room } from '../types';
 import { formatDistanceToNow } from 'date-fns';
+import type { Locale } from 'date-fns';
 import { faIR } from 'date-fns/locale';
+import { enUS, de } from 'date-fns/locale';
 
 interface RoomItemProps {
   room: Room;
 }
 
+const localeMap: Record<string, Locale> = {
+  fa: faIR,
+  en: enUS,
+  de: de,
+};
+
 export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
+  const { i18n, t } = useTranslation();
+
   const lastActivityTime = formatDistanceToNow(new Date(room.lastActivityAt), {
     addSuffix: true,
-    locale: faIR,
+    locale: localeMap[i18n.language] || faIR,
   });
 
   return (
-    <Box 
+    <Box
       className="glass-panel-hover"
-      sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        width: '100%', 
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
         gap: 2,
         p: 2,
         borderRadius: 3,
@@ -48,7 +54,7 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
             bgcolor: '#00F0FF',
             boxShadow: '0 0 8px #00F0FF',
             border: '2px solid #0B0F19',
-          }
+          },
         }}
         invisible={!room.isActive}
       >
@@ -58,7 +64,9 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
           sx={{
             width: 52,
             height: 52,
-            background: room.avatarUrl ? 'transparent' : 'linear-gradient(135deg, #7000FF 0%, #00F0FF 100%)',
+            background: room.avatarUrl
+              ? 'transparent'
+              : 'linear-gradient(135deg, #7000FF 0%, #00F0FF 100%)',
             color: '#0B0F19',
             fontWeight: 700,
             fontSize: '1.2rem',
@@ -71,12 +79,19 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
       </Badge>
 
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', mb: 0.5 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'baseline',
+            mb: 0.5,
+          }}
+        >
           <Typography
             variant="subtitle1"
             fontWeight="700"
             noWrap
-            sx={{ 
+            sx={{
               maxWidth: '65%',
               color: '#F8FAFC',
               letterSpacing: '-0.01em',
@@ -84,13 +99,13 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
           >
             {room.name}
           </Typography>
-          <Typography 
-            variant="caption" 
-            sx={{ 
+          <Typography
+            variant="caption"
+            sx={{
               color: '#64748B',
               fontWeight: 500,
               fontSize: '0.75rem',
-            }} 
+            }}
             noWrap
           >
             {lastActivityTime}
@@ -100,7 +115,7 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
         <Typography
           variant="body2"
           noWrap
-          sx={{ 
+          sx={{
             maxWidth: '100%',
             color: '#94A3B8',
             fontSize: '0.85rem',
@@ -109,29 +124,37 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
         >
           {room.lastMessage ? (
             <>
-              <Typography component="span" sx={{ color: '#00F0FF', fontWeight: 600 }}>
+              <Typography
+                component="span"
+                sx={{ color: '#00F0FF', fontWeight: 600 }}
+              >
                 {room.lastMessage.senderName}:
               </Typography>{' '}
               {room.lastMessage.content}
             </>
           ) : (
-            <span style={{ color: '#64748B' }}>{room.description || 'بدون توضیحات'}</span>
+            <span style={{ color: '#64748B' }}>
+              {room.description || t('rooms.noDescription')}
+            </span>
           )}
         </Typography>
 
         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-          <Box 
-            sx={{ 
-              width: 6, 
-              height: 6, 
-              borderRadius: '50%', 
+          <Box
+            sx={{
+              width: 6,
+              height: 6,
+              borderRadius: '50%',
               bgcolor: '#7000FF',
               mr: 1,
-              boxShadow: '0 0 6px #7000FF'
-            }} 
+              boxShadow: '0 0 6px #7000FF',
+            }}
           />
-          <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 500, fontSize: '0.75rem' }}>
-            {room.memberCount} عضو
+          <Typography
+            variant="caption"
+            sx={{ color: '#64748B', fontWeight: 500, fontSize: '0.75rem' }}
+          >
+            {t('rooms.members', { count: room.memberCount })}
           </Typography>
         </Box>
       </Box>

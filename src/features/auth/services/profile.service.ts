@@ -93,4 +93,36 @@ export const profileService = {
       lastSeenAt: serverTimestamp(),
     });
   },
+
+  updateDisplayName: async (
+    uid: string,
+    displayName: string
+  ): Promise<void> => {
+    try {
+      const userRef = doc(db, USERS_COLLECTION, uid);
+      await updateDoc(userRef, {
+        displayName,
+        updatedAt: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error('Failed to update display name:', error);
+      throw error;
+    }
+  },
+
+  updateLanguage: async (
+    uid: string,
+    language: 'fa' | 'en' | 'de'
+  ): Promise<void> => {
+    try {
+      const userRef = doc(db, USERS_COLLECTION, uid);
+      await updateDoc(userRef, {
+        'settings.language': language,
+        updatedAt: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error('Failed to update language:', error);
+      throw error;
+    }
+  },
 };

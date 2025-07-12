@@ -5,6 +5,7 @@
  */
 
 import { useEffect, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, CircularProgress, Typography, Button } from '@mui/material';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useMessages } from '../hooks/useMessages';
@@ -21,12 +22,25 @@ interface MessageListProps {
   onDelete?: (messageId: string) => void;
 }
 
-function groupMessagesByDate(messages: Message[]): Array<{ type: 'separator' | 'message'; key: string; message?: Message; date?: string }> {
-  const items: Array<{ type: 'separator' | 'message'; key: string; message?: Message; date?: string }> = [];
+function groupMessagesByDate(
+  messages: Message[],
+  locale: string
+): Array<{
+  type: 'separator' | 'message';
+  key: string;
+  message?: Message;
+  date?: string;
+}> {
+  const items: Array<{
+    type: 'separator' | 'message';
+    key: string;
+    message?: Message;
+    date?: string;
+  }> = [];
   let lastDate: string | null = null;
 
   messages.forEach((message) => {
-    const messageDate = new Date(message.createdAt).toLocaleDateString('fa-IR');
+    const messageDate = new Date(message.createdAt).toLocaleDateString(locale);
 
     if (messageDate !== lastDate) {
       items.push({
@@ -53,6 +67,7 @@ export const MessageList: React.FC<MessageListProps> = ({
   onReply,
   onDelete,
 }) => {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const {
     messages,
@@ -71,12 +86,14 @@ export const MessageList: React.FC<MessageListProps> = ({
     if (!searchQuery.trim()) return messages;
     const query = searchQuery.toLowerCase();
     return messages.filter(
-      (m) =>
-        m.type === 'text' && m.content.toLowerCase().includes(query)
+      (m) => m.type === 'text' && m.content.toLowerCase().includes(query)
     );
   }, [messages, searchQuery]);
 
-  const groupedItems = useMemo(() => groupMessagesByDate(filteredMessages), [filteredMessages]);
+  const groupedItems = useMemo(
+    () => groupMessagesByDate(filteredMessages, i18n.language === 'fa' ? 'fa-IR' : i18n.language),
+    [filteredMessages, i18n.language]
+  );
 
   const activeTypingUsers = useMemo(() => {
     if (!user) return {};
@@ -150,7 +167,7 @@ export const MessageList: React.FC<MessageListProps> = ({
       >
         <Typography color="error">{error.message}</Typography>
         <Button variant="outlined" onClick={() => window.location.reload()}>
-          تلاش مجدد
+          {t('common.retry')}
         </Button>
       </Box>
     );
@@ -175,9 +192,11 @@ export const MessageList: React.FC<MessageListProps> = ({
             variant="outlined"
             onClick={loadOlderMessages}
             disabled={isLoadingMore}
-            startIcon={isLoadingMore ? <CircularProgress size={16} /> : null}
+            startIcon={
+              isLoadingMore ? <CircularProgress size={16} /> : null
+            }
           >
-            {isLoadingMore ? 'در حال بارگذاری...' : 'پیام‌های قدیمی‌تر'}
+            {isLoadingMore ? t('chat.loadingOlder') : t('chat.olderMessages')}
           </Button>
         </Box>
       )}
@@ -192,7 +211,7 @@ export const MessageList: React.FC<MessageListProps> = ({
           }}
         >
           <Typography variant="body1" color="text.secondary">
-            هنوز پیامی ارسال نشده. اولین پیام را ارسال کنید! 👋
+            {t('chat.firstMessage')}
           </Typography>
         </Box>
       )}

@@ -5,6 +5,7 @@
  */
 
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   List,
   ListItem,
@@ -28,6 +29,7 @@ import { useRoomsStore } from '../stores/roomsStore';
 import type { Room } from '../types';
 
 export const RoomList: React.FC = () => {
+  const { t } = useTranslation();
   const { rooms, isLoading, error, searchQuery, setSearchQuery, refresh } =
     useRooms();
   const { openModal } = useCreateRoom();
@@ -70,12 +72,12 @@ export const RoomList: React.FC = () => {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
         <Typography color="#FF6B6B" gutterBottom fontWeight="600">
-          خطا در بارگذاری اتاق‌ها
+          {t('rooms.loadError')}
         </Typography>
         <Typography variant="body2" color="#94A3B8" paragraph>
           {error.message}
         </Typography>
-        <Tooltip title="تلاش مجدد">
+        <Tooltip title={t('common.retry')}>
           <IconButton onClick={refresh} sx={{ color: '#00F0FF' }}>
             <RefreshIcon />
           </IconButton>
@@ -110,40 +112,44 @@ export const RoomList: React.FC = () => {
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Box 
-              sx={{ 
-                p: 1, 
-                borderRadius: 2, 
+            <Box
+              sx={{
+                p: 1,
+                borderRadius: 2,
                 bgcolor: 'rgba(0, 240, 255, 0.1)',
                 color: '#00F0FF',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
               }}
             >
               <ChatIcon sx={{ fontSize: 24 }} />
             </Box>
             <Box>
-              <Typography variant="h6" fontWeight="800" sx={{ color: '#F8FAFC', letterSpacing: '-0.02em' }}>
-                اتاق‌ها
+              <Typography
+                variant="h6"
+                fontWeight="800"
+                sx={{ color: '#F8FAFC', letterSpacing: '-0.02em' }}
+              >
+                {t('rooms.title')}
               </Typography>
               {uniqueRooms.length > 0 && (
                 <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 500 }}>
-                  {uniqueRooms.length} اتاق فعال
+                  {t('rooms.activeRooms', { count: uniqueRooms.length })}
                 </Typography>
               )}
             </Box>
           </Box>
 
           <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <Tooltip title="ایجاد اتاق جدید">
-              <IconButton 
-                onClick={openModal} 
+            <Tooltip title={t('rooms.createRoom')}>
+              <IconButton
+                onClick={openModal}
                 sx={{
                   bgcolor: 'rgba(112, 0, 255, 0.15)',
                   color: '#9D4DFF',
                   border: '1px solid rgba(112, 0, 255, 0.2)',
-                  '&:hover': { 
+                  '&:hover': {
                     bgcolor: 'rgba(112, 0, 255, 0.25)',
                     transform: 'translateY(-2px)',
                   },
@@ -153,14 +159,17 @@ export const RoomList: React.FC = () => {
                 <AddIcon />
               </IconButton>
             </Tooltip>
-            <Tooltip title="بروزرسانی">
+            <Tooltip title={t('rooms.refresh')}>
               <IconButton
                 onClick={refresh}
                 disabled={isLoading}
                 sx={{
                   color: '#94A3B8',
                   opacity: isLoading ? 0.5 : 1,
-                  '&:hover': { color: '#00F0FF', bgcolor: 'rgba(0, 240, 255, 0.1)' },
+                  '&:hover': {
+                    color: '#00F0FF',
+                    bgcolor: 'rgba(0, 240, 255, 0.1)',
+                  },
                   transition: 'all 0.3s ease',
                 }}
               >
@@ -178,42 +187,57 @@ export const RoomList: React.FC = () => {
           <Box sx={{ p: 3, textAlign: 'center', mt: 4 }}>
             {searchQuery ? (
               <>
-                <Typography sx={{ color: '#94A3B8', fontWeight: 500 }} gutterBottom>
-                  اتاقی با عنوان "{searchQuery}" یافت نشد
+                <Typography
+                  sx={{ color: '#94A3B8', fontWeight: 500 }}
+                  gutterBottom
+                >
+                  {t('rooms.noRoomsFound', { query: searchQuery })}
                 </Typography>
                 <Typography
                   variant="body2"
-                  sx={{ color: '#00F0FF', fontWeight: 600, cursor: 'pointer', mt: 1 }}
+                  sx={{
+                    color: '#00F0FF',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    mt: 1,
+                  }}
                   onClick={() => setSearchQuery('')}
                 >
-                  پاک کردن جستجو
+                  {t('rooms.clearSearch')}
                 </Typography>
               </>
             ) : (
               <>
-                <Typography variant="h6" sx={{ color: '#94A3B8', fontWeight: 600 }} gutterBottom>
-                  هنوز اتاقی ایجاد نشده
+                <Typography
+                  variant="h6"
+                  sx={{ color: '#94A3B8', fontWeight: 600 }}
+                  gutterBottom
+                >
+                  {t('rooms.noRoomsYet')}
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#64748B' }} paragraph>
-                  اولین اتاق چت خود را ایجاد کنید
+                  {t('rooms.createFirstRoom')}
                 </Typography>
-                <Tooltip title="ایجاد اتاق جدید">
+                <Tooltip title={t('rooms.createRoom')}>
                   <IconButton
                     onClick={openModal}
                     size="large"
                     sx={{
                       mt: 2,
-                      background: 'linear-gradient(135deg, #7000FF 0%, #00F0FF 100%)',
+                      background:
+                        'linear-gradient(135deg, #7000FF 0%, #00F0FF 100%)',
                       color: '#0B0F19',
                       width: 64,
                       height: 64,
                       boxShadow: '0 8px 24px rgba(112, 0, 255, 0.3)',
                       '&:hover': {
-                        background: 'linear-gradient(135deg, #9D4DFF 0%, #66F9FF 100%)',
+                        background:
+                          'linear-gradient(135deg, #9D4DFF 0%, #66F9FF 100%)',
                         transform: 'translateY(-4px) scale(1.05)',
                         boxShadow: '0 12px 32px rgba(112, 0, 255, 0.4)',
                       },
-                      transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                      transition:
+                        'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     }}
                   >
                     <AddIcon sx={{ fontSize: 32 }} />
@@ -231,7 +255,8 @@ export const RoomList: React.FC = () => {
                   onClick={() => setActiveRoom(room.id)}
                   sx={{
                     borderRadius: 3,
-                    transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    transition:
+                      'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     '&.Mui-selected': {
                       bgcolor: 'rgba(0, 240, 255, 0.08)',
                       border: '1px solid rgba(0, 240, 255, 0.2)',

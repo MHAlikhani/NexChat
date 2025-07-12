@@ -8,6 +8,7 @@
 
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogTitle,
@@ -29,6 +30,7 @@ import { useCreateRoom } from '../hooks/useCreateRoom';
 import { createRoomSchema, type CreateRoomFormData } from '../utils/validators';
 
 export const CreateRoomModal: React.FC = () => {
+  const { t } = useTranslation();
   const { isModalOpen, closeModal, createRoom, isCreating } = useCreateRoom();
 
   const {
@@ -69,19 +71,34 @@ export const CreateRoomModal: React.FC = () => {
           backdropFilter: 'blur(24px)',
           border: '1px solid rgba(255, 255, 255, 0.1)',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-        }
+        },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-        <Typography variant="h6" fontWeight="700" sx={{ color: '#F8FAFC', letterSpacing: '-0.01em' }}>
-          ایجاد اتاق جدید
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          pb: 1,
+        }}
+      >
+        <Typography
+          component="span"
+          variant="h6"
+          fontWeight="700"
+          sx={{ color: '#F8FAFC', letterSpacing: '-0.01em' }}
+        >
+          {t('rooms.createRoom')}
         </Typography>
-        <IconButton 
-          onClick={handleClose} 
+        <IconButton
+          onClick={handleClose}
           size="small"
           sx={{
             color: '#94A3B8',
-            '&:hover': { bgcolor: 'rgba(255, 107, 107, 0.1)', color: '#FF6B6B' }
+            '&:hover': {
+              bgcolor: 'rgba(255, 107, 107, 0.1)',
+              color: '#FF6B6B',
+            },
           }}
         >
           <CloseIcon />
@@ -98,8 +115,8 @@ export const CreateRoomModal: React.FC = () => {
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="نام اتاق"
-                  placeholder="مثال: تیم توسعه"
+                  label={t('rooms.roomName')}
+                  placeholder={t('rooms.roomNamePlaceholder')}
                   error={!!errors.name}
                   helperText={errors.name?.message}
                   fullWidth
@@ -119,8 +136,8 @@ export const CreateRoomModal: React.FC = () => {
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="توضیحات"
-                  placeholder="توضیحات اختیاری درباره اتاق"
+                  label={t('rooms.description')}
+                  placeholder={t('rooms.descriptionPlaceholder')}
                   error={!!errors.description}
                   helperText={errors.description?.message}
                   multiline
@@ -136,7 +153,9 @@ export const CreateRoomModal: React.FC = () => {
 
             {/* Room Type */}
             <FormControl>
-              <FormLabel sx={{ color: '#F8FAFC', fontWeight: 600, mb: 1 }}>نوع اتاق</FormLabel>
+              <FormLabel sx={{ color: '#F8FAFC', fontWeight: 600, mb: 1 }}>
+                {t('rooms.roomType')}
+              </FormLabel>
               <Controller
                 name="type"
                 control={control}
@@ -145,18 +164,26 @@ export const CreateRoomModal: React.FC = () => {
                     <FormControlLabel
                       value="public"
                       control={
-                        <Radio 
-                          sx={{ 
+                        <Radio
+                          sx={{
                             color: '#94A3B8',
                             '&.Mui-checked': { color: '#00F0FF' },
-                          }} 
+                          }}
                         />
                       }
                       label={
                         <Box sx={{ mr: 1 }}>
-                          <Typography variant="body1" sx={{ color: '#F8FAFC', fontWeight: 600 }}>عمومی</Typography>
-                          <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mt: 0.5 }}>
-                            همه می‌توانند ببینند و عضو شوند
+                          <Typography
+                            variant="body1"
+                            sx={{ color: '#F8FAFC', fontWeight: 600 }}
+                          >
+                            {t('rooms.public')}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            sx={{ color: '#64748B', display: 'block', mt: 0.5 }}
+                          >
+                            {t('rooms.publicDesc')}
                           </Typography>
                         </Box>
                       }
@@ -172,24 +199,32 @@ export const CreateRoomModal: React.FC = () => {
                         '&.Mui-checked': {
                           border: '1px solid rgba(0, 240, 255, 0.3)',
                           bgcolor: 'rgba(0, 240, 255, 0.05)',
-                        }
+                        },
                       }}
                     />
                     <FormControlLabel
                       value="private"
                       control={
-                        <Radio 
-                          sx={{ 
+                        <Radio
+                          sx={{
                             color: '#94A3B8',
                             '&.Mui-checked': { color: '#7000FF' },
-                          }} 
+                          }}
                         />
                       }
                       label={
                         <Box sx={{ mr: 1 }}>
-                          <Typography variant="body1" sx={{ color: '#F8FAFC', fontWeight: 600 }}>خصوصی</Typography>
-                          <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mt: 0.5 }}>
-                            فقط با دعوت‌نامه
+                          <Typography
+                            variant="body1"
+                            sx={{ color: '#F8FAFC', fontWeight: 600 }}
+                          >
+                            {t('rooms.private')}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            sx={{ color: '#64748B', display: 'block', mt: 0.5 }}
+                          >
+                            {t('rooms.privateDesc')}
                           </Typography>
                         </Box>
                       }
@@ -205,7 +240,7 @@ export const CreateRoomModal: React.FC = () => {
                         '&.Mui-checked': {
                           border: '1px solid rgba(112, 0, 255, 0.3)',
                           bgcolor: 'rgba(112, 0, 255, 0.05)',
-                        }
+                        },
                       }}
                     />
                   </RadioGroup>
@@ -216,31 +251,35 @@ export const CreateRoomModal: React.FC = () => {
         </DialogContent>
 
         <DialogActions sx={{ p: 3, pt: 1, gap: 1.5 }}>
-          <Button 
-            onClick={handleClose} 
+          <Button
+            onClick={handleClose}
             disabled={isCreating}
             sx={{
               color: '#94A3B8',
-              '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' },
             }}
           >
-            انصراف
+            {t('common.cancel')}
           </Button>
           <Button
             type="submit"
             variant="contained"
             disabled={isCreating}
-            sx={{ 
+            sx={{
               minWidth: 140,
-              background: isCreating ? 'rgba(255,255,255,0.1)' : 'linear-gradient(135deg, #00F0FF 0%, #7000FF 100%)',
+              background: isCreating
+                ? 'rgba(255,255,255,0.1)'
+                : 'linear-gradient(135deg, #00F0FF 0%, #7000FF 100%)',
               color: isCreating ? '#94A3B8' : '#0B0F19',
               fontWeight: 700,
               '&:hover': {
-                background: isCreating ? 'rgba(255,255,255,0.1)' : 'linear-gradient(135deg, #66F9FF 0%, #9D4DFF 100%)',
-              }
+                background: isCreating
+                  ? 'rgba(255,255,255,0.1)'
+                  : 'linear-gradient(135deg, #66F9FF 0%, #9D4DFF 100%)',
+              },
             }}
           >
-            {isCreating ? 'در حال ایجاد...' : 'ایجاد اتاق'}
+            {isCreating ? t('rooms.creating') : t('rooms.createRoom')}
           </Button>
         </DialogActions>
       </form>

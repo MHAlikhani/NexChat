@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import { Box, Typography, Button, Container, Paper } from '@mui/material';
 import { Chat as ChatIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   return (
@@ -28,16 +30,21 @@ export default function HomePage() {
         >
           <ChatIcon sx={{ fontSize: 80, color: '#25D366', mb: 2 }} />
 
-          <Typography variant="h3" component="h1" gutterBottom fontWeight="bold">
+          <Typography
+            variant="h3"
+            component="h1"
+            gutterBottom
+            fontWeight="bold"
+          >
             NexChat
           </Typography>
 
           <Typography variant="h6" color="text.secondary" paragraph>
-            پلتفرم پیام‌رسان سازمانی نسل جدید
+            {t('home.subtitle')}
           </Typography>
 
           <Typography variant="body1" color="text.secondary" paragraph>
-            نسخه 2.0.0 (Enterprise Edition)
+            {t('home.version')}
           </Typography>
 
           <Box sx={{ mt: 4 }}>
@@ -53,13 +60,13 @@ export default function HomePage() {
               }}
               onClick={() => navigate('/login')}
             >
-              شروع کنید
+              {t('home.getStarted')}
             </Button>
           </Box>
 
           <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid #e0e0e0' }}>
             <Typography variant="caption" color="text.secondary">
-              ساخته شده با React 18 + TypeScript + Firebase
+              {t('home.builtWith')}
             </Typography>
           </Box>
         </Paper>

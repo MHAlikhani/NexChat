@@ -7,20 +7,26 @@
  */
 
 import { Box, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface DateSeparatorProps {
   date: string;
 }
 
 export const DateSeparator: React.FC<DateSeparatorProps> = ({ date }) => {
-  const today = new Date().toLocaleDateString('fa-IR');
-  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toLocaleDateString('fa-IR');
+  const { t, i18n } = useTranslation();
+
+  const locale = i18n.language === 'fa' ? 'fa-IR' : i18n.language;
+  const today = new Date().toLocaleDateString(locale);
+  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toLocaleDateString(
+    locale
+  );
 
   let displayDate = date;
   if (date === today) {
-    displayDate = 'امروز';
+    displayDate = t('chat.today');
   } else if (date === yesterday) {
-    displayDate = 'دیروز';
+    displayDate = t('chat.yesterday');
   }
 
   return (

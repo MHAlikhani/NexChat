@@ -7,6 +7,7 @@
  */
 
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { useRoomsStore } from '../stores/roomsStore';
 import { roomsService } from '../services/rooms.service';
@@ -28,6 +29,7 @@ export interface UseRoomActionsReturn {
  * useRoomActions Hook
  */
 export const useRoomActions = (): UseRoomActionsReturn => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [isJoining, setIsJoining] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
@@ -41,12 +43,12 @@ export const useRoomActions = (): UseRoomActionsReturn => {
   const joinRoom = useCallback(
     async (roomId: string): Promise<void> => {
       if (!user) {
-        toast.error('لطفاً ابتدا وارد شوید');
+        toast.error(t('rooms.pleaseLogin'));
         return;
       }
 
       setIsJoining(true);
-      const toastId = toast.loading('در حال عضویت...');
+      const toastId = toast.loading(t('rooms.joining'));
 
       try {
         // Optimistic update
@@ -60,11 +62,9 @@ export const useRoomActions = (): UseRoomActionsReturn => {
 
         await roomsService.join(roomId, user.uid);
 
-        toast.success('عضویت موفقیت‌آمیز بود', { id: toastId });
+        toast.success(t('rooms.joinSuccess'), { id: toastId });
       } catch (error) {
-        const message = error instanceof Error
-          ? error.message
-          : 'عضویت ناموفق بود';
+        const message = error instanceof Error ? error.message : t('rooms.joinFailed');
 
         toast.error(message, { id: toastId });
 
@@ -80,7 +80,7 @@ export const useRoomActions = (): UseRoomActionsReturn => {
         setIsJoining(false);
       }
     },
-    [user, rooms, updateRoom]
+    [user, rooms, updateRoom, t]
   );
 
   /**
@@ -91,22 +91,20 @@ export const useRoomActions = (): UseRoomActionsReturn => {
       if (!user) return;
 
       setIsLeaving(true);
-      const toastId = toast.loading('در حال خروج...');
+      const toastId = toast.loading(t('rooms.leaving'));
 
       try {
         await roomsService.leave(roomId, user.uid);
-        toast.success('با موفقیت از اتاق خارج شدید', { id: toastId });
+        toast.success(t('rooms.leaveSuccess'), { id: toastId });
       } catch (error) {
-        const message = error instanceof Error
-          ? error.message
-          : 'خروج ناموفق بود';
+        const message = error instanceof Error ? error.message : t('rooms.leaveFailed');
 
         toast.error(message, { id: toastId });
       } finally {
         setIsLeaving(false);
       }
     },
-    [user]
+    [user, t]
   );
 
   /**
@@ -117,14 +115,12 @@ export const useRoomActions = (): UseRoomActionsReturn => {
       if (!user) return;
 
       // Confirm deletion
-      const confirmed = window.confirm(
-        'آیا از حذف این اتاق اطمینان دارید؟ این عمل قابل بازگشت نیست.'
-      );
+      const confirmed = window.confirm(t('rooms.deleteConfirm'));
 
       if (!confirmed) return;
 
       setIsDeleting(true);
-      const toastId = toast.loading('در حال حذف اتاق...');
+      const toastId = toast.loading(t('rooms.deleting'));
 
       try {
         await roomsService.delete(roomId);
@@ -132,18 +128,16 @@ export const useRoomActions = (): UseRoomActionsReturn => {
         // Remove from store
         removeRoom(roomId);
 
-        toast.success('اتاق با موفقیت حذف شد', { id: toastId });
+        toast.success(t('rooms.deleteSuccess'), { id: toastId });
       } catch (error) {
-        const message = error instanceof Error
-          ? error.message
-          : 'حذف ناموفق بود';
+        const message = error instanceof Error ? error.message : t('rooms.deleteFailed');
 
         toast.error(message, { id: toastId });
       } finally {
         setIsDeleting(false);
       }
     },
-    [user, removeRoom]
+    [user, removeRoom, t]
   );
 
   return {

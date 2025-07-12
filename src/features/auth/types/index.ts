@@ -23,7 +23,7 @@ export interface UserProfile {
 
 export interface UserSettings {
   theme: 'light' | 'dark' | 'system';
-  language: 'fa' | 'en';
+  language: 'fa' | 'en' | 'de';
   notifications: boolean;
   showOnlineStatus: boolean;
 }

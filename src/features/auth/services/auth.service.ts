@@ -3,21 +3,23 @@ import {
   signOut as firebaseSignOut,
   GoogleAuthProvider,
   onAuthStateChanged,
+  updateProfile as firebaseUpdateProfile,
   type Unsubscribe,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import i18n from '@/lib/i18n';
 import type { User, AuthError, AuthProvider } from '../types';
 import { profileService } from './profile.service';
 import { mapFirebaseUserToDomain } from '../utils/mappers';
 
-const ERROR_MESSAGES: Record<string, string> = {
-  'auth/popup-closed-by-user': 'پنجره ورود توسط شما بسته شد',
-  'auth/cancelled-popup-request': 'درخواست ورود لغو شد',
-  'auth/popup-blocked': 'پنجره ورود توسط مرورگر مسدود شد',
-  'auth/network-request-failed': 'خطای شبکه. اتصال اینترنت خود را بررسی کنید',
-  'auth/user-disabled': 'این حساب غیرفعال شده است',
-  'auth/operation-not-allowed': 'این روش ورود فعال نیست',
-  'auth/unauthorized-domain': 'دامنه مجاز نیست',
+const ERROR_MESSAGE_KEYS: Record<string, string> = {
+  'auth/popup-closed-by-user': 'auth.popupClosed',
+  'auth/cancelled-popup-request': 'auth.popupCancelled',
+  'auth/popup-blocked': 'auth.popupBlocked',
+  'auth/network-request-failed': 'auth.networkError',
+  'auth/user-disabled': 'auth.accountDisabled',
+  'auth/operation-not-allowed': 'auth.operationNotAllowed',
+  'auth/unauthorized-domain': 'auth.unauthorizedDomain',
 };
 
 const providers = {
@@ -28,7 +30,7 @@ export const authService = {
   signIn: async (provider: AuthProvider = 'google'): Promise<User> => {
     try {
       if (!(provider in providers)) {
-        throw new Error(`روش ورود "${provider}" پشتیبانی نمی‌شود`);
+        throw new Error(i18n.t('auth.unsupportedSignIn', { provider }));
       }
 
       const selectedProvider =
@@ -72,14 +74,41 @@ export const authService = {
     const firebaseUser = auth.currentUser;
     return firebaseUser ? mapFirebaseUserToDomain(firebaseUser) : null;
   },
+
+  updateProfile: async (updates: {
+    displayName?: string;
+    photoURL?: string;
+  }): Promise<void> => {
+    try {
+      const firebaseUser = auth.currentUser;
+      if (!firebaseUser) {
+        throw new Error('No user logged in');
+      }
+
+      // به‌روزرسانی در Firebase Auth
+      await firebaseUpdateProfile(firebaseUser, updates);
+
+      // به‌روزرسانی در Firestore
+      if (updates.displayName) {
+        await profileService.updateDisplayName(
+          firebaseUser.uid,
+          updates.displayName
+        );
+      }
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+      throw normalizeAuthError(error);
+    }
+  },
 };
 
 function normalizeAuthError(error: unknown): AuthError {
   if (error && typeof error === 'object' && 'code' in error) {
     const firebaseError = error as { code: string; message: string };
+    const messageKey = ERROR_MESSAGE_KEYS[firebaseError.code];
     return {
       code: firebaseError.code,
-      message: ERROR_MESSAGES[firebaseError.code] || firebaseError.message,
+      message: messageKey ? i18n.t(messageKey) : firebaseError.message,
       details: error,
     };
   }
@@ -94,7 +123,7 @@ function normalizeAuthError(error: unknown): AuthError {
 
   return {
     code: 'unknown-error',
-    message: 'خطای ناشناخته‌ای رخ داد',
+    message: i18n.t('auth.unknownError'),
     details: error,
   };
 }

@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   AppBar,
@@ -37,6 +38,7 @@ interface ChatWindowProps {
 }
 
 export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { deleteRoom, leaveRoom } = useRoomActions();
   const { deleteMessage } = useSendMessage();
@@ -71,11 +73,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
-      <AppBar 
-        position="static" 
+      <AppBar
+        position="static"
         elevation={0}
         className="glass-panel"
-        sx={{ 
+        sx={{
           borderBottom: '1px solid rgba(255,255,255,0.08)',
           borderRadius: 0,
         }}
@@ -84,19 +86,21 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
           <IconButton
             edge="start"
             onClick={onBack}
-            sx={{ 
+            sx={{
               display: { md: 'none' },
               color: '#94A3B8',
-              '&:hover': { bgcolor: 'rgba(0, 240, 255, 0.1)', color: '#00F0FF' }
+              '&:hover': { bgcolor: 'rgba(0, 240, 255, 0.1)', color: '#00F0FF' },
             }}
           >
             <BackIcon />
           </IconButton>
 
-          <Avatar 
-            src={room.avatarUrl} 
-            sx={{ 
-              background: room.avatarUrl ? 'transparent' : 'linear-gradient(135deg, #7000FF 0%, #00F0FF 100%)',
+          <Avatar
+            src={room.avatarUrl}
+            sx={{
+              background: room.avatarUrl
+                ? 'transparent'
+                : 'linear-gradient(135deg, #7000FF 0%, #00F0FF 100%)',
               color: '#0B0F19',
               width: 48,
               height: 48,
@@ -108,21 +112,32 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
           </Avatar>
 
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography variant="subtitle1" fontWeight="700" noWrap sx={{ color: '#F8FAFC', letterSpacing: '-0.01em' }}>
+            <Typography
+              variant="subtitle1"
+              fontWeight="700"
+              noWrap
+              sx={{ color: '#F8FAFC', letterSpacing: '-0.01em' }}
+            >
               {room.name}
             </Typography>
-            <Typography variant="caption" sx={{ color: '#00F0FF', fontWeight: 600, fontSize: '0.8rem' }}>
-              {room.memberCount} عضو فعال
+            <Typography
+              variant="caption"
+              sx={{ color: '#00F0FF', fontWeight: 600, fontSize: '0.8rem' }}
+            >
+              {t('rooms.activeMembers', { count: room.memberCount })}
             </Typography>
           </Box>
 
           {!isCreator && isMember && (
-            <Tooltip title="خروج از اتاق">
-              <IconButton 
+            <Tooltip title={t('rooms.leaveRoom')}>
+              <IconButton
                 onClick={handleLeave}
                 sx={{
                   color: '#94A3B8',
-                  '&:hover': { bgcolor: 'rgba(255, 107, 107, 0.1)', color: '#FF6B6B' }
+                  '&:hover': {
+                    bgcolor: 'rgba(255, 107, 107, 0.1)',
+                    color: '#FF6B6B',
+                  },
                 }}
               >
                 <BackIcon />
@@ -131,12 +146,15 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
           )}
 
           {isCreator && (
-            <Tooltip title="حذف اتاق">
-              <IconButton 
-                onClick={handleDeleteRoom} 
+            <Tooltip title={t('rooms.deleteRoom')}>
+              <IconButton
+                onClick={handleDeleteRoom}
                 sx={{
                   color: '#94A3B8',
-                  '&:hover': { bgcolor: 'rgba(255, 107, 107, 0.1)', color: '#FF6B6B' }
+                  '&:hover': {
+                    bgcolor: 'rgba(255, 107, 107, 0.1)',
+                    color: '#FF6B6B',
+                  },
                 }}
               >
                 <DeleteIcon />
@@ -144,17 +162,19 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
             </Tooltip>
           )}
 
-          <Tooltip title={showSearch ? 'بستن جستجو' : 'جستجو در پیام‌ها'}>
-            <IconButton 
+          <Tooltip title={showSearch ? t('chat.closeSearch') : t('chat.searchMessages')}>
+            <IconButton
               onClick={() => setShowSearch(!showSearch)}
               sx={{
                 color: showSearch ? '#00F0FF' : '#94A3B8',
                 bgcolor: showSearch ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
-                border: showSearch ? '1px solid rgba(0, 240, 255, 0.2)' : '1px solid transparent',
-                '&:hover': { 
-                  bgcolor: 'rgba(0, 240, 255, 0.15)', 
+                border: showSearch
+                  ? '1px solid rgba(0, 240, 255, 0.2)'
+                  : '1px solid transparent',
+                '&:hover': {
+                  bgcolor: 'rgba(0, 240, 255, 0.15)',
                   color: '#00F0FF',
-                  borderColor: 'rgba(0, 240, 255, 0.3)'
+                  borderColor: 'rgba(0, 240, 255, 0.3)',
                 },
                 transition: 'all 0.3s ease',
               }}
@@ -166,17 +186,20 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
       </AppBar>
 
       {showSearch && (
-        <Box sx={{ 
-          p: 2, 
-          bgcolor: 'rgba(15, 23, 42, 0.6)',
-          backdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
-          animation: 'slideUpFade 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
-        }}>
+        <Box
+          sx={{
+            p: 2,
+            bgcolor: 'rgba(15, 23, 42, 0.6)',
+            backdropFilter: 'blur(20px)',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            animation:
+              'slideUpFade 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+          }}
+        >
           <TextField
             fullWidth
             size="small"
-            placeholder="جستجو در پیام‌ها..."
+            placeholder={t('chat.searchInMessages')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             InputProps={{
@@ -187,7 +210,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
               ),
               endAdornment: searchQuery && (
                 <InputAdornment position="end">
-                  <IconButton size="small" onClick={() => setSearchQuery('')} sx={{ color: '#94A3B8' }}>
+                  <IconButton
+                    size="small"
+                    onClick={() => setSearchQuery('')}
+                    sx={{ color: '#94A3B8' }}
+                  >
                     <CloseIcon fontSize="small" />
                   </IconButton>
                 </InputAdornment>
@@ -199,7 +226,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
                 bgcolor: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 '& fieldset': { border: 'none' },
-                '&:hover': { 
+                '&:hover': {
                   bgcolor: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(0, 240, 255, 0.3)',
                 },
@@ -211,8 +238,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
                 '& .MuiInputBase-input': {
                   color: '#F8FAFC',
                   '&::placeholder': { color: '#64748B', opacity: 1 },
-                }
-              }
+                },
+              },
             }}
           />
         </Box>

@@ -17,6 +17,7 @@ export interface UseAuthReturn {
   signIn: (provider?: AuthProvider) => Promise<void>;
   signOut: () => Promise<void>;
   clearError: () => void;
+  updateDisplayName: (displayName: string) => Promise<void>;
 }
 
 export const useAuth = (): UseAuthReturn => {
@@ -57,6 +58,26 @@ export const useAuth = (): UseAuthReturn => {
     setError(null);
   }, [setError]);
 
+  const updateDisplayName = useCallback(
+    async (displayName: string): Promise<void> => {
+      try {
+        setLoading(true);
+        await authService.updateProfile({ displayName });
+
+        // به‌روزرسانی user در store
+        if (user) {
+          setUser({ ...user, displayName });
+        }
+      } catch (error) {
+        setError(error as AuthError);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setLoading, setError, setUser, user]
+  );
+
   return {
     user,
     isLoading,
@@ -65,5 +86,6 @@ export const useAuth = (): UseAuthReturn => {
     signIn,
     signOut,
     clearError,
+    updateDisplayName,
   };
 };

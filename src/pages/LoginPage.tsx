@@ -1,8 +1,11 @@
-import { Box, Typography, Container, Button } from '@mui/material';
+import { Trans, useTranslation } from 'react-i18next';
+import { Box, Typography, Container } from '@mui/material';
 import { Chat as ChatIcon } from '@mui/icons-material';
 import { SignInButton } from '@/features/auth';
 
 export default function LoginPage() {
+  const { t } = useTranslation();
+
   return (
     <>
       {/* Aurora Background */}
@@ -30,15 +33,17 @@ export default function LoginPage() {
               borderRadius: 4,
               border: '1px solid rgba(255, 255, 255, 0.1)',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-              animation: 'slideUpFade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+              animation:
+                'slideUpFade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
             }}
           >
-            <Box 
-              sx={{ 
+            <Box
+              sx={{
                 display: 'inline-flex',
                 p: 2.5,
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, rgba(112, 0, 255, 0.2) 0%, rgba(0, 240, 255, 0.2) 100%)',
+                background:
+                  'linear-gradient(135deg, rgba(112, 0, 255, 0.2) 0%, rgba(0, 240, 255, 0.2) 100%)',
                 border: '1px solid rgba(0, 240, 255, 0.3)',
                 mb: 3,
                 boxShadow: '0 0 30px rgba(0, 240, 255, 0.15)',
@@ -47,20 +52,52 @@ export default function LoginPage() {
               <ChatIcon sx={{ fontSize: 56, color: '#00F0FF' }} />
             </Box>
 
-            <Typography variant="h3" component="h1" gutterBottom fontWeight="800" sx={{ color: '#F8FAFC', letterSpacing: '-0.02em' }}>
-              به <span className="text-gradient">NexChat</span> خوش آمدید
+            <Typography
+              variant="h3"
+              component="h1"
+              gutterBottom
+              fontWeight="800"
+              sx={{ color: '#F8FAFC', letterSpacing: '-0.02em' }}
+            >
+              <Trans
+                i18nKey="auth.welcomeTo"
+                components={{
+                  gradient: <span className="text-gradient" />,
+                }}
+              />
             </Typography>
 
-            <Typography variant="body1" sx={{ color: '#94A3B8', mb: 4, lineHeight: 1.7 }}>
-              تجربه‌ای مدرن، سریع و امن از گفتگو را آغاز کنید.
+            <Typography
+              variant="body1"
+              sx={{ color: '#94A3B8', mb: 4, lineHeight: 1.7 }}
+            >
+              {t('auth.loginSubtitle')}
             </Typography>
 
             <Box sx={{ mt: 2 }}>
               <SignInButton fullWidth />
             </Box>
 
-            <Typography variant="caption" sx={{ color: '#64748B', mt: 4, display: 'block', lineHeight: 1.6 }}>
-              با ورود، <span style={{ color: '#00F0FF', cursor: 'pointer' }}>شرایط استفاده</span> و <span style={{ color: '#00F0FF', cursor: 'pointer' }}>حریم خصوصی</span> را می‌پذیرید.
+            <Typography
+              variant="caption"
+              sx={{
+                color: '#64748B',
+                mt: 4,
+                display: 'block',
+                lineHeight: 1.6,
+              }}
+            >
+              <Trans
+                i18nKey="auth.termsAgreement"
+                components={{
+                  terms: (
+                    <span style={{ color: '#00F0FF', cursor: 'pointer' }} />
+                  ),
+                  privacy: (
+                    <span style={{ color: '#00F0FF', cursor: 'pointer' }} />
+                  ),
+                }}
+              />
             </Typography>
           </Box>
         </Container>
