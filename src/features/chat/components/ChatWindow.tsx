@@ -78,18 +78,18 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
         elevation={0}
         className="glass-panel"
         sx={{
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          borderBottom: '0.5px solid rgba(255,255,255,0.1)',
           borderRadius: 0,
         }}
       >
-        <Toolbar sx={{ gap: 2, py: 1 }}>
+        <Toolbar sx={{ gap: 1.5, py: 1 }}>
           <IconButton
             edge="start"
             onClick={onBack}
             sx={{
               display: { md: 'none' },
-              color: '#94A3B8',
-              '&:hover': { bgcolor: 'rgba(0, 240, 255, 0.1)', color: '#00F0FF' },
+              color: '#8E8E93',
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.08)', color: '#FFFFFF' },
             }}
           >
             <BackIcon />
@@ -100,29 +100,27 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
             sx={{
               background: room.avatarUrl
                 ? 'transparent'
-                : 'linear-gradient(135deg, #7000FF 0%, #00F0FF 100%)',
-              color: '#0B0F19',
-              width: 48,
-              height: 48,
-              boxShadow: '0 4px 15px rgba(112, 0, 255, 0.3)',
-              border: '2px solid rgba(255,255,255,0.1)',
+                : 'linear-gradient(135deg, #5E5CE6 0%, #0A84FF 100%)',
+              color: '#FFFFFF',
+              width: 42,
+              height: 42,
             }}
           >
-            <GroupIcon sx={{ fontSize: 28 }} />
+            <GroupIcon sx={{ fontSize: 22 }} />
           </Avatar>
 
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
               variant="subtitle1"
-              fontWeight="700"
+              fontWeight="600"
               noWrap
-              sx={{ color: '#F8FAFC', letterSpacing: '-0.01em' }}
+              sx={{ color: '#FFFFFF', letterSpacing: '-0.01em', fontSize: '0.95rem' }}
             >
               {room.name}
             </Typography>
             <Typography
               variant="caption"
-              sx={{ color: '#00F0FF', fontWeight: 600, fontSize: '0.8rem' }}
+              sx={{ color: '#8E8E93', fontWeight: 500, fontSize: '0.75rem' }}
             >
               {t('rooms.activeMembers', { count: room.memberCount })}
             </Typography>
@@ -133,10 +131,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
               <IconButton
                 onClick={handleLeave}
                 sx={{
-                  color: '#94A3B8',
+                  color: '#8E8E93',
                   '&:hover': {
-                    bgcolor: 'rgba(255, 107, 107, 0.1)',
-                    color: '#FF6B6B',
+                    bgcolor: 'rgba(255, 69, 58, 0.1)',
+                    color: '#FF453A',
                   },
                 }}
               >
@@ -150,10 +148,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
               <IconButton
                 onClick={handleDeleteRoom}
                 sx={{
-                  color: '#94A3B8',
+                  color: '#8E8E93',
                   '&:hover': {
-                    bgcolor: 'rgba(255, 107, 107, 0.1)',
-                    color: '#FF6B6B',
+                    bgcolor: 'rgba(255, 69, 58, 0.1)',
+                    color: '#FF453A',
                   },
                 }}
               >
@@ -166,17 +164,13 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
             <IconButton
               onClick={() => setShowSearch(!showSearch)}
               sx={{
-                color: showSearch ? '#00F0FF' : '#94A3B8',
-                bgcolor: showSearch ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
-                border: showSearch
-                  ? '1px solid rgba(0, 240, 255, 0.2)'
-                  : '1px solid transparent',
+                color: showSearch ? '#0A84FF' : '#8E8E93',
+                bgcolor: showSearch ? 'rgba(10, 132, 255, 0.1)' : 'transparent',
                 '&:hover': {
-                  bgcolor: 'rgba(0, 240, 255, 0.15)',
-                  color: '#00F0FF',
-                  borderColor: 'rgba(0, 240, 255, 0.3)',
+                  bgcolor: showSearch ? 'rgba(10, 132, 255, 0.15)' : 'rgba(255,255,255,0.08)',
+                  color: '#0A84FF',
                 },
-                transition: 'all 0.3s ease',
+                transition: 'background-color 0.15s ease',
               }}
             >
               {showSearch ? <CloseIcon /> : <SearchIcon />}
@@ -189,11 +183,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
         <Box
           sx={{
             p: 2,
-            bgcolor: 'rgba(15, 23, 42, 0.6)',
+            bgcolor: 'rgba(28, 28, 30, 0.6)',
             backdropFilter: 'blur(20px)',
-            borderBottom: '1px solid rgba(255,255,255,0.08)',
-            animation:
-              'slideUpFade 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+            borderBottom: '0.5px solid rgba(255,255,255,0.1)',
+            animation: 'slideUpFade 0.15s cubic-bezier(0.25, 0.1, 0.25, 1) forwards',
           }}
         >
           <TextField
@@ -205,7 +198,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon fontSize="small" sx={{ color: '#00F0FF' }} />
+                  <SearchIcon fontSize="small" sx={{ color: '#0A84FF' }} />
                 </InputAdornment>
               ),
               endAdornment: searchQuery && (
@@ -213,7 +206,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
                   <IconButton
                     size="small"
                     onClick={() => setSearchQuery('')}
-                    sx={{ color: '#94A3B8' }}
+                    sx={{ color: '#8E8E93' }}
                   >
                     <CloseIcon fontSize="small" />
                   </IconButton>
@@ -222,22 +215,19 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ roomId, onBack }) => {
             }}
             sx={{
               '& .MuiOutlinedInput-root': {
-                borderRadius: 3,
-                bgcolor: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 2.5,
+                bgcolor: 'rgba(118, 118, 128, 0.12)',
+                border: 'none',
                 '& fieldset': { border: 'none' },
                 '&:hover': {
-                  bgcolor: 'rgba(255,255,255,0.08)',
-                  border: '1px solid rgba(0, 240, 255, 0.3)',
+                  bgcolor: 'rgba(118, 118, 128, 0.18)',
                 },
                 '&.Mui-focused': {
-                  bgcolor: 'rgba(255,255,255,0.1)',
-                  border: '1px solid #00F0FF',
-                  boxShadow: '0 0 0 4px rgba(0, 240, 255, 0.1)',
+                  bgcolor: 'rgba(118, 118, 128, 0.24)',
                 },
                 '& .MuiInputBase-input': {
-                  color: '#F8FAFC',
-                  '&::placeholder': { color: '#64748B', opacity: 1 },
+                  color: '#FFFFFF',
+                  '&::placeholder': { color: '#636366', opacity: 1 },
                 },
               },
             }}

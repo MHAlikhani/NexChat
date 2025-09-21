@@ -1,7 +1,7 @@
 /**
  * i18n Configuration
  *
- * پشتیبانی از چند زبان: فارسی، انگلیسی، آلمانی
+ * Multi-language support: English, Persian, German
  *
  * @module lib/i18n
  */
@@ -31,11 +31,11 @@ i18n
       en: { translation: enTranslation },
       de: { translation: deTranslation },
     },
-    fallbackLng: 'fa',
-    lng: 'fa',
+    fallbackLng: 'en',
+    lng: 'en',
     debug: import.meta.env.DEV,
     interpolation: {
-      escapeValue: false, // React به صورت پیش‌فرض از XSS جلوگیری می‌کند
+      escapeValue: false, // React handles XSS by default
     },
     detection: {
       order: ['localStorage', 'navigator'],
@@ -44,18 +44,18 @@ i18n
   });
 
 /**
- * تغییر جهت صفحه بر اساس زبان
+ * Update document direction based on language
  */
 export const updateDocumentDirection = (lang: string) => {
-  const dir = supportedLanguages[lang as SupportedLanguage]?.dir ?? 'rtl';
+  const dir = supportedLanguages[lang as SupportedLanguage]?.dir ?? 'ltr';
   document.documentElement.dir = dir;
   document.documentElement.lang = lang;
 };
 
-// تنظیم جهت اولیه
+// Set initial direction
 updateDocumentDirection(i18n.language);
 
-// گوش دادن به تغییر زبان
+// Listen for language changes
 i18n.on('languageChanged', (lng) => {
   updateDocumentDirection(lng);
 });

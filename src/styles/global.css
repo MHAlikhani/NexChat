@@ -1,26 +1,27 @@
-/* NexChat 2026 - Aurora Spatial Design System */
+/* NexChat - Apple-Inspired Design System */
 
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&family=Inter:wght@300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Vazirmatn:wght@100..900&display=swap');
 
 :root {
-  /* 2026 Color Palette - Psychology Driven */
-  --color-bg-deep: #0B0F19;
-  --color-bg-surface: rgba(255, 255, 255, 0.03);
-  --color-border-subtle: rgba(255, 255, 255, 0.08);
-  --color-border-glow: rgba(0, 240, 255, 0.3);
-  
-  --color-primary-cyan: #00F0FF;
-  --color-primary-violet: #7000FF;
-  --color-accent-coral: #FF6B6B;
-  --color-accent-amber: #FFA500;
-  
-  --color-text-primary: #F8FAFC;
-  --color-text-secondary: #94A3B8;
-  
-  /* Animation Curves */
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  /* Apple-inspired Dark Mode Palette */
+  --color-bg-deep: #000000;
+  --color-bg-surface: rgba(28, 28, 30, 0.8);
+  --color-bg-elevated: rgba(44, 44, 46, 0.8);
+  --color-border-subtle: rgba(84, 84, 88, 0.65);
+  --color-border-light: rgba(255, 255, 255, 0.1);
+
+  --color-primary: #0A84FF;
+  --color-secondary: #5E5CE6;
+  --color-accent-red: #FF453A;
+  --color-accent-orange: #FF9F0A;
+  --color-accent-green: #30D158;
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #8E8E93;
+  --color-text-tertiary: #636366;
+
+  /* Subtle, performant transitions */
+  --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 * {
@@ -31,12 +32,16 @@
 
 html, body {
   height: 100%;
-  font-family: 'Vazirmatn', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
   background-color: var(--color-bg-deep);
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+}
+
+[dir="rtl"] html, [dir="rtl"] body {
+  font-family: 'Vazirmatn', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 #root {
@@ -45,9 +50,8 @@ html, body {
 }
 
 /* ==========================================
-   AURORA MESH GRADIENT BACKGROUND
-   Replaces outdated WhatsApp patterns with
-   a living, breathing, organic environment
+   SUBTLE AMBIENT BACKGROUND
+   Static gradient instead of animated aurora
    ========================================== */
 .aurora-background {
   position: fixed;
@@ -60,86 +64,52 @@ html, body {
   overflow: hidden;
 }
 
-.aurora-background::before,
+.aurora-background::before {
+  content: '';
+  position: absolute;
+  width: 80vw;
+  height: 80vw;
+  background: radial-gradient(circle, rgba(10, 132, 255, 0.08) 0%, transparent 70%);
+  top: -30%;
+  right: -20%;
+  pointer-events: none;
+}
+
 .aurora-background::after {
   content: '';
   position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.4;
-  animation: aurora-flow 20s infinite alternate ease-in-out;
-}
-
-.aurora-background::before {
   width: 60vw;
   height: 60vw;
-  background: radial-gradient(circle, var(--color-primary-violet) 0%, transparent 70%);
-  top: -20%;
-  right: -10%;
-  animation-delay: 0s;
-}
-
-.aurora-background::after {
-  width: 50vw;
-  height: 50vw;
-  background: radial-gradient(circle, var(--color-primary-cyan) 0%, transparent 70%);
-  bottom: -10%;
-  left: -10%;
-  animation-delay: -10s;
+  background: radial-gradient(circle, rgba(94, 92, 230, 0.06) 0%, transparent 70%);
+  bottom: -20%;
+  left: -15%;
+  pointer-events: none;
 }
 
 .aurora-orb {
-  position: absolute;
-  width: 40vw;
-  height: 40vw;
-  background: radial-gradient(circle, rgba(255, 107, 107, 0.15) 0%, transparent 70%);
-  border-radius: 50%;
-  filter: blur(60px);
-  top: 40%;
-  left: 30%;
-  animation: aurora-float 25s infinite alternate ease-in-out;
-}
-
-@keyframes aurora-flow {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(5%, 5%) scale(1.1); }
-  100% { transform: translate(-5%, -2%) scale(0.95); }
-}
-
-@keyframes aurora-float {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  100% { transform: translate(10%, -10%) rotate(15deg); }
+  display: none;
 }
 
 /* ==========================================
-   GLASSMORPHISM UTILITIES
+   GLASSMORPHISM (Apple-style frosted glass)
    ========================================== */
 .glass-panel {
   background: var(--color-bg-surface);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--color-border-subtle);
-  box-shadow: 
-    0 8px 32px 0 rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 0.5px solid var(--color-border-light);
 }
 
 .glass-panel-hover {
-  transition: all 0.3s var(--ease-smooth);
+  transition: background-color 0.15s var(--ease-apple);
 }
 
 .glass-panel-hover:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--color-border-glow);
-  transform: translateY(-2px);
-  box-shadow: 
-    0 12px 40px 0 rgba(0, 0, 0, 0.3),
-    0 0 20px rgba(0, 240, 255, 0.1),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  background: rgba(44, 44, 46, 0.8);
 }
 
 /* ==========================================
-   MODERN SCROLLBAR
+   SCROLLBAR (Minimal)
    ========================================== */
 ::-webkit-scrollbar {
   width: 6px;
@@ -151,76 +121,75 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  transition: background 0.3s ease;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 240, 255, 0.4);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* ==========================================
-   MESSAGE BUBBLE SHAPES (Organic, not rigid)
+   MESSAGE BUBBLES (Clean, Apple Messages style)
    ========================================== */
 .bubble-sent {
   border-radius: 18px 18px 4px 18px;
-  background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(112, 0, 255, 0.15) 100%);
-  border: 1px solid rgba(0, 240, 255, 0.2);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s ease;
+  background: var(--color-primary);
+  border: none;
+  box-shadow: none;
+  transition: opacity 0.15s ease;
 }
 
 .bubble-sent:hover {
-  transform: translateY(-1px) scale(1.005);
-  box-shadow: 0 8px 25px rgba(0, 240, 255, 0.15);
-  border-color: rgba(0, 240, 255, 0.4);
+  opacity: 0.9;
+  transform: none;
+  box-shadow: none;
+  border-color: transparent;
 }
 
 .bubble-received {
   border-radius: 18px 18px 18px 4px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  transition: transform 0.2s var(--ease-spring), background 0.2s ease;
+  background: rgba(118, 118, 128, 0.24);
+  border: none;
+  backdrop-filter: none;
+  transition: background-color 0.15s ease;
 }
 
 .bubble-received:hover {
-  transform: translateY(-1px) scale(1.005);
-  background: rgba(255, 255, 255, 0.08);
+  transform: none;
+  background: rgba(118, 118, 128, 0.32);
 }
 
 /* ==========================================
-   ANIMATIONS
+   ANIMATIONS (Fast & subtle)
    ========================================== */
 @keyframes slideUpFade {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.2); }
-  50% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.5); }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 @keyframes typing-bounce {
   0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-6px); }
+  30% { transform: translateY(-4px); }
 }
 
 .animate-slide-up {
-  animation: slideUpFade 0.4s var(--ease-spring) forwards;
+  animation: slideUpFade 0.2s var(--ease-apple) forwards;
 }
 
 .animate-pulse-glow {
-  animation: pulse-glow 2s infinite;
+  animation: pulse-glow 2s infinite ease-in-out;
 }
 
 /* ==========================================
@@ -239,12 +208,12 @@ html, body {
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, var(--color-primary-cyan) 0%, var(--color-primary-violet) 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .glow-text {
-  text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+  text-shadow: none;
 }

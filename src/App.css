@@ -1,4 +1,4 @@
-/* NexChat 2026 - App Layout */
+/* NexChat - App Layout (Apple-inspired) */
 
 .app {
   width: 100vw;
@@ -17,8 +17,6 @@
   display: flex;
   position: relative;
   overflow: hidden;
-  /* Glassmorphism base applied via global classes, 
-     but ensuring no default shadows break the immersion */
   background: transparent;
 }
 
@@ -33,8 +31,7 @@
 }
 
 .loader__container .MuiCircularProgress-root {
-  color: #00F0FF;
-  filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.5));
+  color: #0A84FF;
 }
 
 /* Responsive adjustments */

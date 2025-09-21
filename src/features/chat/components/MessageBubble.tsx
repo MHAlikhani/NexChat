@@ -37,11 +37,11 @@ const MessageStatus: React.FC<{ message: Message }> = ({ message }) => {
   }
 
   if (message.isFailed) {
-    return <ErrorIcon sx={{ fontSize: 14, color: '#FF6B6B' }} />;
+    return <ErrorIcon sx={{ fontSize: 14, color: '#FF453A' }} />;
   }
 
   if (message.seenBy.length > 1) {
-    return <DoneAllIcon sx={{ fontSize: 14, color: '#00F0FF' }} />;
+    return <DoneAllIcon sx={{ fontSize: 14, color: '#0A84FF' }} />;
   }
 
   return <DoneAllIcon sx={{ fontSize: 14, color: 'rgba(255,255,255,0.5)' }} />;
@@ -57,12 +57,11 @@ const highlightText = (text: string, query: string) => {
         component="span"
         key={i}
         sx={{
-          bgcolor: 'rgba(255, 165, 0, 0.3)',
-          color: '#FFA500',
+          bgcolor: 'rgba(255, 159, 10, 0.3)',
+          color: '#FF9F0A',
           borderRadius: 1,
           px: 0.5,
           fontWeight: 600,
-          border: '1px solid rgba(255, 165, 0, 0.5)',
         }}
       >
         {part}
@@ -86,7 +85,7 @@ export const MessageBubble = memo<MessageBubbleProps>(
     const menuAnchorRef = useRef<HTMLButtonElement>(null);
 
     const time = format(new Date(message.createdAt), 'HH:mm', {
-      locale: localeMap[i18n.language] || faIR,
+      locale: localeMap[i18n.language] || enUS,
     });
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -117,9 +116,9 @@ export const MessageBubble = memo<MessageBubbleProps>(
         <Box
           sx={{
             display: 'flex',
-            justifyContent: isOwn ? 'flex-start' : 'flex-end',
-            mb: 1.5,
-            px: 1,
+            justifyContent: isOwn ? 'flex-end' : 'flex-start',
+            mb: 1,
+            px: 2,
             position: 'relative',
             '&:hover .message-actions': {
               opacity: 1,
@@ -131,13 +130,13 @@ export const MessageBubble = memo<MessageBubbleProps>(
               src={message.senderPhoto || undefined}
               alt={message.senderName}
               sx={{
-                width: 36,
-                height: 36,
-                ml: 1.5,
+                width: 32,
+                height: 32,
+                mr: 1.5,
                 alignSelf: 'flex-end',
-                border: '2px solid rgba(112, 0, 255, 0.5)',
-                boxShadow: '0 0 15px rgba(112, 0, 255, 0.2)',
-                bgcolor: 'rgba(112, 0, 255, 0.2)',
+                bgcolor: 'rgba(94, 92, 230, 0.3)',
+                fontSize: '0.8rem',
+                fontWeight: 600,
               }}
             >
               {message.senderName.charAt(0)}
@@ -147,43 +146,40 @@ export const MessageBubble = memo<MessageBubbleProps>(
           <Box
             className={isOwn ? 'bubble-sent' : 'bubble-received'}
             sx={{
-              maxWidth: { xs: '85%', sm: '65%', md: '45%' },
-              p: 2,
+              maxWidth: { xs: '80%', sm: '60%', md: '45%' },
+              px: 2,
+              py: 1.5,
               opacity: message.isPending ? 0.7 : 1,
               position: 'relative',
-              animation:
-                'slideUpFade 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+              animation: 'slideUpFade 0.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards',
             }}
           >
             {/* Reply Quote */}
             {message.replyTo && (
               <Box
                 sx={{
-                  mb: 2,
+                  mb: 1.5,
                   p: 1.5,
                   bgcolor: isOwn
-                    ? 'rgba(255,255,255,0.1)'
-                    : 'rgba(0, 240, 255, 0.05)',
+                    ? 'rgba(255,255,255,0.15)'
+                    : 'rgba(255,255,255,0.08)',
                   borderRadius: 2,
-                  borderRight: isOwn
-                    ? '3px solid rgba(0, 240, 255, 0.6)'
-                    : '3px solid #7000FF',
-                  backdropFilter: 'blur(5px)',
+                  borderLeft: isOwn ? 'none' : '3px solid #5E5CE6',
+                  borderRight: isOwn ? '3px solid rgba(255,255,255,0.4)' : 'none',
                 }}
               >
                 <Typography
                   variant="caption"
                   sx={{
-                    fontWeight: 700,
-                    color: isOwn ? '#00F0FF' : '#9D4DFF',
+                    fontWeight: 600,
+                    color: isOwn ? 'rgba(255,255,255,0.9)' : '#0A84FF',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 0.5,
                     fontSize: '0.75rem',
-                    letterSpacing: '0.02em',
                   }}
                 >
-                  <ReplyIcon sx={{ fontSize: 14 }} />
+                  <ReplyIcon sx={{ fontSize: 12 }} />
                   {message.replyToSenderName || t('chat.user')}
                 </Typography>
                 <Typography
@@ -193,9 +189,9 @@ export const MessageBubble = memo<MessageBubbleProps>(
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
-                    color: isOwn ? 'rgba(255,255,255,0.8)' : '#94A3B8',
+                    color: isOwn ? 'rgba(255,255,255,0.7)' : '#8E8E93',
                     mt: 0.5,
-                    lineHeight: 1.5,
+                    lineHeight: 1.4,
                     fontSize: '0.8rem',
                   }}
                 >
@@ -208,12 +204,11 @@ export const MessageBubble = memo<MessageBubbleProps>(
               <Typography
                 variant="caption"
                 sx={{
-                  color: '#9D4DFF',
-                  fontWeight: 700,
+                  color: '#5E5CE6',
+                  fontWeight: 600,
                   display: 'block',
-                  mb: 1,
-                  fontSize: '0.8rem',
-                  letterSpacing: '0.02em',
+                  mb: 0.5,
+                  fontSize: '0.75rem',
                 }}
               >
                 {message.senderName}
@@ -227,9 +222,9 @@ export const MessageBubble = memo<MessageBubbleProps>(
                   whiteSpace: 'pre-wrap',
                   wordBreak: 'break-word',
                   direction: i18n.dir(),
-                  color: isOwn ? '#F8FAFC' : '#E2E8F0',
+                  color: isOwn ? '#FFFFFF' : '#FFFFFF',
                   fontSize: '0.95rem',
-                  lineHeight: 1.7,
+                  lineHeight: 1.5,
                   fontWeight: 400,
                 }}
               >
@@ -238,32 +233,24 @@ export const MessageBubble = memo<MessageBubbleProps>(
             )}
 
             {message.type === 'image' && (
-              <Box sx={{ mt: 1 }}>
+              <Box sx={{ mt: 0.5 }}>
                 <img
                   src={message.content}
                   alt={t('chat.sentImage')}
                   loading="lazy"
                   style={{
                     maxWidth: '100%',
-                    borderRadius: 12,
+                    borderRadius: 10,
                     display: 'block',
                     cursor: 'pointer',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    transition: 'transform 0.3s ease',
                   }}
                   onClick={() => window.open(message.content, '_blank')}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.transform = 'scale(1.02)')
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.transform = 'scale(1)')
-                  }
                 />
               </Box>
             )}
 
             {message.type === 'audio' && (
-              <Box sx={{ mt: 1 }}>
+              <Box sx={{ mt: 0.5 }}>
                 <AudioPlayer
                   src={message.content}
                   duration={message.duration || 0}
@@ -273,7 +260,7 @@ export const MessageBubble = memo<MessageBubbleProps>(
 
             {/* Link Preview for single URL messages */}
             {isSingleUrl && (
-              <Box sx={{ mt: 1.5 }}>
+              <Box sx={{ mt: 1 }}>
                 <LinkPreview url={message.content} />
               </Box>
             )}
@@ -283,17 +270,16 @@ export const MessageBubble = memo<MessageBubbleProps>(
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'flex-end',
-                gap: 0.75,
-                mt: 1.5,
+                gap: 0.5,
+                mt: 0.75,
               }}
             >
               <Typography
                 variant="caption"
                 sx={{
                   fontSize: '0.7rem',
-                  color: isOwn ? 'rgba(255,255,255,0.6)' : '#64748B',
+                  color: isOwn ? 'rgba(255,255,255,0.6)' : '#636366',
                   fontWeight: 500,
-                  letterSpacing: '0.02em',
                 }}
               >
                 {time}
@@ -310,24 +296,23 @@ export const MessageBubble = memo<MessageBubbleProps>(
                 onClick={handleMenuOpen}
                 sx={{
                   position: 'absolute',
-                  top: -10,
-                  left: -10,
+                  top: -8,
+                  left: -8,
                   opacity: 0,
-                  transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                  bgcolor: 'rgba(15, 23, 42, 0.8)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                  color: '#94A3B8',
+                  transition: 'opacity 0.15s ease',
+                  bgcolor: 'rgba(28, 28, 30, 0.9)',
+                  backdropFilter: 'blur(20px)',
+                  border: '0.5px solid rgba(255,255,255,0.1)',
+                  color: '#8E8E93',
+                  width: 28,
+                  height: 28,
                   '&:hover': {
-                    bgcolor: 'rgba(0, 240, 255, 0.1)',
-                    color: '#00F0FF',
-                    borderColor: 'rgba(0, 240, 255, 0.3)',
-                    transform: 'scale(1.1)',
+                    bgcolor: 'rgba(44, 44, 46, 0.95)',
+                    color: '#FFFFFF',
                   },
                 }}
               >
-                <MoreVertIcon fontSize="small" />
+                <MoreVertIcon sx={{ fontSize: 16 }} />
               </IconButton>
             )}
           </Box>
@@ -342,13 +327,13 @@ export const MessageBubble = memo<MessageBubbleProps>(
           slotProps={{
             paper: {
               sx: {
-                borderRadius: 3,
-                bgcolor: 'rgba(15, 23, 42, 0.95)',
-                backdropFilter: 'blur(20px)',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                minWidth: 150,
-                mt: 1,
+                borderRadius: 2.5,
+                bgcolor: 'rgba(28, 28, 30, 0.95)',
+                backdropFilter: 'blur(30px)',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+                border: '0.5px solid rgba(255,255,255,0.1)',
+                minWidth: 140,
+                mt: 0.5,
               },
             },
           }}
@@ -356,26 +341,26 @@ export const MessageBubble = memo<MessageBubbleProps>(
           <MenuItem
             onClick={handleReply}
             sx={{
-              py: 1.5,
-              color: '#00F0FF',
-              '&:hover': { bgcolor: 'rgba(0, 240, 255, 0.08)' },
+              py: 1.25,
+              color: '#0A84FF',
+              '&:hover': { bgcolor: 'rgba(10, 132, 255, 0.1)' },
             }}
           >
-            <ReplyIcon fontSize="small" sx={{ ml: 1.5 }} />
-            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+            <ReplyIcon fontSize="small" sx={{ mr: 1.5 }} />
+            <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
               {t('chat.reply')}
             </Typography>
           </MenuItem>
           <MenuItem
             onClick={handleDelete}
             sx={{
-              py: 1.5,
-              color: '#FF6B6B',
-              '&:hover': { bgcolor: 'rgba(255, 107, 107, 0.08)' },
+              py: 1.25,
+              color: '#FF453A',
+              '&:hover': { bgcolor: 'rgba(255, 69, 58, 0.1)' },
             }}
           >
-            <DeleteIcon fontSize="small" sx={{ ml: 1.5 }} />
-            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+            <DeleteIcon fontSize="small" sx={{ mr: 1.5 }} />
+            <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
               {t('common.delete')}
             </Typography>
           </MenuItem>

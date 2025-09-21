@@ -8,10 +8,8 @@ export default function LoginPage() {
 
   return (
     <>
-      {/* Aurora Background */}
-      <div className="aurora-background">
-        <div className="aurora-orb"></div>
-      </div>
+      {/* Ambient Background */}
+      <div className="aurora-background" />
 
       <Box
         sx={{
@@ -28,36 +26,39 @@ export default function LoginPage() {
           <Box
             className="glass-panel"
             sx={{
-              padding: 5,
+              padding: { xs: 4, sm: 5 },
               textAlign: 'center',
-              borderRadius: 4,
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-              animation:
-                'slideUpFade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+              borderRadius: 3,
+              animation: 'slideUpFade 0.25s cubic-bezier(0.25, 0.1, 0.25, 1) forwards',
             }}
           >
+            {/* Icon */}
             <Box
               sx={{
-                display: 'inline-flex',
-                p: 2.5,
-                borderRadius: '50%',
-                background:
-                  'linear-gradient(135deg, rgba(112, 0, 255, 0.2) 0%, rgba(0, 240, 255, 0.2) 100%)',
-                border: '1px solid rgba(0, 240, 255, 0.3)',
+                width: 72,
+                height: 72,
+                mx: 'auto',
                 mb: 3,
-                boxShadow: '0 0 30px rgba(0, 240, 255, 0.15)',
+                borderRadius: '20px',
+                background: 'linear-gradient(135deg, #0A84FF 0%, #5E5CE6 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <ChatIcon sx={{ fontSize: 56, color: '#00F0FF' }} />
+              <ChatIcon sx={{ fontSize: 36, color: '#FFFFFF' }} />
             </Box>
 
+            {/* Title */}
             <Typography
-              variant="h3"
+              variant="h4"
               component="h1"
-              gutterBottom
-              fontWeight="800"
-              sx={{ color: '#F8FAFC', letterSpacing: '-0.02em' }}
+              fontWeight="700"
+              sx={{
+                color: '#FFFFFF',
+                letterSpacing: '-0.02em',
+                mb: 1,
+              }}
             >
               <Trans
                 i18nKey="auth.welcomeTo"
@@ -67,21 +68,28 @@ export default function LoginPage() {
               />
             </Typography>
 
+            {/* Subtitle */}
             <Typography
               variant="body1"
-              sx={{ color: '#94A3B8', mb: 4, lineHeight: 1.7 }}
+              sx={{
+                color: '#8E8E93',
+                mb: 4,
+                lineHeight: 1.5,
+              }}
             >
               {t('auth.loginSubtitle')}
             </Typography>
 
-            <Box sx={{ mt: 2 }}>
+            {/* Sign In Button */}
+            <Box sx={{ mt: 1 }}>
               <SignInButton fullWidth />
             </Box>
 
+            {/* Terms */}
             <Typography
               variant="caption"
               sx={{
-                color: '#64748B',
+                color: '#636366',
                 mt: 4,
                 display: 'block',
                 lineHeight: 1.6,
@@ -91,10 +99,10 @@ export default function LoginPage() {
                 i18nKey="auth.termsAgreement"
                 components={{
                   terms: (
-                    <span style={{ color: '#00F0FF', cursor: 'pointer' }} />
+                    <span style={{ color: '#0A84FF', cursor: 'pointer' }} />
                   ),
                   privacy: (
-                    <span style={{ color: '#00F0FF', cursor: 'pointer' }} />
+                    <span style={{ color: '#0A84FF', cursor: 'pointer' }} />
                   ),
                 }}
               />

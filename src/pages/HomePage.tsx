@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Box, Typography, Button, Container, Paper } from '@mui/material';
+import { Box, Typography, Button, Container } from '@mui/material';
 import { Chat as ChatIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,69 +8,121 @@ export default function HomePage() {
   const navigate = useNavigate();
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 3,
-      }}
-    >
-      <Container maxWidth="sm">
-        <Paper
-          elevation={8}
-          sx={{
-            padding: 5,
-            textAlign: 'center',
-            borderRadius: 4,
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          }}
-        >
-          <ChatIcon sx={{ fontSize: 80, color: '#25D366', mb: 2 }} />
+    <>
+      <div className="aurora-background" />
 
-          <Typography
-            variant="h3"
-            component="h1"
-            gutterBottom
-            fontWeight="bold"
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 3,
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        <Container maxWidth="xs">
+          <Box
+            className="glass-panel"
+            sx={{
+              padding: { xs: 4, sm: 5 },
+              textAlign: 'center',
+              borderRadius: 3,
+              animation: 'slideUpFade 0.25s cubic-bezier(0.25, 0.1, 0.25, 1) forwards',
+            }}
           >
-            NexChat
-          </Typography>
+            {/* Icon */}
+            <Box
+              sx={{
+                width: 72,
+                height: 72,
+                mx: 'auto',
+                mb: 3,
+                borderRadius: '20px',
+                background: 'linear-gradient(135deg, #0A84FF 0%, #5E5CE6 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <ChatIcon sx={{ fontSize: 36, color: '#FFFFFF' }} />
+            </Box>
 
-          <Typography variant="h6" color="text.secondary" paragraph>
-            {t('home.subtitle')}
-          </Typography>
+            {/* Title */}
+            <Typography
+              variant="h4"
+              component="h1"
+              fontWeight="700"
+              sx={{
+                color: '#FFFFFF',
+                letterSpacing: '-0.02em',
+                mb: 1,
+              }}
+            >
+              NexChat
+            </Typography>
 
-          <Typography variant="body1" color="text.secondary" paragraph>
-            {t('home.version')}
-          </Typography>
+            {/* Subtitle */}
+            <Typography
+              variant="body1"
+              sx={{
+                color: '#8E8E93',
+                mb: 1,
+                lineHeight: 1.5,
+              }}
+            >
+              {t('home.subtitle')}
+            </Typography>
 
-          <Box sx={{ mt: 4 }}>
+            {/* Version */}
+            <Typography
+              variant="caption"
+              sx={{
+                color: '#636366',
+                display: 'block',
+                mb: 4,
+              }}
+            >
+              {t('home.version')}
+            </Typography>
+
+            {/* CTA Button */}
             <Button
               variant="contained"
               size="large"
-              sx={{
-                px: 4,
-                py: 1.5,
-                fontSize: '1.1rem',
-                borderRadius: 3,
-                textTransform: 'none',
-              }}
+              fullWidth
               onClick={() => navigate('/login')}
+              sx={{
+                py: 1.5,
+                fontSize: '1rem',
+                fontWeight: 600,
+                borderRadius: 2.5,
+                textTransform: 'none',
+                background: '#0A84FF',
+                '&:hover': {
+                  background: '#0A84FF',
+                  opacity: 0.85,
+                },
+              }}
             >
               {t('home.getStarted')}
             </Button>
-          </Box>
 
-          <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid #e0e0e0' }}>
-            <Typography variant="caption" color="text.secondary">
+            {/* Footer */}
+            <Typography
+              variant="caption"
+              sx={{
+                color: '#636366',
+                mt: 4,
+                display: 'block',
+              }}
+            >
               {t('home.builtWith')}
             </Typography>
           </Box>
-        </Paper>
-      </Container>
-    </Box>
+        </Container>
+      </Box>
+    </>
   );
 }

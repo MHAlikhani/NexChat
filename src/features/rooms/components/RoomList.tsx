@@ -60,8 +60,8 @@ export const RoomList: React.FC = () => {
           <Skeleton
             key={i}
             variant="rectangular"
-            height={72}
-            sx={{ mb: 1, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.03)' }}
+            height={64}
+            sx={{ mb: 1, borderRadius: 2.5, bgcolor: 'rgba(255,255,255,0.03)' }}
           />
         ))}
       </Box>
@@ -71,14 +71,14 @@ export const RoomList: React.FC = () => {
   if (error) {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography color="#FF6B6B" gutterBottom fontWeight="600">
+        <Typography color="#FF453A" gutterBottom fontWeight="600">
           {t('rooms.loadError')}
         </Typography>
-        <Typography variant="body2" color="#94A3B8" paragraph>
+        <Typography variant="body2" color="#8E8E93" paragraph>
           {error.message}
         </Typography>
         <Tooltip title={t('common.retry')}>
-          <IconButton onClick={refresh} sx={{ color: '#00F0FF' }}>
+          <IconButton onClick={refresh} sx={{ color: '#0A84FF' }}>
             <RefreshIcon />
           </IconButton>
         </Tooltip>
@@ -94,13 +94,13 @@ export const RoomList: React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         borderRadius: 0,
-        borderRight: '1px solid rgba(255,255,255,0.08)',
+        borderRight: '0.5px solid rgba(255,255,255,0.1)',
       }}
     >
       <Box
         sx={{
-          p: 2.5,
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          p: 2,
+          borderBottom: '0.5px solid rgba(255,255,255,0.1)',
         }}
       >
         <Box
@@ -108,33 +108,34 @@ export const RoomList: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            mb: 2.5,
+            mb: 2,
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <Box
               sx={{
-                p: 1,
+                width: 36,
+                height: 36,
                 borderRadius: 2,
-                bgcolor: 'rgba(0, 240, 255, 0.1)',
-                color: '#00F0FF',
+                bgcolor: 'rgba(10, 132, 255, 0.12)',
+                color: '#0A84FF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <ChatIcon sx={{ fontSize: 24 }} />
+              <ChatIcon sx={{ fontSize: 20 }} />
             </Box>
             <Box>
               <Typography
-                variant="h6"
-                fontWeight="800"
-                sx={{ color: '#F8FAFC', letterSpacing: '-0.02em' }}
+                variant="subtitle1"
+                fontWeight="700"
+                sx={{ color: '#FFFFFF', letterSpacing: '-0.01em', fontSize: '0.95rem' }}
               >
                 {t('rooms.title')}
               </Typography>
               {uniqueRooms.length > 0 && (
-                <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#636366', fontWeight: 500, fontSize: '0.7rem' }}>
                   {t('rooms.activeRooms', { count: uniqueRooms.length })}
                 </Typography>
               )}
@@ -146,14 +147,12 @@ export const RoomList: React.FC = () => {
               <IconButton
                 onClick={openModal}
                 sx={{
-                  bgcolor: 'rgba(112, 0, 255, 0.15)',
-                  color: '#9D4DFF',
-                  border: '1px solid rgba(112, 0, 255, 0.2)',
+                  bgcolor: 'rgba(94, 92, 230, 0.12)',
+                  color: '#5E5CE6',
                   '&:hover': {
-                    bgcolor: 'rgba(112, 0, 255, 0.25)',
-                    transform: 'translateY(-2px)',
+                    bgcolor: 'rgba(94, 92, 230, 0.2)',
                   },
-                  transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  transition: 'background-color 0.15s ease',
                 }}
               >
                 <AddIcon />
@@ -164,13 +163,13 @@ export const RoomList: React.FC = () => {
                 onClick={refresh}
                 disabled={isLoading}
                 sx={{
-                  color: '#94A3B8',
+                  color: '#8E8E93',
                   opacity: isLoading ? 0.5 : 1,
                   '&:hover': {
-                    color: '#00F0FF',
-                    bgcolor: 'rgba(0, 240, 255, 0.1)',
+                    color: '#0A84FF',
+                    bgcolor: 'rgba(10, 132, 255, 0.1)',
                   },
-                  transition: 'all 0.3s ease',
+                  transition: 'background-color 0.15s ease',
                 }}
               >
                 <RefreshIcon />
@@ -182,13 +181,13 @@ export const RoomList: React.FC = () => {
         <SearchBar value={searchQuery} onChange={setSearchQuery} />
       </Box>
 
-      <Box sx={{ flex: 1, overflow: 'auto', p: 1.5 }}>
+      <Box sx={{ flex: 1, overflow: 'auto', p: 1 }}>
         {uniqueRooms.length === 0 ? (
           <Box sx={{ p: 3, textAlign: 'center', mt: 4 }}>
             {searchQuery ? (
               <>
                 <Typography
-                  sx={{ color: '#94A3B8', fontWeight: 500 }}
+                  sx={{ color: '#8E8E93', fontWeight: 500 }}
                   gutterBottom
                 >
                   {t('rooms.noRoomsFound', { query: searchQuery })}
@@ -196,7 +195,7 @@ export const RoomList: React.FC = () => {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: '#00F0FF',
+                    color: '#0A84FF',
                     fontWeight: 600,
                     cursor: 'pointer',
                     mt: 1,
@@ -210,12 +209,12 @@ export const RoomList: React.FC = () => {
               <>
                 <Typography
                   variant="h6"
-                  sx={{ color: '#94A3B8', fontWeight: 600 }}
+                  sx={{ color: '#8E8E93', fontWeight: 600, fontSize: '1rem' }}
                   gutterBottom
                 >
                   {t('rooms.noRoomsYet')}
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#64748B' }} paragraph>
+                <Typography variant="body2" sx={{ color: '#636366', fontSize: '0.85rem' }} paragraph>
                   {t('rooms.createFirstRoom')}
                 </Typography>
                 <Tooltip title={t('rooms.createRoom')}>
@@ -224,23 +223,19 @@ export const RoomList: React.FC = () => {
                     size="large"
                     sx={{
                       mt: 2,
-                      background:
-                        'linear-gradient(135deg, #7000FF 0%, #00F0FF 100%)',
-                      color: '#0B0F19',
-                      width: 64,
-                      height: 64,
-                      boxShadow: '0 8px 24px rgba(112, 0, 255, 0.3)',
+                      bgcolor: '#0A84FF',
+                      color: '#FFFFFF',
+                      width: 56,
+                      height: 56,
+                      borderRadius: 3,
                       '&:hover': {
-                        background:
-                          'linear-gradient(135deg, #9D4DFF 0%, #66F9FF 100%)',
-                        transform: 'translateY(-4px) scale(1.05)',
-                        boxShadow: '0 12px 32px rgba(112, 0, 255, 0.4)',
+                        bgcolor: '#0A84FF',
+                        opacity: 0.85,
                       },
-                      transition:
-                        'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                      transition: 'opacity 0.15s ease',
                     }}
                   >
-                    <AddIcon sx={{ fontSize: 32 }} />
+                    <AddIcon sx={{ fontSize: 28 }} />
                   </IconButton>
                 </Tooltip>
               </>
@@ -249,25 +244,21 @@ export const RoomList: React.FC = () => {
         ) : (
           <List disablePadding>
             {uniqueRooms.map((room) => (
-              <ListItem key={room.id} disablePadding sx={{ mb: 0.5 }}>
+              <ListItem key={room.id} disablePadding sx={{ mb: 0.25 }}>
                 <ListItemButton
                   selected={activeRoomId === room.id}
                   onClick={() => setActiveRoom(room.id)}
                   sx={{
-                    borderRadius: 3,
-                    transition:
-                      'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    borderRadius: 2.5,
+                    transition: 'background-color 0.15s ease',
                     '&.Mui-selected': {
-                      bgcolor: 'rgba(0, 240, 255, 0.08)',
-                      border: '1px solid rgba(0, 240, 255, 0.2)',
-                      boxShadow: '0 4px 12px rgba(0, 240, 255, 0.1)',
+                      bgcolor: 'rgba(10, 132, 255, 0.1)',
                       '&:hover': {
-                        bgcolor: 'rgba(0, 240, 255, 0.12)',
+                        bgcolor: 'rgba(10, 132, 255, 0.15)',
                       },
                     },
                     '&:hover': {
                       bgcolor: 'rgba(255, 255, 255, 0.05)',
-                      transform: 'translateX(-4px)',
                     },
                   }}
                 >

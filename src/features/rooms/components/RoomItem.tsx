@@ -28,7 +28,7 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
 
   const lastActivityTime = formatDistanceToNow(new Date(room.lastActivityAt), {
     addSuffix: true,
-    locale: localeMap[i18n.language] || faIR,
+    locale: localeMap[i18n.language] || enUS,
   });
 
   return (
@@ -39,10 +39,9 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
         alignItems: 'center',
         width: '100%',
         gap: 2,
-        p: 2,
-        borderRadius: 3,
+        p: 1.5,
+        borderRadius: 2.5,
         cursor: 'pointer',
-        transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
       }}
     >
       <Badge
@@ -51,9 +50,10 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
         variant="dot"
         sx={{
           '& .MuiBadge-badge': {
-            bgcolor: '#00F0FF',
-            boxShadow: '0 0 8px #00F0FF',
-            border: '2px solid #0B0F19',
+            bgcolor: '#30D158',
+            border: '2px solid #000000',
+            width: 10,
+            height: 10,
           },
         }}
         invisible={!room.isActive}
@@ -62,19 +62,17 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
           src={room.avatarUrl}
           alt={room.name}
           sx={{
-            width: 52,
-            height: 52,
+            width: 48,
+            height: 48,
             background: room.avatarUrl
               ? 'transparent'
-              : 'linear-gradient(135deg, #7000FF 0%, #00F0FF 100%)',
-            color: '#0B0F19',
-            fontWeight: 700,
-            fontSize: '1.2rem',
-            border: '2px solid rgba(255,255,255,0.1)',
-            boxShadow: '0 4px 12px rgba(112, 0, 255, 0.2)',
+              : 'linear-gradient(135deg, #5E5CE6 0%, #0A84FF 100%)',
+            color: '#FFFFFF',
+            fontWeight: 600,
+            fontSize: '1.1rem',
           }}
         >
-          {room.avatarUrl ? null : <GroupIcon sx={{ fontSize: 28 }} />}
+          {room.avatarUrl ? null : <GroupIcon sx={{ fontSize: 24 }} />}
         </Avatar>
       </Badge>
 
@@ -84,17 +82,18 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'baseline',
-            mb: 0.5,
+            mb: 0.25,
           }}
         >
           <Typography
             variant="subtitle1"
-            fontWeight="700"
+            fontWeight="600"
             noWrap
             sx={{
-              maxWidth: '65%',
-              color: '#F8FAFC',
+              maxWidth: '70%',
+              color: '#FFFFFF',
               letterSpacing: '-0.01em',
+              fontSize: '0.95rem',
             }}
           >
             {room.name}
@@ -102,9 +101,9 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
           <Typography
             variant="caption"
             sx={{
-              color: '#64748B',
+              color: '#636366',
               fontWeight: 500,
-              fontSize: '0.75rem',
+              fontSize: '0.7rem',
             }}
             noWrap
           >
@@ -117,42 +116,41 @@ export const RoomItem: React.FC<RoomItemProps> = ({ room }) => {
           noWrap
           sx={{
             maxWidth: '100%',
-            color: '#94A3B8',
-            fontSize: '0.85rem',
-            lineHeight: 1.5,
+            color: '#8E8E93',
+            fontSize: '0.8rem',
+            lineHeight: 1.4,
           }}
         >
           {room.lastMessage ? (
             <>
               <Typography
                 component="span"
-                sx={{ color: '#00F0FF', fontWeight: 600 }}
+                sx={{ color: '#0A84FF', fontWeight: 600, fontSize: '0.8rem' }}
               >
                 {room.lastMessage.senderName}:
               </Typography>{' '}
               {room.lastMessage.content}
             </>
           ) : (
-            <span style={{ color: '#64748B' }}>
+            <span style={{ color: '#636366' }}>
               {room.description || t('rooms.noDescription')}
             </span>
           )}
         </Typography>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
           <Box
             sx={{
-              width: 6,
-              height: 6,
+              width: 5,
+              height: 5,
               borderRadius: '50%',
-              bgcolor: '#7000FF',
-              mr: 1,
-              boxShadow: '0 0 6px #7000FF',
+              bgcolor: '#5E5CE6',
+              mr: 0.75,
             }}
           />
           <Typography
             variant="caption"
-            sx={{ color: '#64748B', fontWeight: 500, fontSize: '0.75rem' }}
+            sx={{ color: '#636366', fontWeight: 500, fontSize: '0.7rem' }}
           >
             {t('rooms.members', { count: room.memberCount })}
           </Typography>

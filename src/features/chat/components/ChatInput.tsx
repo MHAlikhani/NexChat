@@ -163,12 +163,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       <Box
         className="glass-panel"
         sx={{
-          p: 2.5,
-          mx: 3,
-          mb: 3,
-          borderRadius: 4,
-          border: '1px solid rgba(255, 107, 107, 0.3)',
-          boxShadow: '0 8px 32px rgba(255, 107, 107, 0.15)',
+          p: 2,
+          mx: 2,
+          mb: 2,
+          borderRadius: 3,
+          border: '0.5px solid rgba(255, 69, 58, 0.3)',
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -178,10 +177,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               onClick={cancelRecording}
               disabled={isSending}
               sx={{
-                color: '#FF6B6B',
-                bgcolor: 'rgba(255, 107, 107, 0.1)',
-                border: '1px solid rgba(255, 107, 107, 0.2)',
-                '&:hover': { bgcolor: 'rgba(255, 107, 107, 0.2)' },
+                color: '#FF453A',
+                bgcolor: 'rgba(255, 69, 58, 0.12)',
+                '&:hover': { bgcolor: 'rgba(255, 69, 58, 0.2)' },
               }}
             >
               <CancelIcon />
@@ -193,24 +191,24 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           >
             <Box
               sx={{
-                width: 12,
-                height: 12,
+                width: 10,
+                height: 10,
                 borderRadius: '50%',
-                bgcolor: '#FF6B6B',
-                animation: 'pulse-glow 1.5s infinite',
+                bgcolor: '#FF453A',
+                animation: 'pulse-glow 1.5s infinite ease-in-out',
               }}
             />
             <Typography
               variant="body1"
-              fontWeight="700"
-              sx={{ color: '#F8FAFC', letterSpacing: '0.02em' }}
+              fontWeight="600"
+              sx={{ color: '#FFFFFF' }}
             >
               {t('chat.recording')} {formatDuration(duration)}
             </Typography>
             {duration >= MAX_RECORD_DURATION - 10 && (
               <Typography
                 variant="caption"
-                sx={{ color: '#FFA500', fontWeight: 700, mr: 1 }}
+                sx={{ color: '#FF9F0A', fontWeight: 600, mr: 1 }}
               >
                 {t('chat.secondsLeft', {
                   count: MAX_RECORD_DURATION - duration,
@@ -225,16 +223,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               onClick={() => void handleStopRecording()}
               disabled={isSending}
               sx={{
-                background: 'linear-gradient(135deg, #FF6B6B 0%, #FFA500 100%)',
-                color: '#0B0F19',
-                boxShadow: '0 4px 15px rgba(255, 107, 107, 0.4)',
+                bgcolor: '#0A84FF',
+                color: '#FFFFFF',
                 '&:hover': {
-                  background:
-                    'linear-gradient(135deg, #FF8E8E 0%, #FFB833 100%)',
-                  boxShadow: '0 6px 20px rgba(255, 107, 107, 0.5)',
-                  transform: 'translateY(-2px)',
+                  bgcolor: '#0A84FF',
+                  opacity: 0.85,
                 },
-                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                transition: 'opacity 0.15s ease',
               }}
             >
               <SendIcon />
@@ -249,41 +244,39 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     <Box
       className="glass-panel"
       sx={{
-        p: 2.5,
-        mx: 3,
-        mb: 3,
-        borderRadius: 4,
-        transition: 'all 0.3s ease',
+        p: 2,
+        mx: 2,
+        mb: 2,
+        borderRadius: 3,
       }}
     >
       {replyingTo && (
         <Box
           sx={{
-            mb: 2,
+            mb: 1.5,
             p: 1.5,
-            bgcolor: 'rgba(0, 240, 255, 0.05)',
+            bgcolor: 'rgba(10, 132, 255, 0.08)',
             borderRadius: 2,
-            borderRight: '3px solid #00F0FF',
+            borderLeft: '3px solid #0A84FF',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            animation:
-              'slideUpFade 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+            animation: 'slideUpFade 0.15s cubic-bezier(0.25, 0.1, 0.25, 1) forwards',
           }}
         >
           <Box sx={{ flex: 1, overflow: 'hidden' }}>
             <Typography
               variant="caption"
               sx={{
-                fontWeight: 700,
-                color: '#00F0FF',
+                fontWeight: 600,
+                color: '#0A84FF',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.5,
-                fontSize: '0.8rem',
+                fontSize: '0.75rem',
               }}
             >
-              <ReplyIcon sx={{ fontSize: 14 }} />
+              <ReplyIcon sx={{ fontSize: 12 }} />
               {t('chat.replyTo', { name: replyingTo.senderName })}
             </Typography>
             <Typography
@@ -293,10 +286,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 WebkitLineClamp: 1,
                 WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
-                color: '#94A3B8',
-                mt: 0.5,
+                color: '#8E8E93',
+                mt: 0.25,
                 lineHeight: 1.4,
-                fontSize: '0.85rem',
+                fontSize: '0.8rem',
               }}
             >
               {replyingTo.type === 'text' ? replyingTo.content : t('chat.media')}
@@ -307,10 +300,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             onClick={onCancelReply}
             sx={{
               ml: 1,
-              color: '#94A3B8',
+              color: '#8E8E93',
               '&:hover': {
-                bgcolor: 'rgba(255, 107, 107, 0.1)',
-                color: '#FF6B6B',
+                bgcolor: 'rgba(255, 69, 58, 0.1)',
+                color: '#FF453A',
               },
             }}
           >
@@ -322,10 +315,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       {imagePreview && (
         <Box
           sx={{
-            mb: 2,
+            mb: 1.5,
             display: 'inline-block',
-            animation:
-              'slideUpFade 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+            animation: 'slideUpFade 0.15s cubic-bezier(0.25, 0.1, 0.25, 1) forwards',
           }}
         >
           <Box sx={{ position: 'relative', display: 'inline-block' }}>
@@ -333,13 +325,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               src={imagePreview}
               alt={t('chat.imagePreview')}
               style={{
-                maxWidth: 240,
-                maxHeight: 180,
-                borderRadius: 16,
+                maxWidth: 200,
+                maxHeight: 160,
+                borderRadius: 10,
                 display: 'block',
                 objectFit: 'cover',
-                border: '1px solid rgba(255,255,255,0.1)',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
               }}
             />
             <IconButton
@@ -347,39 +337,35 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               onClick={handleCancelImage}
               sx={{
                 position: 'absolute',
-                top: 8,
-                left: 8,
-                bgcolor: 'rgba(15, 23, 42, 0.8)',
+                top: 6,
+                left: 6,
+                bgcolor: 'rgba(0, 0, 0, 0.6)',
                 backdropFilter: 'blur(10px)',
-                color: '#FF6B6B',
-                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#FFFFFF',
+                width: 24,
+                height: 24,
                 '&:hover': {
-                  bgcolor: 'rgba(255, 107, 107, 0.2)',
-                  color: '#FF6B6B',
+                  bgcolor: 'rgba(0, 0, 0, 0.8)',
                 },
               }}
             >
-              <CloseIcon fontSize="small" />
+              <CloseIcon sx={{ fontSize: 14 }} />
             </IconButton>
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 1.5, mt: 2 }}>
+          <Box sx={{ display: 'flex', gap: 1, mt: 1.5 }}>
             <Tooltip title={t('chat.sendImage')}>
               <IconButton
                 onClick={() => void handleSendImage()}
                 disabled={isSending}
                 sx={{
-                  background:
-                    'linear-gradient(135deg, #00F0FF 0%, #7000FF 100%)',
-                  color: '#0B0F19',
-                  boxShadow: '0 4px 15px rgba(0, 240, 255, 0.3)',
+                  bgcolor: '#0A84FF',
+                  color: '#FFFFFF',
                   '&:hover': {
-                    background:
-                      'linear-gradient(135deg, #66F9FF 0%, #9D4DFF 100%)',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 6px 20px rgba(0, 240, 255, 0.4)',
+                    bgcolor: '#0A84FF',
+                    opacity: 0.85,
                   },
-                  transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  transition: 'opacity 0.15s ease',
                 }}
               >
                 <SendIcon />
@@ -391,11 +377,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 onClick={handleCancelImage}
                 disabled={isSending}
                 sx={{
-                  color: '#FF6B6B',
-                  bgcolor: 'rgba(255, 107, 107, 0.1)',
-                  border: '1px solid rgba(255, 107, 107, 0.2)',
-                  '&:hover': { bgcolor: 'rgba(255, 107, 107, 0.2)' },
-                  transition: 'all 0.2s ease',
+                  color: '#FF453A',
+                  bgcolor: 'rgba(255, 69, 58, 0.12)',
+                  '&:hover': { bgcolor: 'rgba(255, 69, 58, 0.2)' },
                 }}
               >
                 <CloseIcon />
@@ -405,7 +389,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </Box>
       )}
 
-      <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1.5 }}>
         <input
           ref={fileInputRef}
           type="file"
@@ -420,15 +404,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             onClick={() => fileInputRef.current?.click()}
             disabled={isSending}
             sx={{
-              color: '#00F0FF',
-              bgcolor: 'rgba(0, 240, 255, 0.08)',
-              border: '1px solid rgba(0, 240, 255, 0.15)',
+              color: '#0A84FF',
+              bgcolor: 'rgba(10, 132, 255, 0.1)',
               '&:hover': {
-                bgcolor: 'rgba(0, 240, 255, 0.15)',
-                transform: 'translateY(-2px)',
+                bgcolor: 'rgba(10, 132, 255, 0.18)',
               },
-              transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              mb: 0.5,
+              transition: 'background-color 0.15s ease',
+              mb: 0.25,
             }}
           >
             <CameraIcon />
@@ -448,23 +430,21 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           inputProps={{ maxLength: 2000 }}
           sx={{
             '& .MuiOutlinedInput-root': {
-              borderRadius: 3,
-              bgcolor: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              transition: 'all 0.3s ease',
+              borderRadius: 2.5,
+              bgcolor: 'rgba(118, 118, 128, 0.12)',
+              border: 'none',
+              transition: 'background-color 0.15s ease',
               '& fieldset': { border: 'none' },
               '&:hover': {
-                bgcolor: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(0, 240, 255, 0.3)',
+                bgcolor: 'rgba(118, 118, 128, 0.18)',
               },
               '&.Mui-focused': {
-                bgcolor: 'rgba(255,255,255,0.08)',
-                border: '1px solid #00F0FF',
-                boxShadow: '0 0 0 4px rgba(0, 240, 255, 0.1)',
+                bgcolor: 'rgba(118, 118, 128, 0.24)',
               },
               '& .MuiInputBase-input': {
-                color: '#F8FAFC',
-                '&::placeholder': { color: '#64748B', opacity: 1 },
+                color: '#FFFFFF',
+                py: 1.25,
+                '&::placeholder': { color: '#636366', opacity: 1 },
               },
             },
           }}
@@ -477,18 +457,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               onClick={() => void handleSendText()}
               disabled={isSending}
               sx={{
-                background:
-                  'linear-gradient(135deg, #00F0FF 0%, #7000FF 100%)',
-                color: '#0B0F19',
-                boxShadow: '0 4px 15px rgba(0, 240, 255, 0.3)',
+                bgcolor: '#0A84FF',
+                color: '#FFFFFF',
                 '&:hover': {
-                  background:
-                    'linear-gradient(135deg, #66F9FF 0%, #9D4DFF 100%)',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 20px rgba(0, 240, 255, 0.4)',
+                  bgcolor: '#0A84FF',
+                  opacity: 0.85,
                 },
-                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                mb: 0.5,
+                transition: 'opacity 0.15s ease',
+                mb: 0.25,
               }}
             >
               <SendIcon />
@@ -508,15 +484,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 onClick={() => void startRecording()}
                 disabled={isSending || !isSupported}
                 sx={{
-                  color: '#00F0FF',
-                  bgcolor: 'rgba(0, 240, 255, 0.08)',
-                  border: '1px solid rgba(0, 240, 255, 0.15)',
+                  color: '#0A84FF',
+                  bgcolor: 'rgba(10, 132, 255, 0.1)',
                   '&:hover': {
-                    bgcolor: 'rgba(0, 240, 255, 0.15)',
-                    transform: 'translateY(-2px)',
+                    bgcolor: 'rgba(10, 132, 255, 0.18)',
                   },
-                  transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                  mb: 0.5,
+                  transition: 'background-color 0.15s ease',
+                  mb: 0.25,
                 }}
               >
                 <MicIcon />

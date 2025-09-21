@@ -1,4 +1,4 @@
-/* Base resets - kept minimal as global.css handles the design system */
+/* Base resets - global.css handles the design system */
 * {
   margin: 0;
   padding: 0;
@@ -7,9 +7,13 @@
 
 body {
   margin: 0;
-  font-family: 'Vazirmatn', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+[dir="rtl"] body {
+  font-family: 'Vazirmatn', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 a {

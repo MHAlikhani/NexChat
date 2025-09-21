@@ -44,10 +44,8 @@ export default function ChatPage() {
 
   return (
     <>
-      {/* Aurora Background */}
-      <div className="aurora-background">
-        <div className="aurora-orb"></div>
-      </div>
+      {/* Ambient Background */}
+      <div className="aurora-background" />
 
       <Box
         sx={{
@@ -64,22 +62,21 @@ export default function ChatPage() {
           elevation={0}
           className="glass-panel"
           sx={{
-            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            borderBottom: '0.5px solid rgba(255,255,255,0.1)',
             borderRadius: 0,
           }}
         >
-          <Toolbar sx={{ minHeight: '64px !important', px: 3 }}>
+          <Toolbar sx={{ minHeight: '56px !important', px: 2 }}>
             <Avatar
               src={user?.photoURL || undefined}
               sx={{
-                ml: 2,
-                width: 44,
-                height: 44,
-                background: 'linear-gradient(135deg, #7000FF 0%, #00F0FF 100%)',
-                color: '#0B0F19',
-                fontWeight: 700,
-                border: '2px solid rgba(255,255,255,0.1)',
-                boxShadow: '0 4px 12px rgba(112, 0, 255, 0.3)',
+                ml: 1,
+                width: 38,
+                height: 38,
+                background: 'linear-gradient(135deg, #5E5CE6 0%, #0A84FF 100%)',
+                color: '#FFFFFF',
+                fontWeight: 600,
+                fontSize: '0.9rem',
               }}
             >
               {user?.displayName?.charAt(0)}
@@ -87,23 +84,23 @@ export default function ChatPage() {
             <Box
               sx={{
                 flex: 1,
-                mr: 2,
+                ml: 1.5,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1,
+                gap: 0.75,
               }}
             >
               <Box>
                 <Typography
                   variant="subtitle1"
-                  fontWeight="700"
-                  sx={{ color: '#F8FAFC', letterSpacing: '-0.01em' }}
+                  fontWeight="600"
+                  sx={{ color: '#FFFFFF', letterSpacing: '-0.01em', fontSize: '0.9rem' }}
                 >
                   {user?.displayName}
                 </Typography>
                 <Typography
                   variant="caption"
-                  sx={{ color: '#00F0FF', fontWeight: 600 }}
+                  sx={{ color: '#30D158', fontWeight: 500, fontSize: '0.7rem' }}
                 >
                   {t('auth.online')}
                 </Typography>
@@ -113,14 +110,16 @@ export default function ChatPage() {
                   onClick={() => setEditNameOpen(true)}
                   size="small"
                   sx={{
-                    color: '#94A3B8',
+                    color: '#8E8E93',
+                    width: 28,
+                    height: 28,
                     '&:hover': {
-                      bgcolor: 'rgba(0, 240, 255, 0.1)',
-                      color: '#00F0FF',
+                      bgcolor: 'rgba(255,255,255,0.08)',
+                      color: '#FFFFFF',
                     },
                   }}
                 >
-                  <EditIcon fontSize="small" />
+                  <EditIcon sx={{ fontSize: 16 }} />
                 </IconButton>
               </Tooltip>
             </Box>
@@ -130,16 +129,14 @@ export default function ChatPage() {
               <IconButton
                 onClick={(e) => setLanguageMenuAnchor(e.currentTarget)}
                 sx={{
-                  color: '#94A3B8',
-                  ml: 1,
-                  bgcolor: 'rgba(112, 0, 255, 0.08)',
-                  border: '1px solid rgba(112, 0, 255, 0.15)',
+                  color: '#8E8E93',
+                  ml: 0.5,
+                  bgcolor: 'rgba(94, 92, 230, 0.08)',
                   '&:hover': {
-                    bgcolor: 'rgba(112, 0, 255, 0.15)',
-                    color: '#9D4DFF',
-                    transform: 'translateY(-2px)',
+                    bgcolor: 'rgba(94, 92, 230, 0.15)',
+                    color: '#5E5CE6',
                   },
-                  transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  transition: 'background-color 0.15s ease',
                 }}
               >
                 <LanguageIcon />
@@ -155,13 +152,13 @@ export default function ChatPage() {
               slotProps={{
                 paper: {
                   sx: {
-                    borderRadius: 3,
-                    bgcolor: 'rgba(15, 23, 42, 0.95)',
-                    backdropFilter: 'blur(20px)',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    minWidth: 150,
-                    mt: 1,
+                    borderRadius: 2.5,
+                    bgcolor: 'rgba(28, 28, 30, 0.95)',
+                    backdropFilter: 'blur(30px)',
+                    boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+                    border: '0.5px solid rgba(255,255,255,0.1)',
+                    minWidth: 140,
+                    mt: 0.5,
                   },
                 },
               }}
@@ -172,14 +169,14 @@ export default function ChatPage() {
                     key={code}
                     onClick={() => handleLanguageChange(code)}
                     sx={{
-                      py: 1.5,
-                      color: '#F8FAFC',
-                      '&:hover': { bgcolor: 'rgba(0, 240, 255, 0.08)' },
+                      py: 1.25,
+                      color: '#FFFFFF',
+                      '&:hover': { bgcolor: 'rgba(10, 132, 255, 0.1)' },
                     }}
                   >
-                    <ListItemText primary={name} />
+                    <ListItemText primary={name} primaryTypographyProps={{ fontSize: '0.875rem', fontWeight: 500 }} />
                     {i18n.language === code && (
-                      <ListItemIcon sx={{ color: '#00F0FF', ml: 1 }}>
+                      <ListItemIcon sx={{ color: '#0A84FF', ml: 1 }}>
                         <CheckIcon fontSize="small" />
                       </ListItemIcon>
                     )}
@@ -190,15 +187,15 @@ export default function ChatPage() {
               <MenuItem
                 onClick={signOut}
                 sx={{
-                  py: 1.5,
-                  color: '#FF6B6B',
-                  '&:hover': { bgcolor: 'rgba(255, 107, 107, 0.08)' },
+                  py: 1.25,
+                  color: '#FF453A',
+                  '&:hover': { bgcolor: 'rgba(255, 69, 58, 0.1)' },
                 }}
               >
-                <ListItemIcon sx={{ color: '#FF6B6B' }}>
+                <ListItemIcon sx={{ color: '#FF453A' }}>
                   <LogoutIcon fontSize="small" />
                 </ListItemIcon>
-                <ListItemText primary={t('auth.logout')} />
+                <ListItemText primary={t('auth.logout')} primaryTypographyProps={{ fontSize: '0.875rem', fontWeight: 500 }} />
               </MenuItem>
             </Menu>
           </Toolbar>
@@ -209,10 +206,10 @@ export default function ChatPage() {
           {/* Sidebar - Room list */}
           <Box
             sx={{
-              width: { xs: '100%', md: 380 },
+              width: { xs: '100%', md: 360 },
               display: { xs: activeRoomId ? 'none' : 'block', md: 'block' },
-              borderLeft: { md: '1px solid rgba(255,255,255,0.08)' },
-              bgcolor: 'rgba(15, 23, 42, 0.4)',
+              borderLeft: { md: '0.5px solid rgba(255,255,255,0.1)' },
+              bgcolor: 'rgba(28, 28, 30, 0.4)',
               backdropFilter: 'blur(20px)',
             }}
           >
@@ -225,8 +222,7 @@ export default function ChatPage() {
               flex: 1,
               display: { xs: activeRoomId ? 'flex' : 'none', md: 'flex' },
               flexDirection: 'column',
-              bgcolor: 'rgba(15, 23, 42, 0.2)',
-              backdropFilter: 'blur(10px)',
+              bgcolor: 'rgba(0, 0, 0, 0.2)',
             }}
           >
             {activeRoomId ? (
@@ -242,31 +238,33 @@ export default function ChatPage() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexDirection: 'column',
-                  gap: 3,
+                  gap: 2,
                 }}
               >
                 <Box
                   sx={{
-                    p: 3,
-                    borderRadius: '50%',
-                    bgcolor: 'rgba(0, 240, 255, 0.05)',
-                    border: '1px solid rgba(0, 240, 255, 0.1)',
-                    boxShadow: '0 0 40px rgba(0, 240, 255, 0.1)',
-                    animation: 'pulse-glow 3s infinite',
+                    width: 80,
+                    height: 80,
+                    borderRadius: '22px',
+                    background: 'linear-gradient(135deg, #0A84FF 0%, #5E5CE6 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mb: 1,
                   }}
                 >
                   <Typography
                     variant="h2"
-                    sx={{ fontSize: '4rem' }}
+                    sx={{ fontSize: '2.5rem', lineHeight: 1 }}
                   >
                     💬
                   </Typography>
                 </Box>
                 <Typography
-                  variant="h4"
-                  fontWeight="800"
+                  variant="h5"
+                  fontWeight="700"
                   sx={{
-                    color: '#F8FAFC',
+                    color: '#FFFFFF',
                     letterSpacing: '-0.02em',
                     textAlign: 'center',
                   }}
@@ -279,12 +277,12 @@ export default function ChatPage() {
                   />
                 </Typography>
                 <Typography
-                  variant="body1"
+                  variant="body2"
                   sx={{
-                    color: '#94A3B8',
+                    color: '#8E8E93',
                     textAlign: 'center',
-                    maxWidth: 400,
-                    lineHeight: 1.7,
+                    maxWidth: 360,
+                    lineHeight: 1.5,
                   }}
                 >
                   {t('auth.loginSubtitle')}
