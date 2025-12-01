@@ -24,7 +24,7 @@ export const mapFirestoreDocToMessage = (
     senderPhoto: (data.senderPhoto as string) || null,
     type: (data.type as Message['type']) || 'text',
     content: (data.content as string) || '',
-    createdAt: convertTimestamp(data.createdAt as Timestamp),
+    createdAt: convertTimestamp(data.createdAt as Timestamp) ?? new Date().toISOString(),
     seenBy: (data.seenBy as string[]) || [],
     isPending: false,
     isFailed: false,

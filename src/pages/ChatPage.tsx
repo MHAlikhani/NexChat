@@ -28,7 +28,7 @@ import { supportedLanguages, type SupportedLanguage } from '@/lib/i18n';
 
 export default function ChatPage() {
   const { t, i18n } = useTranslation();
-  const { user, signOut, updateDisplayName } = useAuth();
+  const { user, signOut } = useAuth();
   const activeRoomId = useRoomsStore((state) => state.activeRoomId);
   const setActiveRoom = useRoomsStore((state) => state.setActiveRoom);
 
