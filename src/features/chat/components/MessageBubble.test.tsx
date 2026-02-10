@@ -19,7 +19,6 @@ describe('MessageBubble', () => {
     senderId: 'user-1',
     senderName: 'Alice',
     senderPhoto: 'https://example.com/alice.jpg',
-    timestamp: new Date('2024-01-01T10:30:00Z'),
     createdAt: new Date('2024-01-01T10:30:00Z').toISOString(),
     type: 'text',
     seenBy: ['user-1'],
@@ -95,36 +94,6 @@ describe('MessageBubble', () => {
     });
   });
 
-  describe('Media Messages', () => {
-    it('should render image message with lazy loading', () => {
-      const imageMessage: Message = {
-        ...baseMessage,
-        type: 'image',
-        content: 'https://example.com/image.jpg',
-      };
-
-      render(<MessageBubble message={imageMessage} isOwn={true} />);
-
-      const img = screen.getByRole('img', { name: /تصویر ارسالی/i });
-      expect(img).toHaveAttribute('src', 'https://example.com/image.jpg');
-      expect(img).toHaveAttribute('loading', 'lazy');
-    });
-
-    it('should render audio message with AudioPlayer', () => {
-      const audioMessage: Message = {
-        ...baseMessage,
-        type: 'audio',
-        content: 'https://example.com/audio.webm',
-        duration: 15,
-      };
-
-      render(<MessageBubble message={audioMessage} isOwn={true} />);
-
-      expect(screen.getByTestId('PlayArrowIcon')).toBeInTheDocument();
-      expect(screen.getByRole('slider')).toBeInTheDocument();
-    });
-  });
-
   describe('Performance & Edge Cases', () => {
     it('should handle very long text messages with word break', () => {
       const longMessage: Message = {
@@ -147,8 +116,10 @@ describe('MessageBubble', () => {
       render(<MessageBubble message={multilineMessage} isOwn={true} />);
 
       const textElement = screen.getByText((_content, element) => {
-        return element?.tagName.toLowerCase() === 'p' &&
-               element?.textContent === 'Line 1\nLine 2\nLine 3';
+        return (
+          element?.tagName.toLowerCase() === 'p' &&
+          element?.textContent === 'Line 1\nLine 2\nLine 3'
+        );
       });
       expect(textElement).toHaveStyle('white-space: pre-wrap');
     });

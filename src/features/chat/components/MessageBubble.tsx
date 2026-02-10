@@ -1,4 +1,4 @@
-import { memo, useState, useRef } from 'react';
+import { memo, useState, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Typography, Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import {
@@ -14,7 +14,6 @@ import type { Locale } from 'date-fns';
 import { faIR } from 'date-fns/locale';
 import { enUS, de } from 'date-fns/locale';
 import type { Message } from '../types';
-import { AudioPlayer } from './AudioPlayer';
 import { LinkPreview } from './LinkPreview';
 
 interface MessageBubbleProps {
@@ -47,35 +46,17 @@ const MessageStatus: React.FC<{ message: Message }> = ({ message }) => {
   return <DoneAllIcon sx={{ fontSize: 14, color: 'rgba(255,255,255,0.5)' }} />;
 };
 
-const highlightText = (text: string, query: string) => {
-  if (!query) return text;
-  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-  const parts = text.split(regex);
-  return parts.map((part, i) =>
-    regex.test(part) ? (
-      <Box
-        component="span"
-        key={i}
-        sx={{
-          bgcolor: 'rgba(255, 159, 10, 0.3)',
-          color: '#FF9F0A',
-          borderRadius: 1,
-          px: 0.5,
-          fontWeight: 600,
-        }}
-      >
-        {part}
-      </Box>
-    ) : (
-      part
-    )
-  );
-};
-
 const extractUrls = (text: string): string[] => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   return text.match(urlRegex) || [];
 };
+
+/**
+ * Maximum message content length for which text highlighting is performed.
+ * Messages longer than this threshold skip highlighting to avoid
+ * performance degradation from creating many React elements.
+ */
+const MAX_HIGHLIGHT_LENGTH = 500;
 
 export const MessageBubble = memo<MessageBubbleProps>(
   ({ message, isOwn, onReply, onDelete, searchQuery = '' }) => {
@@ -87,6 +68,45 @@ export const MessageBubble = memo<MessageBubbleProps>(
     const time = format(new Date(message.createdAt), 'HH:mm', {
       locale: localeMap[i18n.language] || enUS,
     });
+
+    /**
+     * Memoized highlighted content.
+     *
+     * Only performs highlighting for messages under MAX_HIGHLIGHT_LENGTH
+     * characters to avoid performance degradation on long messages.
+     * The result is memoized to prevent unnecessary re-renders when
+     * other props change.
+     */
+    const highlightedContent = useMemo(() => {
+      // Skip highlighting for long messages to maintain performance
+      if (!searchQuery || message.content.length > MAX_HIGHLIGHT_LENGTH) {
+        return message.content;
+      }
+
+      const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${escapedQuery})`, 'gi');
+      const parts = message.content.split(regex);
+
+      return parts.map((part, i) =>
+        regex.test(part) ? (
+          <Box
+            component="span"
+            key={i}
+            sx={{
+              bgcolor: 'rgba(255, 159, 10, 0.3)',
+              color: '#FF9F0A',
+              borderRadius: 1,
+              px: 0.5,
+              fontWeight: 600,
+            }}
+          >
+            {part}
+          </Box>
+        ) : (
+          part
+        )
+      );
+    }, [message.content, searchQuery]);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.stopPropagation();
@@ -160,9 +180,7 @@ export const MessageBubble = memo<MessageBubbleProps>(
                 sx={{
                   mb: 1.5,
                   p: 1.5,
-                  bgcolor: isOwn
-                    ? 'rgba(255,255,255,0.15)'
-                    : 'rgba(255,255,255,0.08)',
+                  bgcolor: isOwn ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.08)',
                   borderRadius: 2,
                   borderLeft: isOwn ? 'none' : '3px solid #5E5CE6',
                   borderRight: isOwn ? '3px solid rgba(255,255,255,0.4)' : 'none',
@@ -215,48 +233,20 @@ export const MessageBubble = memo<MessageBubbleProps>(
               </Typography>
             )}
 
-            {message.type === 'text' && (
-              <Typography
-                variant="body2"
-                sx={{
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-word',
-                  direction: i18n.dir(),
-                  color: isOwn ? '#FFFFFF' : '#FFFFFF',
-                  fontSize: '0.95rem',
-                  lineHeight: 1.5,
-                  fontWeight: 400,
-                }}
-              >
-                {highlightText(message.content, searchQuery)}
-              </Typography>
-            )}
-
-            {message.type === 'image' && (
-              <Box sx={{ mt: 0.5 }}>
-                <img
-                  src={message.content}
-                  alt={t('chat.sentImage')}
-                  loading="lazy"
-                  style={{
-                    maxWidth: '100%',
-                    borderRadius: 10,
-                    display: 'block',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => window.open(message.content, '_blank')}
-                />
-              </Box>
-            )}
-
-            {message.type === 'audio' && (
-              <Box sx={{ mt: 0.5 }}>
-                <AudioPlayer
-                  src={message.content}
-                  duration={message.duration || 0}
-                />
-              </Box>
-            )}
+            <Typography
+              variant="body2"
+              sx={{
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+                direction: i18n.dir(),
+                color: isOwn ? '#FFFFFF' : '#FFFFFF',
+                fontSize: '0.95rem',
+                lineHeight: 1.5,
+                fontWeight: 400,
+              }}
+            >
+              {highlightedContent}
+            </Typography>
 
             {/* Link Preview for single URL messages */}
             {isSingleUrl && (

@@ -4,7 +4,7 @@
  * @module lib/sentry
  */
 
-import * as Sentry from "@sentry/react";
+import * as Sentry from '@sentry/react';
 
 export const SentryInit = () => {
   const dsn = import.meta.env.VITE_SENTRY_DSN;
@@ -44,7 +44,17 @@ export const captureError = (error: unknown, context?: Record<string, unknown>) 
   }
 };
 
-export const captureMessage = (message: string, level: Sentry.SeverityLevel = 'info') => {
+/**
+ * Capture a message with Sentry at a specified severity level.
+ *
+ * Note: `Sentry.SeverityLevel` is used here as the type for the `level`
+ * parameter. If this function is not used anywhere in the codebase,
+ * it should be removed to avoid dead code.
+ */
+export const captureMessage = (
+  message: string,
+  level: 'fatal' | 'error' | 'warning' | 'info' | 'debug' = 'info'
+) => {
   if (import.meta.env.VITE_SENTRY_DSN) {
     Sentry.captureMessage(message, level);
   }

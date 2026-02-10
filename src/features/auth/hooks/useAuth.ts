@@ -58,15 +58,23 @@ export const useAuth = (): UseAuthReturn => {
     setError(null);
   }, [setError]);
 
+  /**
+   * Update the current user's display name.
+   *
+   * Uses `useAuthStore.getState().user` instead of the closure `user`
+   * to avoid stale state issues and prevent this callback from being
+   * recreated every time the user object changes.
+   */
   const updateDisplayName = useCallback(
     async (displayName: string): Promise<void> => {
       try {
         setLoading(true);
         await authService.updateProfile({ displayName });
 
-        // به‌روزرسانی user در store
-        if (user) {
-          setUser({ ...user, displayName });
+        // Get the latest user from the store directly to avoid stale closure
+        const currentUser = useAuthStore.getState().user;
+        if (currentUser) {
+          setUser({ ...currentUser, displayName });
         }
       } catch (error) {
         setError(error as AuthError);
@@ -75,7 +83,7 @@ export const useAuth = (): UseAuthReturn => {
         setLoading(false);
       }
     },
-    [setLoading, setError, setUser, user]
+    [setLoading, setError, setUser]
   );
 
   return {

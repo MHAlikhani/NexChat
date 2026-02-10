@@ -11,6 +11,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
+    "strictNullChecks": true,
+    "baseUrl": ".",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,

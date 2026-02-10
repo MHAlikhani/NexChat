@@ -9,17 +9,14 @@ import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { useChatStore } from '../stores/chatStore';
 import { messagesService } from '../services/messages.service';
-import { mediaService } from '../services/media.service';
 import { useAuth } from '@/features/auth';
 import type { Message, MessageType } from '../types';
 
 export interface UseSendMessageReturn {
-  sendTextMessage: (roomId: string, text: string, replyTo?: { id: string; content: string; senderName: string }) => Promise<void>;
-  sendImageMessage: (roomId: string, file: File) => Promise<void>;
-  sendAudioMessage: (
+  sendTextMessage: (
     roomId: string,
-    audioBlob: Blob,
-    duration: number
+    text: string,
+    replyTo?: { id: string; content: string; senderName: string }
   ) => Promise<void>;
   deleteMessage: (roomId: string, messageId: string) => Promise<void>;
 }
@@ -28,12 +25,7 @@ export const useSendMessage = (): UseSendMessageReturn => {
   const { user } = useAuth();
 
   const createOptimisticMessage = useCallback(
-    (
-      roomId: string,
-      content: string,
-      type: MessageType,
-      extra: Partial<Message> = {}
-    ): Message => {
+    (roomId: string, content: string, type: MessageType, extra: Partial<Message> = {}): Message => {
       return {
         id: `temp-${uuidv4()}`,
         roomId,
@@ -53,7 +45,11 @@ export const useSendMessage = (): UseSendMessageReturn => {
   );
 
   const sendTextMessage = useCallback(
-    async (roomId: string, text: string, replyTo?: { id: string; content: string; senderName: string }): Promise<void> => {
+    async (
+      roomId: string,
+      text: string,
+      replyTo?: { id: string; content: string; senderName: string }
+    ): Promise<void> => {
       if (!user) {
         toast.error('لطفاً ابتدا وارد شوید');
         return;
@@ -66,11 +62,13 @@ export const useSendMessage = (): UseSendMessageReturn => {
         roomId,
         trimmedText,
         'text',
-        replyTo ? {
-          replyTo: replyTo.id,
-          replyToContent: replyTo.content,
-          replyToSenderName: replyTo.senderName,
-        } : undefined
+        replyTo
+          ? {
+              replyTo: replyTo.id,
+              replyToContent: replyTo.content,
+              replyToSenderName: replyTo.senderName,
+            }
+          : undefined
       );
 
       useChatStore.getState().addMessage(optimisticMessage);
@@ -102,137 +100,8 @@ export const useSendMessage = (): UseSendMessageReturn => {
           isFailed: true,
         });
 
-        const message =
-          error instanceof Error ? error.message : 'ارسال ناموفق بود';
+        const message = error instanceof Error ? error.message : 'ارسال ناموفق بود';
         toast.error(message);
-      }
-    },
-    [user, createOptimisticMessage]
-  );
-
-  const sendImageMessage = useCallback(
-    async (roomId: string, file: File): Promise<void> => {
-      if (!user) {
-        toast.error('لطفاً ابتدا وارد شوید');
-        return;
-      }
-
-      const toastId = toast.loading('در حال فشرده‌سازی و ارسال تصویر...');
-
-      const localUrl = URL.createObjectURL(file);
-      const optimisticMessage = createOptimisticMessage(
-        roomId,
-        localUrl,
-        'image',
-        { fileName: file.name, fileSize: file.size } as Partial<Message>
-      );
-
-      useChatStore.getState().addMessage(optimisticMessage);
-
-      try {
-        const { url, size } = await mediaService.uploadImage(file);
-
-        const realMessageId = await messagesService.send(
-          {
-            roomId,
-            content: url,
-            type: 'image',
-            fileName: file.name,
-            fileSize: size,
-          },
-          {
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          }
-        );
-
-        URL.revokeObjectURL(localUrl);
-
-        useChatStore.getState().updateMessage(optimisticMessage.id, {
-          id: realMessageId,
-          content: url,
-          isPending: false,
-        });
-
-        toast.success('تصویر ارسال شد', { id: toastId });
-      } catch (error) {
-        URL.revokeObjectURL(localUrl);
-
-        useChatStore.getState().updateMessage(optimisticMessage.id, {
-          isPending: false,
-          isFailed: true,
-        });
-
-        const message =
-          error instanceof Error ? error.message : 'ارسال تصویر ناموفق بود';
-        toast.error(message, { id: toastId });
-      }
-    },
-    [user, createOptimisticMessage]
-  );
-
-  const sendAudioMessage = useCallback(
-    async (
-      roomId: string,
-      audioBlob: Blob,
-      duration: number
-    ): Promise<void> => {
-      if (!user) {
-        toast.error('لطفاً ابتدا وارد شوید');
-        return;
-      }
-
-      const toastId = toast.loading('در حال ارسال پیام صوتی...');
-
-      const localUrl = URL.createObjectURL(audioBlob);
-      const optimisticMessage = createOptimisticMessage(
-        roomId,
-        localUrl,
-        'audio',
-        { duration } as Partial<Message>
-      );
-
-      useChatStore.getState().addMessage(optimisticMessage);
-
-      try {
-        const { url, size } = await mediaService.uploadAudio(audioBlob);
-
-        const realMessageId = await messagesService.send(
-          {
-            roomId,
-            content: url,
-            type: 'audio',
-            fileSize: size,
-            duration,
-          },
-          {
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          }
-        );
-
-        URL.revokeObjectURL(localUrl);
-
-        useChatStore.getState().updateMessage(optimisticMessage.id, {
-          id: realMessageId,
-          content: url,
-          isPending: false,
-        });
-
-        toast.success('پیام صوتی ارسال شد', { id: toastId });
-      } catch (error) {
-        URL.revokeObjectURL(localUrl);
-
-        useChatStore.getState().updateMessage(optimisticMessage.id, {
-          isPending: false,
-          isFailed: true,
-        });
-
-        const message =
-          error instanceof Error ? error.message : 'ارسال صوت ناموفق بود';
-        toast.error(message, { id: toastId });
       }
     },
     [user, createOptimisticMessage]
@@ -259,8 +128,6 @@ export const useSendMessage = (): UseSendMessageReturn => {
 
   return {
     sendTextMessage,
-    sendImageMessage,
-    sendAudioMessage,
     deleteMessage,
   };
 };

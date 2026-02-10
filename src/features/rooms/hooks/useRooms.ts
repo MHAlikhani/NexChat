@@ -22,17 +22,17 @@ export interface UseRoomsReturn {
 
 export const useRooms = (): UseRoomsReturn => {
   const { user } = useAuth();
+  const userUid = user?.uid;
 
   const [localSearchQuery, setLocalSearchQuery] = useState('');
 
   const debouncedSearchQuery = useDebounce(localSearchQuery, 300);
 
-  const { rooms, isLoading, error, isSubscribed } = useRoomsStore(
+  const { rooms, isLoading, error } = useRoomsStore(
     useShallow((state) => ({
       rooms: roomsSelectors.selectFilteredRooms(state),
       isLoading: roomsSelectors.selectIsLoading(state),
       error: roomsSelectors.selectError(state),
-      isSubscribed: roomsSelectors.selectIsSubscribed(state),
     }))
   );
 
@@ -44,23 +44,39 @@ export const useRooms = (): UseRoomsReturn => {
     updateStoreSearchQuery(debouncedSearchQuery);
   }, [debouncedSearchQuery, updateStoreSearchQuery]);
 
+  /**
+   * Subscribe to real-time room updates for the current user.
+   *
+   * Uses `useRoomsStore.getState()` to check subscription status
+   * instead of the closure value, avoiding stale closure issues
+   * and the need for eslint-disable comments.
+   *
+   * The effect only re-runs when the user's UID changes (i.e., when
+   * the user logs in or out), ensuring we don't create duplicate
+   * subscriptions.
+   */
   useEffect(() => {
-    if (!user || isSubscribed) {
+    if (!userUid) {
       return;
     }
 
-    const state = useRoomsStore.getState();
-    state.setLoading(true);
+    // Check subscription status from store directly to avoid stale closure
+    const currentState = useRoomsStore.getState();
+    if (currentState.isSubscribed) {
+      return;
+    }
+
+    currentState.setLoading(true);
 
     const unsubscribe = roomsService.subscribeToAll(
       (rooms) => {
-        const currentState = useRoomsStore.getState();
-        currentState.setRooms(rooms);
-        currentState.setLoading(false);
-        currentState.setError(null);
+        const state = useRoomsStore.getState();
+        state.setRooms(rooms);
+        state.setLoading(false);
+        state.setError(null);
       },
       {
-        userId: user.uid,
+        userId: userUid,
         limit: 100,
       }
     );
@@ -71,18 +87,14 @@ export const useRooms = (): UseRoomsReturn => {
       unsubscribe();
       useRoomsStore.getState().setSubscribed(false);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.uid]);
+  }, [userUid]);
 
-  const setSearchQuery = useCallback(
-    (query: string) => {
-      setLocalSearchQuery(query);
-    },
-    []
-  );
+  const setSearchQuery = useCallback((query: string) => {
+    setLocalSearchQuery(query);
+  }, []);
 
   const refresh = useCallback(async () => {
-    if (!user) return;
+    if (!userUid) return;
 
     const state = useRoomsStore.getState();
 
@@ -90,7 +102,7 @@ export const useRooms = (): UseRoomsReturn => {
       state.setLoading(true);
       state.setError(null);
       const fetchedRooms = await roomsService.getAll({
-        userId: user.uid,
+        userId: userUid,
         limit: 100,
       });
       state.setRooms(fetchedRooms);
@@ -99,7 +111,7 @@ export const useRooms = (): UseRoomsReturn => {
     } finally {
       state.setLoading(false);
     }
-  }, [user]);
+  }, [userUid]);
 
   return {
     rooms,

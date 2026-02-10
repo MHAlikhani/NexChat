@@ -4,7 +4,7 @@
  * @module features/chat/types
  */
 
-export type MessageType = 'text' | 'image' | 'audio' | 'system';
+export type MessageType = 'text' | 'system';
 
 export interface Message {
   id: string;
@@ -18,32 +18,18 @@ export interface Message {
   seenBy: string[];
   isPending?: boolean;
   isFailed?: boolean;
-  duration?: number;
   timestamp?: Date;
+  editedAt?: string | null;
   // Reply/Quote fields
   replyTo?: string | null;
   replyToContent?: string | null;
   replyToSenderName?: string | null;
 }
 
-export interface MediaMessage extends Message {
-  type: 'image' | 'audio';
-  fileName?: string;
-  fileSize?: number;
-  duration?: number;
-  dimensions?: {
-    width: number;
-    height: number;
-  };
-}
-
 export interface SendMessageInput {
   roomId: string;
   content: string;
   type: MessageType;
-  fileName?: string;
-  fileSize?: number;
-  duration?: number;
   replyTo?: string;
   replyToContent?: string;
   replyToSenderName?: string;
@@ -56,11 +42,4 @@ export interface ChatState {
   isLoadingMore: boolean;
   error: Error | null;
   typingUsers: Record<string, string>;
-}
-
-export interface AudioRecorderState {
-  isRecording: boolean;
-  duration: number;
-  audioBlob: Blob | null;
-  error: string | null;
 }

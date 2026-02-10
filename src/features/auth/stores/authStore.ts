@@ -8,6 +8,13 @@ import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
 import type { User, AuthError } from '../types';
 
+/**
+ * Maximum age (in milliseconds) for persisted auth state.
+ * After this period, the persisted user is considered stale and cleared.
+ * This prevents showing a logged-in UI when the Firebase session has expired.
+ */
+const MAX_PERSISTED_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
+
 interface AuthState {
   user: User | null;
   isLoading: boolean;
@@ -21,6 +28,12 @@ interface AuthActions {
   setError: (error: AuthError | null) => void;
   setInitialized: (isInitialized: boolean) => void;
   reset: () => void;
+}
+
+interface PersistedState {
+  user: User | null;
+  isInitialized: boolean;
+  lastUpdated: number;
 }
 
 type AuthStore = AuthState & AuthActions;
@@ -51,10 +64,48 @@ export const useAuthStore = create<AuthStore>()(
       {
         name: 'nexchat-auth-storage',
         storage: createJSONStorage(() => localStorage),
-        partialize: (state) => ({
+        partialize: (state): PersistedState => ({
           user: state.user,
           isInitialized: state.isInitialized,
+          lastUpdated: Date.now(),
         }),
+        version: 1,
+        /**
+         * On rehydration, validate the persisted user's freshness.
+         * If the persisted state is older than MAX_PERSISTED_AGE_MS,
+         * clear the user to prevent showing stale logged-in state
+         * when the Firebase session has actually expired.
+         */
+        onRehydrateStorage: () => {
+          return (state) => {
+            if (state) {
+              // The persisted state includes lastUpdated from partialize
+              const persistedRaw = localStorage.getItem('nexchat-auth-storage');
+              if (persistedRaw) {
+                try {
+                  const parsed = JSON.parse(persistedRaw);
+                  const lastUpdated = parsed?.state?.lastUpdated;
+
+                  if (lastUpdated && Date.now() - lastUpdated > MAX_PERSISTED_AGE_MS) {
+                    // Clear stale user data
+                    useAuthStore.setState({
+                      user: null,
+                      isInitialized: false,
+                      isLoading: true,
+                    });
+                  }
+                } catch {
+                  // If parsing fails, clear the state
+                  useAuthStore.setState({
+                    user: null,
+                    isInitialized: false,
+                    isLoading: true,
+                  });
+                }
+              }
+            }
+          };
+        },
       }
     ),
     { name: 'AuthStore' }

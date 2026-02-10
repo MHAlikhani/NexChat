@@ -4,50 +4,25 @@
       "collectionGroup": "rooms",
       "queryScope": "COLLECTION",
       "fields": [
-        {
-          "fieldPath": "members",
-          "arrayConfig": "CONTAINS"
-        },
-        {
-          "fieldPath": "isActive",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "lastActivityAt",
-          "order": "DESCENDING"
-        }
+        { "fieldPath": "isActive", "order": "ASCENDING" },
+        { "fieldPath": "name", "order": "ASCENDING" },
+        { "fieldPath": "lastActivityAt", "order": "DESCENDING" }
       ]
     },
     {
       "collectionGroup": "rooms",
       "queryScope": "COLLECTION",
       "fields": [
-        {
-          "fieldPath": "isActive",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "type",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "lastActivityAt",
-          "order": "DESCENDING"
-        }
+        { "fieldPath": "members", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "lastActivityAt", "order": "DESCENDING" }
       ]
     },
     {
       "collectionGroup": "messages",
       "queryScope": "COLLECTION",
       "fields": [
-        {
-          "fieldPath": "roomId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
+        { "fieldPath": "roomId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
     }
   ],

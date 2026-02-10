@@ -6,6 +6,10 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import { Toaster } from 'react-hot-toast';
 import { BrowserRouter } from 'react-router-dom';
 
+// Validate environment variables early to fail fast
+import { validateEnv } from './lib/env';
+validateEnv();
+
 // Initialize i18n and Sentry before rendering
 import './lib/i18n';
 import { SentryInit } from './lib/sentry';

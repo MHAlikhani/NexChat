@@ -30,7 +30,7 @@ import { useCreateRoom } from '../hooks/useCreateRoom';
 import { createRoomSchema, type CreateRoomFormData } from '../utils/validators';
 
 export const CreateRoomModal: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isModalOpen, closeModal, createRoom, isCreating } = useCreateRoom();
 
   const {
@@ -63,7 +63,7 @@ export const CreateRoomModal: React.FC = () => {
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
-      dir="rtl"
+      dir={i18n.dir()}
       PaperProps={{
         sx: {
           borderRadius: 4,
@@ -173,10 +173,7 @@ export const CreateRoomModal: React.FC = () => {
                       }
                       label={
                         <Box sx={{ mr: 1 }}>
-                          <Typography
-                            variant="body1"
-                            sx={{ color: '#F8FAFC', fontWeight: 600 }}
-                          >
+                          <Typography variant="body1" sx={{ color: '#F8FAFC', fontWeight: 600 }}>
                             {t('rooms.public')}
                           </Typography>
                           <Typography
@@ -214,10 +211,7 @@ export const CreateRoomModal: React.FC = () => {
                       }
                       label={
                         <Box sx={{ mr: 1 }}>
-                          <Typography
-                            variant="body1"
-                            sx={{ color: '#F8FAFC', fontWeight: 600 }}
-                          >
+                          <Typography variant="body1" sx={{ color: '#F8FAFC', fontWeight: 600 }}>
                             {t('rooms.private')}
                           </Typography>
                           <Typography

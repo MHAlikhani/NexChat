@@ -16,6 +16,8 @@ import {
   where,
   orderBy,
   limit,
+  startAt,
+  endAt,
   onSnapshot,
   serverTimestamp,
   arrayUnion,
@@ -37,10 +39,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 };
 
 export const roomsService = {
-  create: async (
-    input: CreateRoomInput,
-    creatorId: string
-  ): Promise<Room> => {
+  create: async (input: CreateRoomInput, creatorId: string): Promise<Room> => {
     try {
       const roomsRef = collection(db, ROOMS_COLLECTION);
 
@@ -182,10 +181,7 @@ export const roomsService = {
     }
   },
 
-  updateLastMessage: async (
-    roomId: string,
-    message: LastMessage
-  ): Promise<void> => {
+  updateLastMessage: async (roomId: string, message: LastMessage): Promise<void> => {
     try {
       const roomRef = doc(db, ROOMS_COLLECTION, roomId);
       await updateDoc(roomRef, {
@@ -230,10 +226,7 @@ export const roomsService = {
     );
   },
 
-  subscribeToOne: (
-    roomId: string,
-    callback: (room: Room | null) => void
-  ): Unsubscribe => {
+  subscribeToOne: (roomId: string, callback: (room: Room | null) => void): Unsubscribe => {
     const roomRef = doc(db, ROOMS_COLLECTION, roomId);
 
     return onSnapshot(
@@ -252,21 +245,85 @@ export const roomsService = {
     );
   },
 
+  /**
+   * Search rooms by name and description.
+   *
+   * PERFORMANCE NOTE: Firestore only supports prefix matching for string
+   * queries (not substring search). For production full-text search,
+   * consider integrating external services like Algolia or Meilisearch.
+   *
+   * This implementation:
+   * 1. First attempts efficient Firestore prefix matching on room names
+   *    using range queries (requires composite index on name + lastActivityAt)
+   * 2. Falls back to client-side filtering if the Firestore query fails
+   *    (e.g., missing composite index)
+   *
+   * @param queryText - The search query string
+   * @param searchLimit - Maximum number of results to return (default: 20)
+   */
   search: async (queryText: string, searchLimit = 20): Promise<Room[]> => {
     try {
-      const allRooms = await roomsService.getAll({ limit: 100 });
+      const normalizedQuery = queryText.trim();
 
-      const normalizedQuery = queryText.toLowerCase().trim();
+      if (!normalizedQuery) {
+        return [];
+      }
 
-      return allRooms
-        .filter((room: Room) => {
-          const nameMatch = room.name.toLowerCase().includes(normalizedQuery);
-          const descMatch = room.description?.toLowerCase().includes(normalizedQuery);
-          return nameMatch || descMatch;
-        })
-        .slice(0, searchLimit);
-    } catch (error) {
-      throw normalizeRoomError(error);
+      // Attempt Firestore prefix matching with range queries
+      const roomsRef = collection(db, ROOMS_COLLECTION);
+
+      const q = query(
+        roomsRef,
+        where('isActive', '==', true),
+        orderBy('name'),
+        startAt(normalizedQuery),
+        endAt(normalizedQuery + '\uf8ff'),
+        limit(searchLimit * 3) // Get extra results for case-insensitive filtering
+      );
+
+      const snapshot = await getDocs(q);
+      const candidates = snapshot.docs.map((docSnap) => mapFirestoreDocToRoom(docSnap));
+
+      // Client-side filter for case-insensitive matching + description search
+      const lowerQuery = normalizedQuery.toLowerCase();
+      const results = candidates.filter(
+        (room) =>
+          room.name.toLowerCase().includes(lowerQuery) ||
+          room.description?.toLowerCase().includes(lowerQuery)
+      );
+
+      // If Firestore prefix matching returned few results, supplement
+      // with client-side search on the broader dataset
+      if (results.length < searchLimit) {
+        const allRooms = await roomsService.getAll({ limit: 100 });
+        const additionalResults = allRooms.filter(
+          (room) =>
+            !results.some((r) => r.id === room.id) &&
+            (room.name.toLowerCase().includes(lowerQuery) ||
+              room.description?.toLowerCase().includes(lowerQuery))
+        );
+
+        return [...results, ...additionalResults].slice(0, searchLimit);
+      }
+
+      return results.slice(0, searchLimit);
+    } catch {
+      // Fallback: if Firestore query fails (e.g., missing composite index),
+      // fall back to full client-side search
+      try {
+        const allRooms = await roomsService.getAll({ limit: 100 });
+        const lowerQuery = queryText.toLowerCase().trim();
+
+        return allRooms
+          .filter(
+            (room: Room) =>
+              room.name.toLowerCase().includes(lowerQuery) ||
+              room.description?.toLowerCase().includes(lowerQuery)
+          )
+          .slice(0, searchLimit);
+      } catch (fallbackError) {
+        throw normalizeRoomError(fallbackError);
+      }
     }
   },
 };

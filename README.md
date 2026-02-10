@@ -27,33 +27,39 @@ This project serves as a production-grade portfolio piece showcasing modern fron
 ## Key Features
 
 ### Real-time Messaging
+
 - Send and receive text messages with **Markdown** and **line break** support
 - Message status indicators (sent, delivered, read) with visual icons
 - Live typing indicators showing "typing..." for other users
 
 ### Media Sharing
+
 - Upload images in JPEG, PNG, and WebP formats
 - **Automatic compression** before sending to reduce bandwidth usage
 - Image preview before sending with cancel option
 
 ### Voice Messages
+
 - Record audio directly in the browser using the **MediaRecorder API**
 - Live timer display during recording
 - **Cancel or send** voice messages at any time
 - Custom audio player with Play/Pause controls and seek slider
 
 ### Secure Authentication
+
 - Sign in with **Google OAuth** via Firebase Authentication
 - Session management with **Refresh Tokens** for enhanced security
 - Route protection with **Protected Routes**
 
 ### User Experience
+
 - Fully **responsive** design for mobile, tablet, and desktop
 - Complete **accessibility** support (ARIA labels, keyboard navigation)
 - **Lazy loading** for images and heavy components
-- Smooth, performant animations
+- Smooth CSS-based animations and MUI transitions
 
 ### Performance
+
 - **Code splitting** with React.lazy and Suspense
 - Component **memoization** to prevent unnecessary re-renders
 - **Debounced** search and frequent operations
@@ -61,22 +67,21 @@ This project serves as a production-grade portfolio piece showcasing modern fron
 
 ## Tech Stack
 
-| Category | Technology | Description |
-|----------|-----------|-------------|
-| **Frontend** | React 18.3 | Core UI library with Hooks and Context API |
-| **Language** | TypeScript 5.3 | Type safety and improved DX |
-| **Build Tool** | Vite 5.0 | Fast builds with instant HMR |
-| **Backend** | Firebase 10.0 | Auth, Realtime Database, and Storage |
-| **Client State** | Zustand 4.4 | Lightweight and fast state management |
-| **Server State** | TanStack Query 5.0 | Caching and server data management |
-| **Routing** | React Router 6.20 | SPA routing with protected routes |
-| **Styling** | MUI 5.14 | Material Design component library |
-| **Forms** | React Hook Form 7.48 | Optimized forms with validation |
-| **Validation** | Zod 3.22 | Schema-based validation |
-| **Testing** | Vitest + RTL | Unit and integration testing |
-| **Code Quality** | ESLint + Prettier | Linting and formatting with Husky |
-| **Animation** | Framer Motion 10.16 | Declarative animations |
-| **Error Tracking** | Sentry 7.80 | Production error monitoring |
+| Category           | Technology           | Description                                |
+| ------------------ | -------------------- | ------------------------------------------ |
+| **Frontend**       | React 18.3           | Core UI library with Hooks and Context API |
+| **Language**       | TypeScript 5.3       | Type safety and improved DX                |
+| **Build Tool**     | Vite 5.0             | Fast builds with instant HMR               |
+| **Backend**        | Firebase 10.0        | Auth, Realtime Database, and Storage       |
+| **Client State**   | Zustand 4.4          | Lightweight and fast state management      |
+| **Server State**   | TanStack Query 5.0   | Caching and server data management         |
+| **Routing**        | React Router 6.20    | SPA routing with protected routes          |
+| **Styling**        | MUI 5.14             | Material Design component library          |
+| **Forms**          | React Hook Form 7.48 | Optimized forms with validation            |
+| **Validation**     | Zod 3.22             | Schema-based validation                    |
+| **Testing**        | Vitest + RTL         | Unit and integration testing               |
+| **Code Quality**   | ESLint + Prettier    | Linting and formatting with Husky          |
+| **Error Tracking** | Sentry 7.80          | Production error monitoring                |
 
 ## Project Structure
 
@@ -102,6 +107,7 @@ src/
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18 or higher
 - npm or yarn
 - A Firebase account (for backend configuration)
@@ -109,29 +115,35 @@ src/
 ### Installation
 
 1. **Clone the repository**
+
 ```bash
 git clone https://github.com/mhalikhani/nexchat.git
 cd nexchat
 ```
 
 2. **Install dependencies**
+
 ```bash
 npm install
 ```
 
 3. **Configure environment variables**
-Copy `.env.example` to `.env` and add your Firebase credentials:
+   Copy `.env.example` to `.env` and add your Firebase credentials:
+
 ```bash
 cp .env.example .env
 ```
 
 4. **Start development server**
+
 ```bash
 npm run dev
 ```
+
 The app will be available at `http://localhost:5173`.
 
 5. **Build for production**
+
 ```bash
 npm run build
 npm run preview  # Preview the production build
@@ -157,6 +169,7 @@ npm run lint:fix
 ```
 
 ### Quality Tools
+
 - **Vitest**: Fast unit testing with Jest compatibility
 - **React Testing Library**: Component testing from the user's perspective
 - **ESLint + Prettier**: Clean and consistent code
