@@ -1,13 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Box,
-  Typography,
-  Card,
-  CardMedia,
-  CardContent,
-  Link,
-} from '@mui/material';
+import { Box, Typography, Card, CardMedia, CardContent, Link } from '@mui/material';
 import { OpenInNew as OpenInNewIcon } from '@mui/icons-material';
 
 interface LinkPreviewProps {
@@ -32,9 +25,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
     const fetchMetadata = async () => {
       try {
         // Using microlink.io API for rich link previews (free tier)
-        const response = await fetch(
-          `https://api.microlink.io/?url=${encodeURIComponent(url)}`
-        );
+        const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
         const data = await response.json();
 
         if (isMounted && data.status === 'success' && data.data) {
@@ -52,7 +43,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
             url,
           });
         }
-      } catch (error) {
+      } catch {
         if (isMounted) {
           setMetadata({
             title: url,

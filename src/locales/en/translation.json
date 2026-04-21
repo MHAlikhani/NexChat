@@ -20,17 +20,9 @@
   },
   "auth": {
     "login": "Login",
-    "register": "Register",
     "logout": "Logout",
-    "email": "Email",
-    "password": "Password",
-    "name": "Name",
-    "forgotPassword": "Forgot Password",
     "welcomeTo": "Welcome to <gradient>NexChat</gradient>",
     "loginSubtitle": "Start a modern, fast and secure chat experience.",
-    "termsAgreement": "By signing in, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
-    "termsOfService": "Terms of Service",
-    "privacyPolicy": "Privacy Policy",
     "online": "Online",
     "offline": "Offline",
     "editName": "Edit Name",
@@ -39,7 +31,11 @@
     "displayName": "Display Name",
     "nameUpdated": "Name updated successfully",
     "nameUpdateFailed": "Failed to update name",
+    "nameTooShort": "Name must be at least 2 characters",
     "signInWithGoogle": "Sign in with Google",
+    "signingIn": "Signing in...",
+    "signInSuccess": "Signed in successfully",
+    "signInFailed": "Sign in failed",
     "popupClosed": "Sign-in popup was closed",
     "popupCancelled": "Sign-in request was cancelled",
     "popupBlocked": "Sign-in popup was blocked by browser",
@@ -86,8 +82,11 @@
     "deleting": "Deleting room...",
     "deleteSuccess": "Room deleted successfully",
     "deleteFailed": "Failed to delete",
+    "created": "Room \"{{name}}\" created successfully",
+    "creationFailed": "Failed to create room",
     "pleaseLogin": "Please login first",
-    "noDescription": "No description"
+    "noDescription": "No description",
+    "alreadyExists": "A room with this name already exists"
   },
   "chat": {
     "sendMessage": "Send Message",
@@ -95,10 +94,12 @@
     "noMessages": "No messages yet. Start the conversation!",
     "firstMessage": "No messages sent yet. Send the first message! 👋",
     "deleteMessage": "Delete Message",
-    "editMessage": "Edit Message",
     "reply": "Reply",
     "replyTo": "Replying to {{name}}",
     "deletedMessage": "Deleted message",
+    "sendFailed": "Failed to send message",
+    "deleteSuccess": "Message deleted successfully",
+    "deleteFailed": "Failed to delete message",
     "searchInMessages": "Search in messages...",
     "searchMessages": "Search Messages",
     "closeSearch": "Close Search",
@@ -114,14 +115,33 @@
   },
   "home": {
     "subtitle": "Next-generation enterprise messaging platform",
-    "version": "Version 2.0.0 (Enterprise Edition)",
+    "version": "Version 2.0.0",
     "getStarted": "Get Started",
     "builtWith": "Built with React 18 + TypeScript + Firebase"
+  },
+  "validation": {
+    "roomNameMin": "Room name must be at least 3 characters",
+    "roomNameMax": "Room name cannot exceed 50 characters",
+    "roomNameInvalid": "Room name can only contain letters, numbers, and spaces",
+    "descriptionMax": "Description cannot exceed 200 characters",
+    "roomTypeInvalid": "Invalid room type",
+    "membersMax": "Maximum 50 initial members allowed",
+    "searchMax": "Search cannot exceed 100 characters",
+    "messageEmpty": "Message cannot be empty",
+    "messageMax": "Message is too long",
+    "nameMin": "Name must be at least 2 characters"
   },
   "errors": {
     "network": "Network error. Please check your internet connection.",
     "unauthorized": "You do not have permission to access this section.",
     "notFound": "The requested page was not found.",
-    "serverError": "Internal server error. Please try again later."
+    "serverError": "Internal server error. Please try again later.",
+    "unknown": "An unknown error occurred.",
+    "permissionDenied": "You do not have permission to perform this action.",
+    "resourceExhausted": "The resource is too large.",
+    "invalidArgument": "Invalid input data.",
+    "joinFailed": "Failed to join the room.",
+    "leaveFailed": "Failed to leave the room.",
+    "deleteFailed": "Failed to delete."
   }
 }

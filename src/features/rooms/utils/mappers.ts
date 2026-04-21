@@ -1,68 +1,45 @@
 /**
  * Room Mappers (Adapter Pattern)
  *
- * تبدیل بین Firestore Document و Domain Room
- *
  * @module features/rooms/utils/mappers
  */
 
-import type { DocumentSnapshot } from 'firebase/firestore';
-import type { Timestamp } from 'firebase/firestore';
-import type { Room, LastMessage } from '../types';
+import type { QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
+import type { Room } from '../types';
 
 /**
  * Map Firestore Document to Domain Room
  */
-export const mapFirestoreDocToRoom = (
-  doc: DocumentSnapshot
-): Room => {
-  const data = doc.data() as Record<string, unknown>;
+export const mapFirestoreDocToRoom = (docSnap: QueryDocumentSnapshot): Room => {
+  const data = docSnap.data() as Record<string, unknown>;
 
   return {
-    id: doc.id,
-    name: data.name as string,
-    description: (data.description as string) || '',
+    id: docSnap.id,
+    name: (data.name as string) || '',
+    description: (data.description as string) || undefined,
     avatarUrl: (data.avatarUrl as string) || undefined,
-    creatorId: data.creatorId as string,
+    creatorId: (data.creatorId as string) || '',
     members: (data.members as string[]) || [],
     memberCount: (data.memberCount as number) || 0,
     type: (data.type as Room['type']) || 'public',
-    createdAt: convertTimestamp(data.createdAt as Timestamp),
-    lastActivityAt: convertTimestamp(data.lastActivityAt as Timestamp),
-    lastMessage: data.lastMessage ? mapLastMessage(data.lastMessage as Record<string, unknown>) : undefined,
+    createdAt: convertTimestamp(data.createdAt as Timestamp) ?? new Date().toISOString(),
+    lastActivityAt: convertTimestamp(data.lastActivityAt as Timestamp) ?? new Date().toISOString(),
+    lastMessage: (data.lastMessage as Room['lastMessage']) || undefined,
     isActive: (data.isActive as boolean) ?? true,
   };
 };
 
 /**
- * Map Firestore timestamp to ISO string
+ * Convert Firestore Timestamp to ISO string or null
  */
-const convertTimestamp = (timestamp: Timestamp | null | undefined): string => {
-  if (!timestamp) {
-    return new Date().toISOString();
-  }
+const convertTimestamp = (timestamp: unknown): string | null => {
+  if (!timestamp) return null;
 
-  if (typeof timestamp === 'string') {
-    return timestamp;
-  }
+  if (typeof timestamp === 'string') return timestamp;
 
-  if (timestamp && typeof timestamp === 'object' && 'toDate' in timestamp) {
+  if (typeof timestamp === 'object' && 'toDate' in (timestamp as object)) {
     return (timestamp as Timestamp).toDate().toISOString();
   }
 
-  return new Date().toISOString();
-};
-
-/**
- * Map last message data
- */
-const mapLastMessage = (data: Record<string, unknown>): LastMessage => {
-  return {
-    id: (data.id as string) || '',
-    content: (data.content as string) || '',
-    senderId: (data.senderId as string) || '',
-    senderName: (data.senderName as string) || '',
-    type: (data.type as LastMessage['type']) || 'text',
-    timestamp: convertTimestamp(data.timestamp as Timestamp),
-  };
+  return null;
 };

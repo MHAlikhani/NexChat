@@ -1,6 +1,11 @@
 /**
  * Environment variable validation
- * Ensures all required environment variables are present at runtime
+ * Ensures all required environment variables are present at runtime.
+ *
+ * The `env` export is validated at module import time (fail-fast).
+ * Do NOT call `validateEnv()` separately — import `env` instead.
+ *
+ * @module lib/env
  */
 
 const requiredEnvVars = [
@@ -14,7 +19,7 @@ const requiredEnvVars = [
 
 type RequiredEnvVar = (typeof requiredEnvVars)[number];
 
-export function validateEnv(): Record<RequiredEnvVar, string> {
+function validateEnv(): Record<RequiredEnvVar, string> {
   const missingVars = requiredEnvVars.filter((envVar) => !import.meta.env[envVar]);
 
   if (missingVars.length > 0) {
@@ -34,5 +39,8 @@ export function validateEnv(): Record<RequiredEnvVar, string> {
   };
 }
 
-// Export validated environment variables for use in the app
+/**
+ * Validated environment variables.
+ * Throws at module import time if any required variables are missing.
+ */
 export const env = validateEnv();

@@ -32,37 +32,10 @@ export interface LastMessage {
 
 export type MessageType = 'text' | 'system';
 
-export interface RoomMember {
-  uid: string;
-  displayName: string;
-  email: string;
-  photoURL: string | null;
-  role: 'creator' | 'admin' | 'member';
-  joinedAt: string;
-  status: 'online' | 'offline' | 'away';
-  lastSeenAt: string;
-}
-
-export interface RoomState {
-  activeRoomId: string | null;
-  rooms: Room[];
-  isLoading: boolean;
-  error: RoomError | null;
-  isCreateModalOpen: boolean;
-  searchQuery: string;
-}
-
-export interface RoomError {
-  code: string;
-  message: string;
-  details?: unknown;
-}
-
 export interface CreateRoomInput {
   name: string;
   description?: string;
   type: RoomType;
-  avatarFile?: File;
   initialMembers?: string[];
 }
 

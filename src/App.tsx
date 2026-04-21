@@ -35,10 +35,10 @@ const PageLoadingFallback = () => (
       alignItems: 'center',
       justifyContent: 'center',
       minHeight: '100vh',
-      bgcolor: '#0B0F19',
+      bgcolor: '#000000',
     }}
   >
-    <CircularProgress sx={{ color: '#0A84FF' }} size={48} thickness={4} />
+    <CircularProgress sx={{ color: '#0A84FF' }} size={40} thickness={4} />
   </Box>
 );
 

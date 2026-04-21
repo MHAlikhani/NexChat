@@ -5,6 +5,7 @@
  */
 
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { useRoomsStore } from '../stores/roomsStore';
 import { roomsService } from '../services/rooms.service';
@@ -21,6 +22,7 @@ export interface UseCreateRoomReturn {
 }
 
 export const useCreateRoom = (): UseCreateRoomReturn => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
 
@@ -29,7 +31,7 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
   const createRoom = useCallback(
     async (data: CreateRoomFormData): Promise<Room | null> => {
       if (!user) {
-        toast.error('لطفاً ابتدا وارد شوید');
+        toast.error(t('rooms.pleaseLogin'));
         return null;
       }
 
@@ -42,17 +44,14 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
       }
 
       setIsCreating(true);
-      const toastId = toast.loading('در حال ایجاد اتاق...');
+      const toastId = toast.loading(t('rooms.creating'));
 
       try {
-        const newRoom = await roomsService.create(
-          validationResult.data,
-          user.uid
-        );
+        const newRoom = await roomsService.create(validationResult.data, user.uid);
 
         addRoom(newRoom);
 
-        toast.success(`اتاق "${newRoom.name}" با موفقیت ایجاد شد`, {
+        toast.success(t('rooms.created', { name: newRoom.name }), {
           id: toastId,
         });
 
@@ -60,9 +59,7 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
 
         return newRoom;
       } catch (error) {
-        const message = error instanceof Error
-          ? error.message
-          : 'ایجاد اتاق ناموفق بود';
+        const message = error instanceof Error ? error.message : t('rooms.creationFailed');
 
         toast.error(message, { id: toastId });
 
@@ -71,7 +68,7 @@ export const useCreateRoom = (): UseCreateRoomReturn => {
         setIsCreating(false);
       }
     },
-    [user, addRoom, setCreateModalOpen]
+    [user, addRoom, setCreateModalOpen, t]
   );
 
   const openModal = useCallback(() => {

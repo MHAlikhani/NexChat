@@ -1,14 +1,13 @@
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Box, Typography, Container } from '@mui/material';
 import { Chat as ChatIcon } from '@mui/icons-material';
 import { SignInButton } from '@/features/auth';
 
 export default function LoginPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <>
-      {/* Ambient Background */}
       <div className="aurora-background" />
 
       <Box
@@ -31,6 +30,7 @@ export default function LoginPage() {
               borderRadius: 3,
               animation: 'slideUpFade 0.25s cubic-bezier(0.25, 0.1, 0.25, 1) forwards',
             }}
+            dir={i18n.dir()}
           >
             {/* Icon */}
             <Box
@@ -49,63 +49,27 @@ export default function LoginPage() {
               <ChatIcon sx={{ fontSize: 36, color: '#FFFFFF' }} />
             </Box>
 
-            {/* Title */}
             <Typography
               variant="h4"
               component="h1"
               fontWeight="700"
-              sx={{
-                color: '#FFFFFF',
-                letterSpacing: '-0.02em',
-                mb: 1,
-              }}
+              sx={{ color: '#FFFFFF', letterSpacing: '-0.02em', mb: 1 }}
             >
-              <Trans
-                i18nKey="auth.welcomeTo"
-                components={{
-                  gradient: <span className="text-gradient" />,
-                }}
-              />
+              NexChat
             </Typography>
 
-            {/* Subtitle */}
-            <Typography
-              variant="body1"
-              sx={{
-                color: '#8E8E93',
-                mb: 4,
-                lineHeight: 1.5,
-              }}
-            >
+            <Typography variant="body1" sx={{ color: '#8E8E93', mb: 1, lineHeight: 1.5 }}>
               {t('auth.loginSubtitle')}
             </Typography>
 
-            {/* Sign In Button */}
-            <Box sx={{ mt: 1 }}>
-              <SignInButton fullWidth />
-            </Box>
+            <Typography variant="caption" sx={{ color: '#636366', display: 'block', mb: 4 }}>
+              {t('home.version')}
+            </Typography>
 
-            {/* Terms */}
-            <Typography
-              variant="caption"
-              sx={{
-                color: '#636366',
-                mt: 4,
-                display: 'block',
-                lineHeight: 1.6,
-              }}
-            >
-              <Trans
-                i18nKey="auth.termsAgreement"
-                components={{
-                  terms: (
-                    <span style={{ color: '#0A84FF', cursor: 'pointer' }} />
-                  ),
-                  privacy: (
-                    <span style={{ color: '#0A84FF', cursor: 'pointer' }} />
-                  ),
-                }}
-              />
+            <SignInButton size="large" fullWidth />
+
+            <Typography variant="caption" sx={{ color: '#636366', mt: 4, display: 'block' }}>
+              {t('home.builtWith')}
             </Typography>
           </Box>
         </Container>

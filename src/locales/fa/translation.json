@@ -20,17 +20,9 @@
   },
   "auth": {
     "login": "ورود",
-    "register": "ثبت‌نام",
     "logout": "خروج",
-    "email": "ایمیل",
-    "password": "رمز عبور",
-    "name": "نام",
-    "forgotPassword": "فراموشی رمز عبور",
     "welcomeTo": "به <gradient>NexChat</gradient> خوش آمدید",
     "loginSubtitle": "تجربه‌ای مدرن، سریع و امن از گفتگو را آغاز کنید.",
-    "termsAgreement": "با ورود، <terms>شرایط استفاده</terms> و <privacy>حریم خصوصی</privacy> را می‌پذیرید.",
-    "termsOfService": "شرایط استفاده",
-    "privacyPolicy": "حریم خصوصی",
     "online": "آنلاین",
     "offline": "آفلاین",
     "editName": "ویرایش نام",
@@ -39,7 +31,11 @@
     "displayName": "نام نمایشی",
     "nameUpdated": "نام با موفقیت به‌روزرسانی شد",
     "nameUpdateFailed": "به‌روزرسانی نام ناموفق بود",
+    "nameTooShort": "نام باید حداقل ۲ کاراکتر باشد",
     "signInWithGoogle": "ورود با گوگل",
+    "signingIn": "در حال ورود...",
+    "signInSuccess": "ورود موفقیت‌آمیز بود",
+    "signInFailed": "ورود ناموفق بود",
     "popupClosed": "پنجره ورود توسط شما بسته شد",
     "popupCancelled": "درخواست ورود لغو شد",
     "popupBlocked": "پنجره ورود توسط مرورگر مسدود شد",
@@ -86,8 +82,11 @@
     "deleting": "در حال حذف اتاق...",
     "deleteSuccess": "اتاق با موفقیت حذف شد",
     "deleteFailed": "حذف ناموفق بود",
+    "created": "اتاق \"{{name}}\" با موفقیت ایجاد شد",
+    "creationFailed": "ایجاد اتاق ناموفق بود",
     "pleaseLogin": "لطفاً ابتدا وارد شوید",
-    "noDescription": "بدون توضیحات"
+    "noDescription": "بدون توضیحات",
+    "alreadyExists": "اتاقی با این نام از قبل وجود دارد"
   },
   "chat": {
     "sendMessage": "ارسال پیام",
@@ -95,10 +94,12 @@
     "noMessages": "هنوز پیامی وجود ندارد. گفتگو را شروع کنید!",
     "firstMessage": "هنوز پیامی ارسال نشده. اولین پیام را ارسال کنید! 👋",
     "deleteMessage": "حذف پیام",
-    "editMessage": "ویرایش پیام",
     "reply": "پاسخ",
     "replyTo": "پاسخ به {{name}}",
     "deletedMessage": "پیام حذف شده",
+    "sendFailed": "ارسال پیام ناموفق بود",
+    "deleteSuccess": "پیام با موفقیت حذف شد",
+    "deleteFailed": "حذف پیام ناموفق بود",
     "searchInMessages": "جستجو در پیام‌ها...",
     "searchMessages": "جستجو در پیام‌ها",
     "closeSearch": "بستن جستجو",
@@ -114,14 +115,33 @@
   },
   "home": {
     "subtitle": "پلتفرم پیام‌رسان سازمانی نسل جدید",
-    "version": "نسخه 2.0.0 (Enterprise Edition)",
+    "version": "نسخه 2.0.0",
     "getStarted": "شروع کنید",
     "builtWith": "ساخته شده با React 18 + TypeScript + Firebase"
+  },
+  "validation": {
+    "roomNameMin": "نام اتاق باید حداقل ۳ کاراکتر باشد",
+    "roomNameMax": "نام اتاق نمی‌تواند بیشتر از ۵۰ کاراکتر باشد",
+    "roomNameInvalid": "نام اتاق فقط می‌تواند شامل حروف، اعداد و فاصله باشد",
+    "descriptionMax": "توضیحات نمی‌تواند بیشتر از ۲۰۰ کاراکتر باشد",
+    "roomTypeInvalid": "نوع اتاق نامعتبر است",
+    "membersMax": "حداکثر ۵۰ عضو اولیه می‌توانید اضافه کنید",
+    "searchMax": "جستجو نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد",
+    "messageEmpty": "پیام نمی‌تواند خالی باشد",
+    "messageMax": "پیام بیش از حد طولانی است",
+    "nameMin": "نام باید حداقل ۲ کاراکتر باشد"
   },
   "errors": {
     "network": "خطای شبکه. لطفاً اتصال اینترنت خود را بررسی کنید.",
     "unauthorized": "شما مجوز دسترسی به این بخش را ندارید.",
     "notFound": "صفحه مورد نظر یافت نشد.",
-    "serverError": "خطای داخلی سرور. لطفاً بعداً دوباره تلاش کنید."
+    "serverError": "خطای داخلی سرور. لطفاً بعداً دوباره تلاش کنید.",
+    "unknown": "خطای ناشناخته‌ای رخ داد.",
+    "permissionDenied": "شما اجازه انجام این عملیات را ندارید.",
+    "resourceExhausted": "منبع بیش از حد بزرگ است.",
+    "invalidArgument": "اطلاعات وارد شده نامعتبر است.",
+    "joinFailed": "عضویت در اتاق ناموفق بود.",
+    "leaveFailed": "خروج از اتاق ناموفق بود.",
+    "deleteFailed": "حذف ناموفق بود."
   }
 }

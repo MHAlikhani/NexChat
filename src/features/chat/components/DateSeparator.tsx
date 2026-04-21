@@ -18,9 +18,7 @@ export const DateSeparator: React.FC<DateSeparatorProps> = ({ date }) => {
 
   const locale = i18n.language === 'fa' ? 'fa-IR' : i18n.language;
   const today = new Date().toLocaleDateString(locale);
-  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toLocaleDateString(
-    locale
-  );
+  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toLocaleDateString(locale);
 
   let displayDate = date;
   if (date === today) {
@@ -34,13 +32,15 @@ export const DateSeparator: React.FC<DateSeparatorProps> = ({ date }) => {
       <Typography
         variant="caption"
         sx={{
-          bgcolor: 'rgba(225, 225, 225, 0.9)',
+          bgcolor: 'rgba(28, 28, 30, 0.8)',
           px: 1.5,
           py: 0.5,
           borderRadius: 2,
-          color: 'text.secondary',
+          color: '#8E8E93',
           fontSize: 12,
-          boxShadow: '0 1px 1px rgba(0,0,0,0.05)',
+          fontWeight: 500,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+          border: '0.5px solid rgba(255,255,255,0.1)',
         }}
       >
         {displayDate}

@@ -26,17 +26,11 @@ import {
   type Unsubscribe,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import i18n from '@/lib/i18n';
 import type { Room, CreateRoomInput, UpdateRoomInput, LastMessage } from '../types';
 import { mapFirestoreDocToRoom } from '../utils/mappers';
 
 const ROOMS_COLLECTION = 'rooms';
-
-const ERROR_MESSAGES: Record<string, string> = {
-  'permission-denied': 'شما مجوز انجام این عملیات را ندارید',
-  'not-found': 'اتاق مورد نظر یافت نشد',
-  'already-exists': 'اتاقی با این نام از قبل وجود دارد',
-  'invalid-argument': 'اطلاعات وارد شده نامعتبر است',
-};
 
 export const roomsService = {
   create: async (input: CreateRoomInput, creatorId: string): Promise<Room> => {
@@ -331,7 +325,16 @@ export const roomsService = {
 function normalizeRoomError(error: unknown): Error {
   if (error && typeof error === 'object' && 'code' in error) {
     const firestoreError = error as { code: string; message: string };
-    const userMessage = ERROR_MESSAGES[firestoreError.code] || firestoreError.message;
+
+    const errorKeyMap: Record<string, string> = {
+      'permission-denied': 'errors.permissionDenied',
+      'not-found': 'errors.notFound',
+      'already-exists': 'rooms.alreadyExists',
+      'invalid-argument': 'errors.invalidArgument',
+    };
+
+    const messageKey = errorKeyMap[firestoreError.code];
+    const userMessage = messageKey ? i18n.t(messageKey) : firestoreError.message;
 
     const err = new Error(userMessage);
     (err as Error & { code?: string }).code = firestoreError.code;
@@ -342,5 +345,5 @@ function normalizeRoomError(error: unknown): Error {
     return error;
   }
 
-  return new Error('خطای ناشناخته‌ای رخ داد');
+  return new Error(i18n.t('errors.unknown'));
 }

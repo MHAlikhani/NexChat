@@ -5,39 +5,44 @@
  */
 
 import { format, formatDistanceToNow, isToday, isYesterday } from 'date-fns';
-import { faIR } from 'date-fns/locale';
+import { faIR, enUS, de } from 'date-fns/locale';
+import type { Locale } from 'date-fns';
 
-export const formatMessageTime = (dateString: string): string => {
+const localeMap: Record<string, Locale> = {
+  fa: faIR,
+  en: enUS,
+  de: de,
+};
+
+/**
+ * Get the appropriate date-fns locale based on app language
+ */
+const getLocale = (language?: string): Locale => {
+  return localeMap[language || 'en'] || enUS;
+};
+
+/**
+ * Format message time based on current language
+ */
+export const formatMessageTime = (dateString: string, language = 'en'): string => {
   const date = new Date(dateString);
+  const locale = getLocale(language);
 
   if (isToday(date)) {
-    return format(date, 'HH:mm', { locale: faIR });
+    return format(date, 'HH:mm', { locale });
   }
 
   if (isYesterday(date)) {
-    return `دیروز ${format(date, 'HH:mm', { locale: faIR })}`;
+    return format(date, 'PP HH:mm', { locale });
   }
 
-  return format(date, 'yyyy/MM/dd HH:mm', { locale: faIR });
+  return format(date, 'yyyy/MM/dd HH:mm', { locale });
 };
 
-export const formatRelativeTime = (dateString: string): string => {
+/**
+ * Format relative time (e.g., "2 hours ago")
+ */
+export const formatRelativeTime = (dateString: string, language = 'en'): string => {
   const date = new Date(dateString);
-  return formatDistanceToNow(date, { addSuffix: true, locale: faIR });
-};
-
-export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
-
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-};
-
-export const formatDuration = (seconds: number): string => {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
+  return formatDistanceToNow(date, { addSuffix: true, locale: getLocale(language) });
 };

@@ -6,9 +6,9 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import { Toaster } from 'react-hot-toast';
 import { BrowserRouter } from 'react-router-dom';
 
-// Validate environment variables early to fail fast
-import { validateEnv } from './lib/env';
-validateEnv();
+// Validate environment variables early to fail fast.
+import { env } from './lib/env';
+void env;
 
 // Initialize i18n and Sentry before rendering
 import './lib/i18n';
@@ -18,6 +18,7 @@ import { App } from './App';
 import { theme } from './styles/theme';
 import './styles/global.css';
 
+// Initialize Sentry silently (no warning if DSN not configured)
 SentryInit();
 
 const queryClient = new QueryClient({
@@ -26,11 +27,22 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5,
       retry: 2,
       refetchOnWindowFocus: false,
+      gcTime: 1000 * 60 * 10,
     },
   },
 });
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+// Remove initial loader after React mounts
+const removeInitialLoader = () => {
+  const loader = document.querySelector('.initial-loader');
+  if (loader?.parentNode) {
+    loader.parentNode.removeChild(loader);
+  }
+};
+
+const rootElement = document.getElementById('root')!;
+
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <BrowserRouter
       future={{
@@ -45,11 +57,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Toaster
             position="top-center"
             toastOptions={{
-              duration: 4000,
+              duration: 3000,
               style: {
                 background: '#363636',
                 color: '#fff',
-                direction: 'rtl',
+                borderRadius: '12px',
+                fontSize: '0.875rem',
               },
             }}
           />
@@ -58,3 +71,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </BrowserRouter>
   </React.StrictMode>
 );
+
+requestAnimationFrame(removeInitialLoader);

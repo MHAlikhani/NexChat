@@ -2,13 +2,11 @@ import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
 
-// Cleanup after each test
 afterEach(() => {
   cleanup();
 });
 
 // Mock HTMLMediaElement methods (not implemented in jsdom)
-// This prevents "Not implemented: HTMLMediaElement.prototype.pause" warnings
 Object.defineProperty(window.HTMLMediaElement.prototype, 'pause', {
   writable: true,
   value: vi.fn(),
@@ -40,7 +38,7 @@ Object.defineProperty(window, 'Audio', {
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -52,6 +50,20 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+// Mock ResizeObserver
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
+// Mock IntersectionObserver
+global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
 // Mock Firebase
 vi.mock('firebase/app', () => ({
   initializeApp: vi.fn(),
@@ -61,11 +73,32 @@ vi.mock('firebase/app', () => ({
 vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(),
   signInWithPopup: vi.fn(),
+  signOut: vi.fn(),
+  onAuthStateChanged: vi.fn(),
   GoogleAuthProvider: vi.fn(),
+  updateProfile: vi.fn(),
 }));
 
 vi.mock('firebase/firestore', () => ({
   getFirestore: vi.fn(),
   collection: vi.fn(),
   doc: vi.fn(),
+  addDoc: vi.fn(),
+  deleteDoc: vi.fn(),
+  getDoc: vi.fn(),
+  getDocs: vi.fn(),
+  updateDoc: vi.fn(),
+  query: vi.fn(),
+  orderBy: vi.fn(),
+  limit: vi.fn(),
+  where: vi.fn(),
+  startAt: vi.fn(),
+  endAt: vi.fn(),
+  startAfter: vi.fn(),
+  onSnapshot: vi.fn(),
+  serverTimestamp: vi.fn(),
+  arrayUnion: vi.fn(),
+  arrayRemove: vi.fn(),
+  increment: vi.fn(),
+  writeBatch: vi.fn(),
 }));

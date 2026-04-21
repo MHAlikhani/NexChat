@@ -102,10 +102,10 @@ class ChatPageErrorBoundary extends Component<ChatErrorBoundaryProps, ChatErrorB
           </Box>
 
           <Typography variant="h6" fontWeight="700" sx={{ color: '#F8FAFC' }}>
-            خطایی در بارگذاری گفتگو رخ داد
+            {this.props.children ? 'Error loading chat' : 'Error'}
           </Typography>
           <Typography variant="body2" sx={{ color: '#94A3B8', textAlign: 'center', maxWidth: 400 }}>
-            متأسفانه مشکلی در نمایش این بخش پیش آمده است. لطفاً دوباره تلاش کنید.
+            {this.state.error?.message || 'An unexpected error occurred.'}
           </Typography>
 
           {import.meta.env.DEV && this.state.error && (
@@ -145,7 +145,7 @@ class ChatPageErrorBoundary extends Component<ChatErrorBoundaryProps, ChatErrorB
               },
             }}
           >
-            تلاش مجدد
+            Retry
           </Button>
         </Box>
       );

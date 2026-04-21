@@ -1,21 +1,77 @@
-# ADR 001: Adopting Vite over Create React App
+# ADR 001: Vite over Create React App
 
-**Date**: September 4, 2026  
-**Status**: Accepted  
-**Author**: Mohammad Hossein Alikhani
+## Status
+
+Accepted
 
 ## Context
-The previous iteration of the project relied on `create-react-app` (CRA) and `react-scripts`. CRA has effectively been abandoned by the community, suffers from slow development server startup times, and offers very limited flexibility for customizing the underlying Webpack configuration.
+
+When starting NexChat, we needed a build tool for our React + TypeScript application. The default choice for years has been Create React App (CRA), but CRA had become increasingly outdated and slow compared to modern alternatives.
+
+Key requirements:
+
+- Fast development server with HMR
+- Modern build performance
+- Native ESM support
+- Good TypeScript support
+- Active maintenance
 
 ## Decision
-We will use **Vite** as the primary build tool and development server for the project.
 
-## Rationale
-1. **Development Speed**: Vite leverages native ES Modules in the browser, delivering near-instantaneous Hot Module Replacement (HMR), regardless of project size.
-2. **First-Class TypeScript Support**: Vite handles TypeScript natively without requiring Babel transpilation, streamlining the development workflow.
-3. **Optimized Production Builds**: Vite uses Rollup under the hood for production builds, providing superior tree-shaking and smaller bundle sizes compared to traditional Webpack setups.
-4. **Simplicity**: The `vite.config.ts` file is highly readable, intuitive, and easily extensible via a rich plugin ecosystem.
+We chose **Vite** as our build tool.
 
 ## Consequences
-- **Positive**: Dramatically improved developer experience (DX), faster CI/CD pipelines, and reduced production bundle sizes.
-- **Negative**: Minor initial learning curve for Vite-specific configurations, and the need to replace a few legacy CRA-specific plugins with their Vite equivalents.
+
+### Positive
+
+- ⚡ **Lightning-fast dev server**: Vite leverages native ES modules, resulting in sub-second cold starts regardless of app size
+- 🔥 **Instant HMR**: Hot Module Replacement is nearly instantaneous because Vite only updates changed modules
+- 📦 **Optimized builds**: Uses Rollup for production builds with excellent tree-shaking
+- 🛠️ **Flexible configuration**: Easy to customize via `vite.config.ts`
+- 📱 **Modern features**: First-class support for CSS modules, JSON imports, WASM, etc.
+- 🔄 **Active development**: Regular updates and modern plugin ecosystem
+
+### Negative
+
+- ⚠️ **Migration cost**: Existing CRA projects require migration effort
+- 📚 **Documentation learning curve**: Slightly less beginner-friendly than CRA's "zero-config" approach
+- 🧪 **Testing setup**: Requires additional configuration for Jest/Vitest
+
+## Alternatives Considered
+
+### Create React App (CRA)
+
+- **Rejected**: No longer actively maintained, slow build times, Webpack 5 with suboptimal defaults
+- **When it made sense**: Pre-2022 projects needing zero configuration
+
+### Webpack 5 (manual configuration)
+
+- **Rejected**: Too much configuration overhead, slower than Vite
+- **When it makes sense**: Enterprise projects with complex build requirements
+
+### Parcel
+
+- **Rejected**: Less mature plugin ecosystem, slower than Vite in benchmarks
+- **When it makes sense**: Prototyping, smaller projects
+
+### esbuild (standalone)
+
+- **Rejected**: Too low-level, lacks dev server, requires manual configuration
+- **When it makes sense**: Library authors, custom build pipelines
+
+## Migration Notes
+
+If migrating from CRA:
+
+1. Remove `react-scripts` dependency
+2. Install `vite`, `@vitejs/plugin-react`
+3. Create `vite.config.ts`
+4. Update scripts in `package.json`:
+   ```json
+   "dev": "vite",
+   "build": "tsc && vite build",
+   "preview": "vite preview"
+   ```
+5. Move `index.html` to project root (Vite requires it there)
+6. Update environment variables from `REACT_APP_` to `VITE_`
+7. Update ESLint configuration

@@ -24,6 +24,7 @@ import {
   type QueryDocumentSnapshot,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import i18n from '@/lib/i18n';
 import type { Message, SendMessageInput } from '../types';
 import { mapFirestoreDocToMessage } from '../utils/mappers';
 
@@ -281,9 +282,9 @@ function normalizeMessageError(error: unknown): Error {
     const firestoreError = error as { code: string; message: string };
 
     const userMessages: Record<string, string> = {
-      'permission-denied': 'شما اجازه انجام این عملیات را ندارید',
-      'not-found': 'پیام مورد نظر یافت نشد',
-      'resource-exhausted': 'پیام بیش از حد بزرگ است',
+      'permission-denied': i18n.t('errors.permissionDenied'),
+      'not-found': i18n.t('errors.notFound'),
+      'resource-exhausted': i18n.t('errors.resourceExhausted'),
     };
 
     const userMessage = userMessages[firestoreError.code] || firestoreError.message;
@@ -297,5 +298,5 @@ function normalizeMessageError(error: unknown): Error {
     return error;
   }
 
-  return new Error('خطای ناشناخته‌ای رخ داد');
+  return new Error(i18n.t('errors.unknown'));
 }

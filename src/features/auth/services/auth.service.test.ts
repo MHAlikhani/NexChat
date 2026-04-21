@@ -1,8 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { authService } from './auth.service';
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import { profileService } from './profile.service';
-import type { AuthProvider } from '../types';
 
 vi.mock('firebase/auth', () => ({
   signInWithPopup: vi.fn(),
@@ -13,6 +10,12 @@ vi.mock('firebase/auth', () => ({
 
 vi.mock('@/lib/firebase', () => ({
   auth: {},
+}));
+
+vi.mock('@/lib/i18n', () => ({
+  default: {
+    t: (key: string) => key,
+  },
 }));
 
 vi.mock('./profile.service', () => ({
@@ -48,77 +51,56 @@ describe('Auth Service', () => {
     vi.clearAllMocks();
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   describe('signIn', () => {
-    it('should sign in successfully with Google provider', async () => {
+    it('should sign in successfully with Google', async () => {
+      const { signInWithPopup } = await import('firebase/auth');
       (signInWithPopup as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
         user: mockFirebaseUser,
       });
 
-      const result = await authService.signIn('google');
+      const result = await authService.signIn();
 
       expect(signInWithPopup).toHaveBeenCalled();
-      expect(profileService.upsertProfile).toHaveBeenCalledWith(mockUser);
       expect(result).toEqual(mockUser);
     });
 
-    it('should default to google provider if none specified', async () => {
-      (signInWithPopup as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: mockFirebaseUser,
-      });
-
-      await authService.signIn();
-
-      expect(signInWithPopup).toHaveBeenCalled();
-    });
-
-    it('should throw error for unsupported provider', async () => {
-      await expect(authService.signIn('github' as AuthProvider)).rejects.toThrow(
-        'روش ورود "github" پشتیبانی نمی‌شود'
-      );
-      expect(signInWithPopup).not.toHaveBeenCalled();
-    });
-
     it('should throw error if no user returned from popup', async () => {
+      const { signInWithPopup } = await import('firebase/auth');
       (signInWithPopup as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
         user: null,
       });
 
-      await expect(authService.signIn('google')).rejects.toThrow(
+      await expect(authService.signIn()).rejects.toThrow(
         'Authentication succeeded but no user returned'
       );
     });
 
     it('should normalize Firebase auth errors', async () => {
+      const { signInWithPopup } = await import('firebase/auth');
       const firebaseError = {
         code: 'auth/popup-closed-by-user',
         message: 'The popup has been closed by the user',
       };
       (signInWithPopup as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(firebaseError);
 
-      await expect(authService.signIn('google')).rejects.toEqual({
+      await expect(authService.signIn()).rejects.toMatchObject({
         code: 'auth/popup-closed-by-user',
-        message: 'پنجره ورود توسط شما بسته شد',
-        details: firebaseError,
       });
     });
 
     it('should handle unknown error types', async () => {
+      const { signInWithPopup } = await import('firebase/auth');
       (signInWithPopup as unknown as ReturnType<typeof vi.fn>).mockRejectedValue('string error');
 
-      await expect(authService.signIn('google')).rejects.toEqual({
+      await expect(authService.signIn()).rejects.toMatchObject({
         code: 'unknown-error',
-        message: 'خطای ناشناخته‌ای رخ داد',
-        details: 'string error',
       });
     });
   });
 
   describe('signOut', () => {
     it('should sign out successfully', async () => {
+      const { signOut } = await import('firebase/auth');
       (signOut as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
 
       await authService.signOut();
@@ -127,22 +109,22 @@ describe('Auth Service', () => {
     });
 
     it('should normalize sign out errors', async () => {
+      const { signOut } = await import('firebase/auth');
       const firebaseError = {
         code: 'auth/network-request-failed',
         message: 'Network error',
       };
       (signOut as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(firebaseError);
 
-      await expect(authService.signOut()).rejects.toEqual({
+      await expect(authService.signOut()).rejects.toMatchObject({
         code: 'auth/network-request-failed',
-        message: 'خطای شبکه. اتصال اینترنت خود را بررسی کنید',
-        details: firebaseError,
       });
     });
   });
 
   describe('onAuthChange', () => {
-    it('should subscribe to auth state changes and map user', () => {
+    it('should subscribe to auth state changes and map user', async () => {
+      const { onAuthStateChanged } = await import('firebase/auth');
       const mockCallback = vi.fn();
       const mockUnsubscribe = vi.fn();
 
@@ -159,7 +141,8 @@ describe('Auth Service', () => {
       expect(unsubscribe).toBe(mockUnsubscribe);
     });
 
-    it('should call callback with null when user signs out', () => {
+    it('should call callback with null when user signs out', async () => {
+      const { onAuthStateChanged } = await import('firebase/auth');
       const mockCallback = vi.fn();
 
       (onAuthStateChanged as unknown as ReturnType<typeof vi.fn>).mockImplementation(

@@ -1,21 +1,10 @@
 {
   "short_name": "NexChat",
   "name": "NexChat - Modern Messaging Platform",
-  "icons": [
-    {
-      "src": "logo.png",
-      "type": "image/png",
-      "sizes": "194x194"
-    },
-    {
-      "src": "icon.png",
-      "type": "image/png",
-      "sizes": "24x24"
-    }
-  ],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#0B0F19",
-  "background_color": "#0B0F19",
-  "description": "NexChat - Modern Messaging Platform"
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "description": "Modern, fast, and intelligent real-time messaging platform",
+  "icons": []
 }

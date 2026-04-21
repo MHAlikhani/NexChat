@@ -7,14 +7,14 @@
 import { useCallback } from 'react';
 import { useAuthStore, authSelectors } from '../stores/authStore';
 import { authService } from '../services/auth.service';
-import type { AuthProvider, AuthError } from '../types';
+import type { AuthError } from '../types';
 
 export interface UseAuthReturn {
   user: ReturnType<typeof authSelectors.selectUser>;
   isLoading: boolean;
   isAuthenticated: boolean;
   error: AuthError | null;
-  signIn: (provider?: AuthProvider) => Promise<void>;
+  signIn: () => Promise<void>;
   signOut: () => Promise<void>;
   clearError: () => void;
   updateDisplayName: (displayName: string) => Promise<void>;
@@ -28,20 +28,17 @@ export const useAuth = (): UseAuthReturn => {
 
   const { setUser, setLoading, setError } = useAuthStore();
 
-  const signIn = useCallback(
-    async (provider: AuthProvider = 'google'): Promise<void> => {
-      try {
-        setLoading(true);
-        setError(null);
-        const user = await authService.signIn(provider);
-        setUser(user);
-      } catch (error) {
-        setError(error as AuthError);
-        throw error;
-      }
-    },
-    [setLoading, setError, setUser]
-  );
+  const signIn = useCallback(async (): Promise<void> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const user = await authService.signIn();
+      setUser(user);
+    } catch (error) {
+      setError(error as AuthError);
+      throw error;
+    }
+  }, [setLoading, setError, setUser]);
 
   const signOut = useCallback(async (): Promise<void> => {
     try {
@@ -58,20 +55,12 @@ export const useAuth = (): UseAuthReturn => {
     setError(null);
   }, [setError]);
 
-  /**
-   * Update the current user's display name.
-   *
-   * Uses `useAuthStore.getState().user` instead of the closure `user`
-   * to avoid stale state issues and prevent this callback from being
-   * recreated every time the user object changes.
-   */
   const updateDisplayName = useCallback(
     async (displayName: string): Promise<void> => {
       try {
         setLoading(true);
         await authService.updateProfile({ displayName });
 
-        // Get the latest user from the store directly to avoid stale closure
         const currentUser = useAuthStore.getState().user;
         if (currentUser) {
           setUser({ ...currentUser, displayName });

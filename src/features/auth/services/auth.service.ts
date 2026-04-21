@@ -1,3 +1,9 @@
+/**
+ * Auth Service
+ *
+ * @module features/auth/services/auth
+ */
+
 import {
   signInWithPopup,
   signOut as firebaseSignOut,
@@ -8,7 +14,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import i18n from '@/lib/i18n';
-import type { User, AuthError, AuthProvider } from '../types';
+import type { User, AuthError } from '../types';
 import { profileService } from './profile.service';
 import { mapFirebaseUserToDomain } from '../utils/mappers';
 
@@ -22,21 +28,12 @@ const ERROR_MESSAGE_KEYS: Record<string, string> = {
   'auth/unauthorized-domain': 'auth.unauthorizedDomain',
 };
 
-const providers = {
-  google: new GoogleAuthProvider(),
-} as const;
+const googleProvider = new GoogleAuthProvider();
 
 export const authService = {
-  signIn: async (provider: AuthProvider = 'google'): Promise<User> => {
+  signIn: async (): Promise<User> => {
     try {
-      if (!(provider in providers)) {
-        throw new Error(i18n.t('auth.unsupportedSignIn', { provider }));
-      }
-
-      const selectedProvider =
-        providers[provider as keyof typeof providers];
-
-      const result = await signInWithPopup(auth, selectedProvider);
+      const result = await signInWithPopup(auth, googleProvider);
 
       if (!result.user) {
         throw new Error('Authentication succeeded but no user returned');
@@ -75,28 +72,19 @@ export const authService = {
     return firebaseUser ? mapFirebaseUserToDomain(firebaseUser) : null;
   },
 
-  updateProfile: async (updates: {
-    displayName?: string;
-    photoURL?: string;
-  }): Promise<void> => {
+  updateProfile: async (updates: { displayName?: string; photoURL?: string }): Promise<void> => {
     try {
       const firebaseUser = auth.currentUser;
       if (!firebaseUser) {
         throw new Error('No user logged in');
       }
 
-      // به‌روزرسانی در Firebase Auth
       await firebaseUpdateProfile(firebaseUser, updates);
 
-      // به‌روزرسانی در Firestore
       if (updates.displayName) {
-        await profileService.updateDisplayName(
-          firebaseUser.uid,
-          updates.displayName
-        );
+        await profileService.updateDisplayName(firebaseUser.uid, updates.displayName);
       }
     } catch (error) {
-      console.error('Failed to update profile:', error);
       throw normalizeAuthError(error);
     }
   },

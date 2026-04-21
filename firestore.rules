@@ -79,7 +79,7 @@ service cloud.firestore {
         // Only allow specific fields to be updated by members
         request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'members', 'memberCount', 'lastActivityAt', 'lastMessage',
-          'name', 'description', 'avatarUrl', 'isActive', 'deletedAt', 'type'
+          'name', 'description', 'isActive', 'deletedAt', 'type'
         ])
       ) && (
         // If name is being updated, it must still be valid
@@ -104,13 +104,13 @@ service cloud.firestore {
         // READ: Only room members can read messages
         allow read: if isSignedIn() && isRoomMember(getRoom(roomId));
 
-        // CREATE: Room members can send messages
+        // CREATE: Room members can send messages (text only)
         allow create: if isSignedIn()
             && isRoomMember(getRoom(roomId))
             && request.resource.data.senderId == request.auth.uid
             && request.resource.data.roomId == roomId
             && request.resource.data.keys().hasAll(['roomId', 'senderId', 'senderName', 'type', 'content', 'seenBy', 'createdAt'])
-            && request.resource.data.type in ['text', 'system', 'image', 'voice']
+            && request.resource.data.type in ['text', 'system']
             && request.resource.data.content is string
             && request.resource.data.content.size() <= 5000;
 

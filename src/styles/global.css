@@ -1,7 +1,5 @@
 /* NexChat - Apple-Inspired Design System */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Vazirmatn:wght@100..900&display=swap');
-
 :root {
   /* Apple-inspired Dark Mode Palette */
   --color-bg-deep: #000000;
@@ -10,17 +8,16 @@
   --color-border-subtle: rgba(84, 84, 88, 0.65);
   --color-border-light: rgba(255, 255, 255, 0.1);
 
-  --color-primary: #0A84FF;
-  --color-secondary: #5E5CE6;
-  --color-accent-red: #FF453A;
-  --color-accent-orange: #FF9F0A;
-  --color-accent-green: #30D158;
+  --color-primary: #0a84ff;
+  --color-secondary: #5e5ce6;
+  --color-accent-red: #ff453a;
+  --color-accent-orange: #ff9f0a;
+  --color-accent-green: #30d158;
 
-  --color-text-primary: #FFFFFF;
-  --color-text-secondary: #8E8E93;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #8e8e93;
   --color-text-tertiary: #636366;
 
-  /* Subtle, performant transitions */
   --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
@@ -30,9 +27,17 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'SF Pro Display',
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   background-color: var(--color-bg-deep);
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
@@ -40,8 +45,14 @@ html, body {
   overflow: hidden;
 }
 
-[dir="rtl"] html, [dir="rtl"] body {
-  font-family: 'Vazirmatn', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+[dir='rtl'] html,
+[dir='rtl'] body {
+  font-family:
+    'Vazirmatn',
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
 }
 
 #root {
@@ -49,10 +60,7 @@ html, body {
   width: 100%;
 }
 
-/* ==========================================
-   SUBTLE AMBIENT BACKGROUND
-   Static gradient instead of animated aurora
-   ========================================== */
+/* Subtle ambient background - static for performance */
 .aurora-background {
   position: fixed;
   top: 0;
@@ -62,6 +70,7 @@ html, body {
   z-index: -1;
   background: var(--color-bg-deep);
   overflow: hidden;
+  pointer-events: none;
 }
 
 .aurora-background::before {
@@ -72,7 +81,6 @@ html, body {
   background: radial-gradient(circle, rgba(10, 132, 255, 0.08) 0%, transparent 70%);
   top: -30%;
   right: -20%;
-  pointer-events: none;
 }
 
 .aurora-background::after {
@@ -83,16 +91,9 @@ html, body {
   background: radial-gradient(circle, rgba(94, 92, 230, 0.06) 0%, transparent 70%);
   bottom: -20%;
   left: -15%;
-  pointer-events: none;
 }
 
-.aurora-orb {
-  display: none;
-}
-
-/* ==========================================
-   GLASSMORPHISM (Apple-style frosted glass)
-   ========================================== */
+/* Glassmorphism */
 .glass-panel {
   background: var(--color-bg-surface);
   backdrop-filter: blur(30px);
@@ -108,9 +109,7 @@ html, body {
   background: rgba(44, 44, 46, 0.8);
 }
 
-/* ==========================================
-   SCROLLBAR (Minimal)
-   ========================================== */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -129,9 +128,7 @@ html, body {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* ==========================================
-   MESSAGE BUBBLES (Clean, Apple Messages style)
-   ========================================== */
+/* Message Bubbles */
 .bubble-sent {
   border-radius: 18px 18px 4px 18px;
   background: var(--color-primary);
@@ -142,27 +139,20 @@ html, body {
 
 .bubble-sent:hover {
   opacity: 0.9;
-  transform: none;
-  box-shadow: none;
-  border-color: transparent;
 }
 
 .bubble-received {
   border-radius: 18px 18px 18px 4px;
   background: rgba(118, 118, 128, 0.24);
   border: none;
-  backdrop-filter: none;
   transition: background-color 0.15s ease;
 }
 
 .bubble-received:hover {
-  transform: none;
   background: rgba(118, 118, 128, 0.32);
 }
 
-/* ==========================================
-   ANIMATIONS (Fast & subtle)
-   ========================================== */
+/* Animations */
 @keyframes slideUpFade {
   from {
     opacity: 0;
@@ -175,13 +165,13 @@ html, body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-@keyframes typing-bounce {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-4px); }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .animate-slide-up {
@@ -192,9 +182,7 @@ html, body {
   animation: pulse-glow 2s infinite ease-in-out;
 }
 
-/* ==========================================
-   UTILITY CLASSES
-   ========================================== */
+/* Utility Classes */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -214,6 +202,50 @@ html, body {
   background-clip: text;
 }
 
-.glow-text {
-  text-shadow: none;
+/* Responsive Design */
+@media (max-width: 600px) {
+  html {
+    font-size: 14px;
+  }
+
+  .glass-panel {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+}
+
+@media (min-width: 601px) and (max-width: 960px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 961px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Prevent text selection on UI elements */
+:not(input):not(textarea):not([contenteditable='true']) {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* High DPI screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  body {
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Safe area support for notched devices */
+@supports (padding-top: env(safe-area-inset-top)) {
+  #root {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
 }

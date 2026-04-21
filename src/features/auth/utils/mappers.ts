@@ -9,10 +9,17 @@
 import type { User as FirebaseUser } from 'firebase/auth';
 import type { User } from '../types';
 
+/**
+ * Fallback display name when Firebase user has no display name.
+ * Using a constant here since mappers are called outside React context.
+ * Components can override this with i18n if needed.
+ */
+const FALLBACK_DISPLAY_NAME = 'User';
+
 export const mapFirebaseUserToDomain = (firebaseUser: FirebaseUser): User => {
   return {
     uid: firebaseUser.uid,
-    displayName: firebaseUser.displayName || 'کاربر ناشناس',
+    displayName: firebaseUser.displayName || FALLBACK_DISPLAY_NAME,
     email: firebaseUser.email || '',
     photoURL: firebaseUser.photoURL,
     emailVerified: firebaseUser.emailVerified,

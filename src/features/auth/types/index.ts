@@ -28,17 +28,10 @@ export interface UserSettings {
   showOnlineStatus: boolean;
 }
 
-export interface AuthState {
-  user: User | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  error: AuthError | null;
-}
-
 export interface AuthError {
   code: string;
   message: string;
   details?: unknown;
 }
 
-export type AuthProvider = 'google' | 'github' | 'email';
+export type AuthProvider = 'google';

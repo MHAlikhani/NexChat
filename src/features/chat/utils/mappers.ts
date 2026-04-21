@@ -8,6 +8,12 @@ import type { QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
 import type { Message } from '../types';
 
 /**
+ * Fallback sender name when not available in Firestore.
+ * Using a constant here since mappers are called outside React context.
+ */
+const FALLBACK_SENDER_NAME = 'User';
+
+/**
  * Map Firestore Document to Domain Message
  */
 export const mapFirestoreDocToMessage = (
@@ -20,7 +26,7 @@ export const mapFirestoreDocToMessage = (
     id: docSnap.id,
     roomId,
     senderId: (data.senderId as string) || '',
-    senderName: (data.senderName as string) || 'کاربر ناشناس',
+    senderName: (data.senderName as string) || FALLBACK_SENDER_NAME,
     senderPhoto: (data.senderPhoto as string) || null,
     type: (data.type as Message['type']) || 'text',
     content: (data.content as string) || '',

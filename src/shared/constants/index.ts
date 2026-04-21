@@ -15,8 +15,6 @@ export const COLLECTIONS = {
 
 export const UI = {
   MAX_MESSAGE_LENGTH: 2000,
-  MAX_IMAGE_SIZE_MB: 5,
-  MAX_AUDIO_DURATION_SECONDS: 300,
   DEBOUNCE_DELAY_MS: 300,
   TOAST_DURATION_MS: 3000,
 } as const;
@@ -24,8 +22,7 @@ export const UI = {
 export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
-  CHAT: '/chat/:roomId',
-  SETTINGS: '/settings',
+  CHAT: '/chat',
 } as const;
 
 export const ERROR_CODES = {

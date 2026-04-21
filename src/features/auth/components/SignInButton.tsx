@@ -7,8 +7,9 @@
 import { useState } from 'react';
 import { Button, CircularProgress } from '@mui/material';
 import { Google as GoogleIcon } from '@mui/icons-material';
-import { useAuth } from '../hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import { useAuth } from '../hooks/useAuth';
 
 interface SignInButtonProps {
   size?: 'small' | 'medium' | 'large';
@@ -21,6 +22,7 @@ export const SignInButton: React.FC<SignInButtonProps> = ({
   fullWidth = false,
   className,
 }) => {
+  const { t } = useTranslation();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const { signIn, clearError } = useAuth();
 
@@ -29,13 +31,11 @@ export const SignInButton: React.FC<SignInButtonProps> = ({
     clearError();
 
     try {
-      const toastId = toast.loading('در حال ورود...');
-      await signIn('google');
-      toast.success('ورود موفقیت‌آمیز بود', { id: toastId });
+      const toastId = toast.loading(t('auth.signingIn'));
+      await signIn();
+      toast.success(t('auth.signInSuccess'), { id: toastId });
     } catch (error) {
-      const message = error instanceof Error
-        ? error.message
-        : 'ورود ناموفق بود';
+      const message = error instanceof Error ? error.message : t('auth.signInFailed');
       toast.error(message);
     } finally {
       setIsSigningIn(false);
@@ -85,7 +85,7 @@ export const SignInButton: React.FC<SignInButtonProps> = ({
         },
       }}
     >
-      {isSigningIn ? 'در حال ورود...' : 'ورود با گوگل'}
+      {isSigningIn ? t('auth.signingIn') : t('auth.signInWithGoogle')}
     </Button>
   );
 };

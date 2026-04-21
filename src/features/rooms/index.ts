@@ -11,11 +11,4 @@ export { SearchBar } from './components/SearchBar';
 export { useRooms } from './hooks/useRooms';
 export { useCreateRoom } from './hooks/useCreateRoom';
 export { useRoomActions } from './hooks/useRoomActions';
-export type {
-  Room,
-  RoomType,
-  RoomMember,
-  LastMessage,
-  CreateRoomInput,
-  UpdateRoomInput,
-} from './types';
+export type { Room, RoomType, LastMessage, CreateRoomInput, UpdateRoomInput } from './types';

@@ -5,6 +5,7 @@
  */
 
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { useChatStore } from '../stores/chatStore';
@@ -22,6 +23,7 @@ export interface UseSendMessageReturn {
 }
 
 export const useSendMessage = (): UseSendMessageReturn => {
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   const createOptimisticMessage = useCallback(
@@ -30,7 +32,7 @@ export const useSendMessage = (): UseSendMessageReturn => {
         id: `temp-${uuidv4()}`,
         roomId,
         senderId: user?.uid || '',
-        senderName: user?.displayName || 'کاربر',
+        senderName: user?.displayName || 'User',
         senderPhoto: user?.photoURL || null,
         type,
         content,
@@ -51,7 +53,7 @@ export const useSendMessage = (): UseSendMessageReturn => {
       replyTo?: { id: string; content: string; senderName: string }
     ): Promise<void> => {
       if (!user) {
-        toast.error('لطفاً ابتدا وارد شوید');
+        toast.error(t('rooms.pleaseLogin'));
         return;
       }
 
@@ -100,30 +102,30 @@ export const useSendMessage = (): UseSendMessageReturn => {
           isFailed: true,
         });
 
-        const message = error instanceof Error ? error.message : 'ارسال ناموفق بود';
+        const message = error instanceof Error ? error.message : t('chat.sendFailed');
         toast.error(message);
       }
     },
-    [user, createOptimisticMessage]
+    [user, createOptimisticMessage, t]
   );
 
   const deleteMessage = useCallback(
     async (roomId: string, messageId: string): Promise<void> => {
       if (!user) {
-        toast.error('لطفاً ابتدا وارد شوید');
+        toast.error(t('rooms.pleaseLogin'));
         return;
       }
 
       try {
         await messagesService.delete(roomId, messageId);
         useChatStore.getState().removeMessage(messageId);
-        toast.success('پیام حذف شد');
+        toast.success(t('chat.deleteSuccess'));
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'حذف ناموفق بود';
+        const message = error instanceof Error ? error.message : t('chat.deleteFailed');
         toast.error(message);
       }
     },
-    [user]
+    [user, t]
   );
 
   return {

@@ -7,6 +7,13 @@
  */
 
 import { z } from 'zod';
+import i18n from '@/lib/i18n';
+
+/**
+ * Helper to get translated error messages at validation time.
+ * Uses i18n instance directly since validators are used outside React context.
+ */
+const t = (key: string, options?: Record<string, unknown>): string => i18n.t(key, options);
 
 /**
  * Create Room Schema
@@ -14,39 +21,24 @@ import { z } from 'zod';
 export const createRoomSchema = z.object({
   name: z
     .string()
-    .min(3, 'نام اتاق باید حداقل ۳ کاراکتر باشد')
-    .max(50, 'نام اتاق نمی‌تواند بیشتر از ۵۰ کاراکتر باشد')
+    .min(3, { message: t('validation.roomNameMin') })
+    .max(50, { message: t('validation.roomNameMax') })
     .trim()
-    .regex(
-      /^[a-zA-Z0-9\u0600-\u06FF\s-_]+$/,
-      'نام اتاق فقط می‌تواند شامل حروف، اعداد و فاصله باشد'
-    ),
+    .regex(/^[a-zA-Z0-9\u0600-\u06FF\s-_]+$/, { message: t('validation.roomNameInvalid') }),
 
   description: z
     .string()
-    .max(200, 'توضیحات نمی‌تواند بیشتر از ۲۰۰ کاراکتر باشد')
+    .max(200, { message: t('validation.descriptionMax') })
     .optional()
     .or(z.literal('')),
 
   type: z.enum(['public', 'private', 'direct'], {
-    errorMap: () => ({ message: 'نوع اتاق نامعتبر است' }),
+    errorMap: () => ({ message: t('validation.roomTypeInvalid') }),
   }),
-
-  avatarFile: z
-    .instanceof(File)
-    .refine(
-      (file) => file.size <= 5 * 1024 * 1024,
-      'حجم تصویر نمی‌تواند بیشتر از ۵ مگابایت باشد'
-    )
-    .refine(
-      (file) => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
-      'فقط فرمت‌های JPEG, PNG و WebP مجاز هستند'
-    )
-    .optional(),
 
   initialMembers: z
     .array(z.string())
-    .max(50, 'حداکثر ۵۰ عضو اولیه می‌توانید اضافه کنید')
+    .max(50, { message: t('validation.membersMax') })
     .optional(),
 });
 
@@ -61,7 +53,7 @@ export const updateRoomSchema = createRoomSchema.partial();
 export const searchSchema = z.object({
   query: z
     .string()
-    .max(100, 'جستجو نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد')
+    .max(100, { message: t('validation.searchMax') })
     .trim(),
 });
 

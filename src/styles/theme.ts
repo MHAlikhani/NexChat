@@ -1,3 +1,12 @@
+/**
+ * MUI Theme Configuration
+ *
+ * Apple-inspired dark mode design with careful attention to
+ * typography, spacing, and component consistency.
+ *
+ * @module styles/theme
+ */
+
 import { createTheme } from '@mui/material/styles';
 
 export const theme = createTheme({
@@ -41,7 +50,8 @@ export const theme = createTheme({
     divider: 'rgba(84, 84, 88, 0.65)',
   },
   typography: {
-    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif',
+    fontFamily:
+      '"Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif',
     h1: { fontWeight: 700, letterSpacing: '-0.02em' },
     h2: { fontWeight: 700, letterSpacing: '-0.015em' },
     h3: { fontWeight: 600, letterSpacing: '-0.01em' },
@@ -54,6 +64,15 @@ export const theme = createTheme({
   },
   shape: {
     borderRadius: 10,
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1280,
+      xl: 1920,
+    },
   },
   components: {
     MuiCssBaseline: {
@@ -76,7 +95,6 @@ export const theme = createTheme({
           '&:hover': {
             opacity: 0.85,
             boxShadow: 'none',
-            transform: 'none',
           },
           '&:active': {
             transform: 'scale(0.98)',
@@ -133,10 +151,7 @@ export const theme = createTheme({
     MuiIconButton: {
       styleOverrides: {
         root: {
-          transition: 'opacity 0.15s ease, background-color 0.15s ease',
-          '&:hover': {
-            transform: 'none',
-          },
+          transition: 'background-color 0.15s ease',
           '&:active': {
             transform: 'scale(0.95)',
           },
@@ -148,9 +163,6 @@ export const theme = createTheme({
         root: {
           borderRadius: 10,
           transition: 'background-color 0.15s ease',
-          '&:hover': {
-            transform: 'none',
-          },
         },
       },
     },
@@ -176,6 +188,18 @@ export const theme = createTheme({
           borderRadius: 8,
           fontSize: '0.75rem',
           fontWeight: 500,
+        },
+      },
+    },
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          paddingLeft: 16,
+          paddingRight: 16,
+          '@media (min-width: 600px)': {
+            paddingLeft: 24,
+            paddingRight: 24,
+          },
         },
       },
     },

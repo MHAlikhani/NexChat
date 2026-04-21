@@ -7,6 +7,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { ErrorOutline as ErrorOutlineIcon, Refresh as RefreshIcon } from '@mui/icons-material';
+import i18n from '@/lib/i18n';
 
 interface Props {
   children: ReactNode;
@@ -61,12 +62,14 @@ export class ErrorBoundary extends Component<Props, State> {
             bgcolor: '#0B0F19',
             color: '#F8FAFC',
           }}
+          dir={i18n.dir()}
         >
           <Box
             sx={{
               p: 2.5,
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 107, 107, 0.05) 100%)',
+              background:
+                'linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 107, 107, 0.05) 100%)',
               border: '1px solid rgba(255, 107, 107, 0.2)',
               mb: 1,
             }}
@@ -75,10 +78,10 @@ export class ErrorBoundary extends Component<Props, State> {
           </Box>
 
           <Typography variant="h4" fontWeight="800" gutterBottom>
-            خطایی رخ داد
+            {i18n.t('errors.unknown')}
           </Typography>
           <Typography variant="body1" sx={{ color: '#94A3B8' }} align="center">
-            متأسفانه مشکلی در بارگذاری صفحه پیش آمده است.
+            {i18n.t('errors.serverError')}
           </Typography>
 
           {import.meta.env.DEV && this.state.error && (
@@ -116,7 +119,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 },
               }}
             >
-              بارگذاری مجدد صفحه
+              {i18n.t('common.retry')}
             </Button>
             <Button
               variant="outlined"
@@ -134,7 +137,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 },
               }}
             >
-              تلاش مجدد
+              {i18n.t('common.retry')}
             </Button>
           </Box>
         </Box>

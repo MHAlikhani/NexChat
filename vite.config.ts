@@ -11,7 +11,11 @@ export default defineConfig(({ mode }) => {
   const isProd = mode === 'production';
 
   return {
-    plugins: [react()],
+    plugins: [
+      react({
+        babel: false,
+      }),
+    ],
 
     resolve: {
       alias: {
@@ -26,50 +30,56 @@ export default defineConfig(({ mode }) => {
       hmr: {
         overlay: true,
       },
+      warmup: {
+        clientFiles: [
+          './src/main.tsx',
+          './src/App.tsx',
+          './src/lib/firebase.ts',
+          './src/lib/i18n.ts',
+        ],
+      },
     },
 
     build: {
-      // Target modern browsers for smaller output
       target: 'es2022',
-      // Hidden sourcemaps in production for debugging without exposing to public
       sourcemap: 'hidden',
-      // Use esbuild for minification (fastest, smallest output)
       minify: isProd ? 'esbuild' : false,
-      // Remove all console/debugger in production
       assetsInlineLimit: 4096,
       cssCodeSplit: true,
-      // Increase chunk size warning limit
       chunkSizeWarningLimit: 300,
+      modulePreload: {
+        polyfill: false,
+      },
+      reportCompressedSize: false,
 
       rollupOptions: {
-        // Tree-shaking optimizations
-        treeshake: true,
+        treeshake: {
+          moduleSideEffects: false,
+        },
         output: {
-          // Manual chunking for optimal loading
           manualChunks(id) {
-            // Vendor - React core
+            // React core
             if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/')) {
               return 'vendor-react';
             }
 
-            // Router (lazy loaded)
+            // Router
             if (id.includes('node_modules/react-router')) {
               return 'vendor-router';
             }
 
-            // MUI - split core and icons
+            // MUI
             if (id.includes('node_modules/@mui/material')) {
               return 'vendor-mui-core';
             }
             if (id.includes('node_modules/@mui/icons-material')) {
-              // Icons are tree-shakeable - this chunk will only contain used icons
               return 'vendor-mui-icons';
             }
             if (id.includes('node_modules/@emotion')) {
               return 'vendor-emotion';
             }
 
-            // Firebase - split by service
+            // Firebase
             if (
               id.includes('node_modules/@firebase/auth') ||
               id.includes('node_modules/firebase/auth')
@@ -89,7 +99,7 @@ export default defineConfig(({ mode }) => {
               return 'vendor-firebase-app';
             }
 
-            // i18n - lazy loaded, separate chunk
+            // i18n
             if (id.includes('node_modules/i18next')) {
               return 'vendor-i18n';
             }
@@ -105,7 +115,7 @@ export default defineConfig(({ mode }) => {
               return 'vendor-virtual';
             }
 
-            // Validation (only loaded when creating rooms)
+            // Forms
             if (
               id.includes('node_modules/zod') ||
               id.includes('node_modules/react-hook-form') ||
@@ -114,20 +124,16 @@ export default defineConfig(({ mode }) => {
               return 'vendor-forms';
             }
 
-            // Sentry - loaded lazily in its own chunk
+            // Sentry
             if (id.includes('node_modules/@sentry')) {
               return 'vendor-sentry';
             }
           },
-          // Optimize chunk file names
           chunkFileNames: 'assets/js/[name]-[hash].js',
           entryFileNames: 'assets/js/[name]-[hash].js',
           assetFileNames: (assetInfo) => {
             const ext = path.extname(assetInfo.name || '').slice(1);
             if (ext === 'css') return 'assets/css/[name]-[hash].css';
-            if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'ico'].includes(ext)) {
-              return 'assets/images/[name]-[hash][extname]';
-            }
             if (['woff', 'woff2', 'ttf', 'eot'].includes(ext)) {
               return 'assets/fonts/[name]-[hash][extname]';
             }
@@ -136,11 +142,10 @@ export default defineConfig(({ mode }) => {
         },
       },
 
-      // esbuild options for production
       ...(isProd && {
-        // Drop debugger statements, but keep console.error for production error logging
         esbuild: {
           drop: ['debugger'],
+          pure: ['console.log', 'console.debug', 'console.trace'],
           legalComments: 'none',
           treeShaking: true,
           minifyIdentifiers: true,
@@ -150,11 +155,7 @@ export default defineConfig(({ mode }) => {
       }),
     },
 
-    // Define compile-time constants to remove dev-only code
-    define: {
-      'import.meta.env.PROD': isProd,
-      'import.meta.env.DEV': !isProd,
-    },
+    define: {},
 
     test: {
       globals: true,

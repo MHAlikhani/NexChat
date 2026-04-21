@@ -20,17 +20,9 @@
   },
   "auth": {
     "login": "Anmelden",
-    "register": "Registrieren",
     "logout": "Abmelden",
-    "email": "E-Mail",
-    "password": "Passwort",
-    "name": "Name",
-    "forgotPassword": "Passwort vergessen",
     "welcomeTo": "Willkommen bei <gradient>NexChat</gradient>",
     "loginSubtitle": "Starten Sie ein modernes, schnelles und sicheres Chaterlebnis.",
-    "termsAgreement": "Mit der Anmeldung stimmen Sie unseren <terms>Nutzungsbedingungen</terms> und der <privacy>Datenschutzerklärung</privacy> zu.",
-    "termsOfService": "Nutzungsbedingungen",
-    "privacyPolicy": "Datenschutzerklärung",
     "online": "Online",
     "offline": "Offline",
     "editName": "Name bearbeiten",
@@ -39,7 +31,11 @@
     "displayName": "Anzeigename",
     "nameUpdated": "Name erfolgreich aktualisiert",
     "nameUpdateFailed": "Name konnte nicht aktualisiert werden",
+    "nameTooShort": "Name muss mindestens 2 Zeichen lang sein",
     "signInWithGoogle": "Mit Google anmelden",
+    "signingIn": "Anmeldung...",
+    "signInSuccess": "Erfolgreich angemeldet",
+    "signInFailed": "Anmeldung fehlgeschlagen",
     "popupClosed": "Anmeldefenster wurde geschlossen",
     "popupCancelled": "Anmeldeanfrage wurde abgebrochen",
     "popupBlocked": "Anmeldefenster vom Browser blockiert",
@@ -86,8 +82,11 @@
     "deleting": "Raum wird gelöscht...",
     "deleteSuccess": "Raum erfolgreich gelöscht",
     "deleteFailed": "Löschen fehlgeschlagen",
+    "created": "Raum \"{{name}}\" erfolgreich erstellt",
+    "creationFailed": "Raum konnte nicht erstellt werden",
     "pleaseLogin": "Bitte melden Sie sich zuerst an",
-    "noDescription": "Keine Beschreibung"
+    "noDescription": "Keine Beschreibung",
+    "alreadyExists": "Ein Raum mit diesem Namen existiert bereits"
   },
   "chat": {
     "sendMessage": "Nachricht senden",
@@ -95,10 +94,12 @@
     "noMessages": "Noch keine Nachrichten. Starten Sie das Gespräch!",
     "firstMessage": "Noch keine Nachrichten gesendet. Senden Sie die erste Nachricht! 👋",
     "deleteMessage": "Nachricht löschen",
-    "editMessage": "Nachricht bearbeiten",
     "reply": "Antworten",
     "replyTo": "Antwort an {{name}}",
     "deletedMessage": "Gelöschte Nachricht",
+    "sendFailed": "Nachricht konnte nicht gesendet werden",
+    "deleteSuccess": "Nachricht erfolgreich gelöscht",
+    "deleteFailed": "Nachricht konnte nicht gelöscht werden",
     "searchInMessages": "In Nachrichten suchen...",
     "searchMessages": "Nachrichten suchen",
     "closeSearch": "Suche schließen",
@@ -114,14 +115,33 @@
   },
   "home": {
     "subtitle": "Enterprise-Nachrichtenplattform der nächsten Generation",
-    "version": "Version 2.0.0 (Enterprise Edition)",
+    "version": "Version 2.0.0",
     "getStarted": "Jetzt starten",
     "builtWith": "Erstellt mit React 18 + TypeScript + Firebase"
+  },
+  "validation": {
+    "roomNameMin": "Raumname muss mindestens 3 Zeichen lang sein",
+    "roomNameMax": "Raumname darf 50 Zeichen nicht überschreiten",
+    "roomNameInvalid": "Raumname darf nur Buchstaben, Zahlen und Leerzeichen enthalten",
+    "descriptionMax": "Beschreibung darf 200 Zeichen nicht überschreiten",
+    "roomTypeInvalid": "Ungültiger Raumtyp",
+    "membersMax": "Maximal 50 Anfangsmitglieder erlaubt",
+    "searchMax": "Suche darf 100 Zeichen nicht überschreiten",
+    "messageEmpty": "Nachricht darf nicht leer sein",
+    "messageMax": "Nachricht ist zu lang",
+    "nameMin": "Name muss mindestens 2 Zeichen lang sein"
   },
   "errors": {
     "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.",
     "unauthorized": "Sie haben keine Berechtigung für diesen Bereich.",
     "notFound": "Die angeforderte Seite wurde nicht gefunden.",
-    "serverError": "Interner Serverfehler. Bitte versuchen Sie es später erneut."
+    "serverError": "Interner Serverfehler. Bitte versuchen Sie es später erneut.",
+    "unknown": "Ein unbekannter Fehler ist aufgetreten.",
+    "permissionDenied": "Sie haben keine Berechtigung für diese Aktion.",
+    "resourceExhausted": "Die Ressource ist zu groß.",
+    "invalidArgument": "Ungültige Eingabedaten.",
+    "joinFailed": "Beitritt zum Raum fehlgeschlagen.",
+    "leaveFailed": "Verlassen des Raums fehlgeschlagen.",
+    "deleteFailed": "Löschen fehlgeschlagen."
   }
 }

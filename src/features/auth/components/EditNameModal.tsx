@@ -28,7 +28,7 @@ interface EditNameModalProps {
 }
 
 export const EditNameModal: React.FC<EditNameModalProps> = ({ open, onClose }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, updateDisplayName } = useAuth();
   const [newName, setNewName] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
@@ -44,7 +44,7 @@ export const EditNameModal: React.FC<EditNameModalProps> = ({ open, onClose }) =
 
     const trimmedName = newName.trim();
     if (!trimmedName || trimmedName.length < 2) {
-      toast.error('نام باید حداقل ۲ کاراکتر باشد');
+      toast.error(t('auth.nameTooShort'));
       return;
     }
 
@@ -58,7 +58,7 @@ export const EditNameModal: React.FC<EditNameModalProps> = ({ open, onClose }) =
       await updateDisplayName(trimmedName);
       toast.success(t('auth.nameUpdated'));
       onClose();
-    } catch (error) {
+    } catch {
       toast.error(t('auth.nameUpdateFailed'));
     } finally {
       setIsUpdating(false);
@@ -78,7 +78,7 @@ export const EditNameModal: React.FC<EditNameModalProps> = ({ open, onClose }) =
       onClose={handleClose}
       maxWidth="xs"
       fullWidth
-      dir="rtl"
+      dir={i18n.dir()}
       PaperProps={{
         sx: {
           borderRadius: 4,
