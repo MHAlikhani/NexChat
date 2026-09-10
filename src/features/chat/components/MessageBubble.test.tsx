@@ -122,9 +122,16 @@ describe('MessageBubble', () => {
         content: 'Line 1\nLine 2\nLine 3',
       };
 
-      render(<MessageBubble message={multilineMessage} isOwn={true} />);
+      const { container } = render(<MessageBubble message={multilineMessage} isOwn={true} />);
 
-      expect(screen.getByText('Line 1\nLine 2\nLine 3')).toBeInTheDocument();
+      const textElement = container.querySelector('.MuiTypography-body2');
+      expect(textElement).toBeInTheDocument();
+      expect(textElement).toHaveTextContent('Line 1');
+      expect(textElement).toHaveTextContent('Line 2');
+      expect(textElement).toHaveTextContent('Line 3');
+
+      // Verify whiteSpace: pre-wrap is applied to preserve line breaks
+      expect(textElement).toHaveStyle('white-space: pre-wrap');
     });
 
     it('should be memoized to prevent unnecessary re-renders', () => {
