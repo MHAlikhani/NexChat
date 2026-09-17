@@ -49,18 +49,18 @@ Each ADR follows this template:
 
 | #   | Decision                                                                  | Status   | Date |
 | --- | ------------------------------------------------------------------------- | -------- | ---- |
-| 001 | [Vite over Create React App](./001-vite-over-cra.md)                      | Accepted | 2024 |
-| 002 | [Zustand over Redux](./002-zustand-over-redux.md)                         | Accepted | 2024 |
-| 003 | [MUI over Tailwind CSS](./003-mui-over-tailwind.md)                       | Accepted | 2024 |
-| 004 | [Firebase as Backend](./004-firebase-backend.md)                          | Accepted | 2024 |
-| 005 | [i18next for Internationalization](./005-i18next-internationalization.md) | Accepted | 2024 |
-| 006 | [Sentry for Error Tracking](./006-sentry-error-tracking.md)               | Accepted | 2024 |
-| 007 | [Vitest for Testing](./007-vitest-testing.md)                             | Accepted | 2024 |
-| 008 | [TypeScript Strict Mode](./008-typescript-strict-mode.md)                 | Accepted | 2024 |
-| 009 | [TanStack Query for Data Fetching](./009-tanstack-query-data-fetching.md) | Accepted | 2024 |
-| 010 | [Feature-Sliced Design](./010-feature-sliced-design.md)                   | Accepted | 2024 |
-| 011 | [Zod for Validation](./011-zod-validation.md)                             | Accepted | 2024 |
-| 012 | [React Hook Form for Forms](./012-react-hook-form.md)                     | Accepted | 2024 |
+| 001 | [Vite over Create React App](./001-vite-over-cra.md)                      | Accepted | 2023 |
+| 002 | [Zustand over Redux](./002-zustand-over-redux.md)                         | Accepted | 2023 |
+| 003 | [MUI over Tailwind CSS](./003-mui-over-tailwind.md)                       | Accepted | 2023 |
+| 004 | [Firebase as Backend](./004-firebase-backend.md)                          | Accepted | 2023 |
+| 005 | [i18next for Internationalization](./005-i18next-internationalization.md) | Accepted | 2023 |
+| 006 | [Sentry for Error Tracking](./006-sentry-error-tracking.md)               | Accepted | 2023 |
+| 007 | [Vitest for Testing](./007-vitest-testing.md)                             | Accepted | 2023 |
+| 008 | [TypeScript Strict Mode](./008-typescript-strict-mode.md)                 | Accepted | 2023 |
+| 009 | [TanStack Query for Data Fetching](./009-tanstack-query-data-fetching.md) | Accepted | 2023 |
+| 010 | [Feature-Sliced Design](./010-feature-sliced-design.md)                   | Accepted | 2023 |
+| 011 | [Zod for Validation](./011-zod-validation.md)                             | Accepted | 2023 |
+| 012 | [React Hook Form for Forms](./012-react-hook-form.md)                     | Accepted | 2023 |
 
 ## Contributing New ADRs
 
